@@ -3,31 +3,32 @@ export default function Card(theme) {
     MuiCard: {
       styleOverrides: {
         root: {
-          position: "relative",
-          boxShadow: theme.customShadows.card,
-          borderRadius: Number(theme.shape.borderRadius),
-          zIndex: 0,
+          // position: "relative",
+          // boxShadow: theme.customShadows.card,
+          // borderRadius: Number(theme.shape.borderRadius),
+          // zIndex: 0,
+          background: theme.palette.common.white,
         },
       },
     },
     MuiCardHeader: {
       defaultProps: {
-        titleTypographyProps: { variant: "h6" },
-        subheaderTypographyProps: {
-          variant: "body2",
-          marginTop: theme.spacing(0.5),
-        },
+        // titleTypographyProps: { variant: "h6" },
+        // subheaderTypographyProps: {
+        //   variant: "body2",
+        //   marginTop: theme.spacing(0.5),
+        // },
       },
       styleOverrides: {
         root: {
-          padding: theme.spacing(3, 3, 0),
+          // padding: theme.spacing(3, 3, 0),
         },
       },
     },
     MuiCardContent: {
       styleOverrides: {
         root: {
-          padding: theme.spacing(3),
+          // padding: theme.spacing(3),
         },
       },
     },

@@ -40,8 +40,11 @@ export function pxToRem(value) {
   return `${value / 16}rem`;
 }
 
-export function responsiveFontSizes({ sm, md, lg }) {
+export function responsiveFontSizes({ xs, sm, md, lg }) {
   return {
+    "@media (max-width:600px)": {
+      fontSize: pxToRem(xs),
+    },
     "@media (min-width:600px)": {
       fontSize: pxToRem(sm),
     },

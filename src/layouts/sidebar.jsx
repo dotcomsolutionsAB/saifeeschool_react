@@ -89,7 +89,7 @@ const Sidebar = () => {
                 {/* Icon */}
                 <IconButton
                   sx={{
-                    mt: item?.children ? 0.9 : 0,
+                    mt: item?.children ? 0.7 : 0,
                     "& > svg": {
                       fontSize: "20px",
                     },
