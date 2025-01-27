@@ -3,14 +3,14 @@ export default function Menu(theme) {
     MuiMenuItem: {
       styleOverrides: {
         root: {
-          fontSize: "12px",
-          fontWeight: 600,
-          "&.Mui-selected": {
-            backgroundColor: theme.palette.action.selected,
-            "&:hover": {
-              backgroundColor: theme.palette.action.hover,
-            },
-          },
+          // fontSize: "12px",
+          // fontWeight: 600,
+          // "&.Mui-selected": {
+          //   backgroundColor: theme.palette.action.selected,
+          //   "&:hover": {
+          //     backgroundColor: theme.palette.action.hover,
+          //   },
+          // },
         },
       },
     },

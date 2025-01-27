@@ -11,7 +11,7 @@ const LayoutProvider = ({ children }) => {
 
     return {
       headerHeight: "64px",
-      sidebarWidth: "286px",
+      sidebarWidth: "280px",
       px: isExtraSmall ? "10px" : "20px",
     };
   };

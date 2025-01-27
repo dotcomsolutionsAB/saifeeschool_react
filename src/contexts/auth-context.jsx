@@ -21,24 +21,17 @@ const AuthProvider = ({ children }) => {
   const [isLoading, setIsLoading] = useState(false);
 
   const login = async (formData) => {
-    // setIsLoading(true);
-    // const response = await loginApi(formData);
-    // setIsLoading(false);
+    setIsLoading(true);
+    const response = await loginApi(formData);
+    setIsLoading(false);
 
-    // if (response?.code === 200) {
-    //   setIsLoggedIn(true);
-    //   setUserInfo(response?.data?.userInfo);
-    // } else if (response?.code === 401) {
-    //   toast.error("Please check your email and password");
-    // } else {
-    //   toast.error(response?.message);
-    // }
-    setIsLoggedIn(true);
-    setUserInfo({
-      accessToken: "alkdfjdslkfjsdlfkjs",
-      username: formData?.username,
-      // avatarUrl
-    });
+    if (response?.code == 200 && response?.status) {
+      setIsLoggedIn(true);
+      setUserInfo(response?.data);
+      toast.success(response?.message || "Login Success");
+    } else {
+      toast.error(response?.message);
+    }
   };
 
   const logout = () => {

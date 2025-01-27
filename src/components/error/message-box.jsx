@@ -21,7 +21,7 @@ const MessageBox = () => {
             gap: 0.5,
           }}
         >
-          <ErrorRounded sx={{ fontSize: "40px" }} />
+          <ErrorRounded sx={{ fontSize: "40px", color: "warning.main" }} />
           <Typography variant="h2">Oops!</Typography>
         </Box>
         <Typography variant="h3">An error occured.</Typography>

@@ -3,29 +3,65 @@ import {
   Box,
   Avatar,
   Divider,
-  TextField,
   InputAdornment,
   IconButton,
   Typography,
+  MenuItem,
+  Popover,
 } from "@mui/material";
 import useLayout from "../hooks/uesLayout";
 import useAuth from "../hooks/useAuth";
 import {
   ArrowDropDownRounded,
+  HomeRounded,
   SearchRounded,
+  SettingsRounded,
   SortRounded,
+  VerifiedUserRounded,
 } from "@mui/icons-material";
 import { useState } from "react";
 import Saifee_Logo from "../assets/logos/Saifee_Logo.png";
+import Input from "@mui/material/Input";
+import { MAIN_SIDEBAR_ITEMS } from "../utils/constants";
+import { usePathname } from "../hooks/usePathname";
+
+const MENU_OPTIONS = [
+  {
+    label: "Home",
+    icon: <HomeRounded />,
+  },
+  {
+    label: "Profile",
+    icon: <VerifiedUserRounded />,
+  },
+  // {
+  //   label: "Settings",
+  //   icon: <SettingsRounded />,
+  // },
+];
 
 const Header = () => {
-  const { userInfo } = useAuth();
+  const pathname = usePathname();
+  const { userInfo, logout } = useAuth();
   const { layout } = useLayout();
 
   const [isImageError, setIsImageError] = useState(false);
+  const [open, setOpen] = useState(null);
+
+  const handleOpen = (event) => {
+    setOpen(event.currentTarget);
+  };
+
+  const handleClose = () => {
+    setOpen(null);
+  };
 
   const handleImageError = () => {
     setIsImageError(true);
+  };
+
+  const handleLogout = () => {
+    logout();
   };
 
   return (
@@ -35,7 +71,10 @@ const Header = () => {
         position: "fixed",
         top: 0,
         left: 0,
-        bgcolor: "custom.body_color",
+        bgcolor:
+          pathname === MAIN_SIDEBAR_ITEMS[0]?.linkName
+            ? "custom.body_color"
+            : "common.white",
         color: "primary.main",
         zIndex: 10,
         height: layout?.headerHeight,
@@ -48,6 +87,8 @@ const Header = () => {
           justifyContent: "space-between",
           alignItems: "center",
           width: "100%",
+          height: "100%",
+          overflow: "hidden",
         }}
       >
         <Box
@@ -55,8 +96,8 @@ const Header = () => {
             p: "10px",
             bgcolor: "primary.light",
             color: "primary.main",
-            width: layout?.sidebarWidth,
-            height: layout?.headerHeight,
+            minWidth: layout?.sidebarWidth,
+            height: "100%",
             display: "flex",
             alignItems: "center",
             justifyContent: "space-between",
@@ -98,20 +139,25 @@ const Header = () => {
         >
           {/* SAIFEE Logo */}
           <Box sx={{ height: "100%", display: "flex", alignItems: "center" }}>
-            <TextField
-              placeholder="Search"
-              slotProps={{
-                input: {
-                  startAdornment: (
-                    <InputAdornment position="start">
-                      <IconButton>
-                        <SearchRounded />
-                      </IconButton>
-                    </InputAdornment>
-                  ),
-                },
-              }}
-            />
+            {pathname === MAIN_SIDEBAR_ITEMS[0]?.linkName ? (
+              <Input
+                autoFocus
+                fullWidth
+                disableUnderline
+                placeholder="Search"
+                startAdornment={
+                  <InputAdornment position="start">
+                    <IconButton>
+                      <SearchRounded sx={{ color: "text.disabled" }} />
+                    </IconButton>
+                  </InputAdornment>
+                }
+              />
+            ) : (
+              <Typography variant="h4" sx={{ textTransform: "uppercase" }}>
+                SAIFEE GOLDEN JUBILEE PUBLIC SCHOOL
+              </Typography>
+            )}
           </Box>
 
           {/* User Profile Avatar */}
@@ -121,11 +167,18 @@ const Header = () => {
               display: "flex",
               alignItems: "center",
               height: "100%",
+              cursor: "pointer",
             }}
+            onClick={handleOpen}
           >
             <Divider
               orientation="vertical"
-              sx={{ width: "3px", height: "40%", bgcolor: "#D60A0B", mr: 1 }}
+              sx={{
+                width: "3px",
+                height: "35%",
+                bgcolor: "error.main",
+                mr: 1,
+              }}
             />
             <Avatar
               variant="circle"
@@ -134,6 +187,89 @@ const Header = () => {
             />
             <ArrowDropDownRounded sx={{ color: "black" }} />
           </Box>
+
+          {/* Popover */}
+          <Popover
+            open={!!open}
+            anchorEl={open}
+            onClose={handleClose}
+            anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
+            transformOrigin={{ vertical: "top", horizontal: "right" }}
+            slotProps={{
+              paper: {
+                sx: {
+                  p: 0,
+                  mt: 1,
+                  ml: 0.75,
+                  width: 200,
+                },
+              },
+            }}
+          >
+            <Box sx={{ my: 1, px: 2 }}>
+              <Typography variant="subtitle2" noWrap>
+                {userInfo?.name}
+              </Typography>
+              <Typography
+                variant="body2"
+                sx={{ color: "text.secondary" }}
+                noWrap
+              >
+                {`${userInfo?.role
+                  ?.charAt(0)
+                  .toUpperCase()}${userInfo?.role?.slice(
+                  1,
+                  userInfo?.role?.length
+                )}`}
+              </Typography>
+              <Typography sx={{ fontSize: "12px" }}>
+                {userInfo?.ay_id}
+              </Typography>
+            </Box>
+
+            <Divider sx={{ borderStyle: "dashed" }} />
+
+            {MENU_OPTIONS.map((option) => (
+              <MenuItem
+                key={option.label}
+                onClick={handleClose}
+                sx={{ display: "flex", alignItems: "center", gap: 1 }}
+              >
+                <IconButton
+                  sx={{
+                    "& > svg": {
+                      fontSize: "18px",
+                    },
+                  }}
+                >
+                  {option?.icon}
+                </IconButton>
+                {option.label}
+              </MenuItem>
+            ))}
+
+            <Divider
+              sx={{
+                borderStyle: "dashed",
+                "&.MuiDivider-root": {
+                  m: 0,
+                },
+              }}
+            />
+
+            <MenuItem
+              onClick={handleLogout}
+              sx={{
+                py: 1,
+                color: "error.main",
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+              }}
+            >
+              Logout
+            </MenuItem>
+          </Popover>
         </Box>
       </Box>
     </AppBar>

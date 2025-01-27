@@ -3,10 +3,11 @@ import { Box, Stack } from "@mui/material";
 const Loader = () => {
   return (
     <Stack
-      height="300px"
       direction="row"
       justifyContent="center"
       alignItems="center"
+      height={350}
+      width="100%"
     >
       <Stack
         justifyContent={"center"}

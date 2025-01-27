@@ -1,42 +1,51 @@
 import { pxToRem, responsiveFontSizes } from "../utils/getFontValue";
 
-const FONT_PRIMARY = "Poppins";
+export const primaryFont = "Poppins,Public Sans, sans-serif";
+export const secondaryFont = "Barlow, sans-serif";
+
+// ----------------------------------------------------------------------
 
 const typography = {
-  fontFamily: FONT_PRIMARY,
-  fontSize: 16,
+  fontFamily: primaryFont,
+  fontSecondaryFamily: secondaryFont,
   fontWeightRegular: 400,
-  fontWeightMedium: 600,
+  fontWeightMedium: 500,
+  fontWeightSemiBold: 600,
   fontWeightBold: 700,
   h1: {
-    fontWeight: 700,
+    fontWeight: 800,
     lineHeight: 80 / 64,
-    letterSpacing: 2,
+    fontSize: pxToRem(40),
     ...responsiveFontSizes({ xs: 40, sm: 52, md: 58, lg: 64 }),
   },
   h2: {
-    fontWeight: 700,
+    fontWeight: 800,
     lineHeight: 64 / 48,
+    fontSize: pxToRem(32),
     ...responsiveFontSizes({ xs: 32, sm: 40, md: 44, lg: 48 }),
   },
   h3: {
     fontWeight: 700,
     lineHeight: 1.5,
+    fontSize: pxToRem(24),
     ...responsiveFontSizes({ xs: 24, sm: 26, md: 30, lg: 32 }),
   },
   h4: {
-    fontWeight: 700,
+    fontWeight: 600,
     lineHeight: 1.5,
+    fontSize: pxToRem(20),
     ...responsiveFontSizes({ xs: 20, sm: 20, md: 24, lg: 24 }),
   },
   h5: {
-    fontWeight: 700,
+    fontWeight: 600,
     lineHeight: 1.5,
+    fontSize: pxToRem(18),
     ...responsiveFontSizes({ xs: 18, sm: 19, md: 20, lg: 20 }),
   },
   h6: {
-    fontWeight: 700,
+    fontWeight: 600,
     lineHeight: 28 / 18,
+    fontSize: pxToRem(17),
     ...responsiveFontSizes({ xs: 17, sm: 18, md: 18, lg: 18 }),
   },
   subtitle1: {
@@ -45,7 +54,7 @@ const typography = {
     fontSize: pxToRem(16),
   },
   subtitle2: {
-    fontWeight: 700,
+    fontWeight: 600,
     lineHeight: 22 / 14,
     fontSize: pxToRem(14),
   },
@@ -56,12 +65,10 @@ const typography = {
   body2: {
     lineHeight: 22 / 14,
     fontSize: pxToRem(14),
-    fontWeight: 600,
   },
   caption: {
     lineHeight: 1.5,
     fontSize: pxToRem(12),
-    fontWeight: 600,
   },
   overline: {
     fontWeight: 700,
@@ -73,10 +80,7 @@ const typography = {
     fontWeight: 700,
     lineHeight: 24 / 14,
     fontSize: pxToRem(14),
-    textTransform: "capitalize",
-  },
-  article: {
-    fontWeight: 700,
+    textTransform: "unset",
   },
 };
 

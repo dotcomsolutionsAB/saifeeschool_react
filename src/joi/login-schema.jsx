@@ -15,14 +15,14 @@ const LoginSchema = Joi.object({
 
   password: Joi.string()
     .trim()
-    .regex(
-      /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$`!()%*?&]{8,}$/
-    )
+    // .regex(
+    //   /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$`!()%*?&]{8,}$/
+    // )
     .messages({
       "any.required": "Password is a required field.",
       "string.empty": "Password must contain value.",
-      "string.pattern.base":
-        "Password must be at least 8 characters long, contain one uppercase letter, one lowercase letter, one number, and one special character.",
+      // "string.pattern.base":
+      //   "Password must be at least 8 characters long, contain one uppercase letter, one lowercase letter, one number, and one special character.",
     })
     .required(),
 });

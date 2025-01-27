@@ -1,14 +1,14 @@
-export default function IconButton(theme) {
+export default function IconButton() {
   return {
     MuiIconButton: {
       styleOverrides: {
         root: {
-          padding: 0.5,
+          padding: "5px",
           color: "inherit", // Set default color
-          borderRadius: theme.shape.borderRadius, // Ensure square corners for all IconButtons
+          borderRadius: "50%",
           overflow: "hidden", // Prevent ripple overflow
           "& .MuiTouchRipple-root .MuiTouchRipple-child": {
-            borderRadius: theme.shape.borderRadius, // Square ripple effect
+            borderRadius: "50%",
           },
         },
       },

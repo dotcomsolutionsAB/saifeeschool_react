@@ -19,7 +19,7 @@ import Login_Background from "../assets/images/Login_Background.jpeg";
 import Saifee_Logo_White from "../assets/logos/Saifee_Logo_White.png";
 
 const NAV_OPTIONS = [
-  // { _id: "1", label: "Home", link: "/" },
+  { _id: "1", label: "Home", link: "/" },
   { _id: "2", label: "About Us", link: "/about-us" },
   { _id: "3", label: "Contact Us", link: "/contact-us" },
 ];
@@ -33,8 +33,8 @@ const Login = () => {
   const passwordRef = useRef(null);
 
   const [formData, setFormData] = useState({
-    username: "admin",
-    password: "Admin@10",
+    username: "1700041",
+    password: "Saifeeschool",
   });
   const [showPassword, setShowPassword] = useState(false);
   const [isForgotPassword, setIsForgotPassword] = useState(false);

@@ -1,6 +1,8 @@
 export const USER_INFO = "userInfo";
 export const IS_LOGGED_IN = "isLoggedIn";
 
+export const DEFAULT_LIMIT = 10;
+
 export const MAIN_SIDEBAR_ITEMS = [
   {
     _id: 1,
@@ -135,10 +137,22 @@ export const MAIN_SIDEBAR_ITEMS = [
   },
 ];
 
+export const CAPITALIZE = (text) => {
+  return text
+    .split(/[-\s]/)
+    .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+    .join(" ");
+};
+
+export function emptyRows(page, rowsPerPage, arrayLength) {
+  console.log(arrayLength, "arrayLength");
+  return page ? Math.max(0, (1 + page) * rowsPerPage - arrayLength) : 0;
+}
+
 const CREATE_ERROR_RESPONSE = (code, message) => ({
   code,
   data: null,
-  isSuccess: false,
+  status: false,
   message,
 });
 

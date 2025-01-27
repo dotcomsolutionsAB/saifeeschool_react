@@ -15,6 +15,8 @@ import Page404 from "../pages/Page404";
 import { IS_LOGGED_IN, USER_INFO } from "../utils/constants";
 import Login from "../pages/login";
 import Dashboard from "../pages/dashboard";
+import Students from "../sections/student-management/students/students";
+import CreateEditStudent from "../sections/student-management/students/create-edit-student";
 
 export default function Router() {
   const { isLoggedIn, logout } = useAuth();
@@ -46,6 +48,29 @@ export default function Router() {
         {
           index: true,
           element: <Dashboard />,
+        },
+        {
+          path: "students-management",
+          children: [
+            {
+              index: true,
+              element: <Navigate to="students" replace />,
+            },
+            {
+              path: "students",
+              children: [
+                { index: true, path: "", element: <Students /> },
+                {
+                  path: "add-student",
+                  element: <CreateEditStudent />,
+                },
+                {
+                  path: "edit-student",
+                  element: <CreateEditStudent isEdit={true} />,
+                },
+              ],
+            },
+          ],
         },
       ],
     },

@@ -7,7 +7,7 @@ export default function Card(theme) {
           // boxShadow: theme.customShadows.card,
           // borderRadius: Number(theme.shape.borderRadius),
           // zIndex: 0,
-          background: theme.palette.common.white,
+          // background: theme.palette.common.white,
         },
       },
     },

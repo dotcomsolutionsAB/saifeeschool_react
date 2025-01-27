@@ -1,8 +1,7 @@
 import axios from "axios";
 import { GET_ERROR, USER_INFO } from "../utils/constants";
 
-// const BASE_URL = "http://localhost:5001/api";
-const BASE_URL = "https://37b2kdr0-5001.inc1.devtunnels.ms/api";
+const BASE_URL = "https://saifeeschool.dotcombusiness.in/api";
 
 // Create an Axios instance
 const api = axios.create({
@@ -12,7 +11,8 @@ const api = axios.create({
 // Add an Axios request interceptor to include the Bearer token in headers
 api.interceptors.request.use(
   (config) => {
-    const userInfo = localStorage.getItem(USER_INFO);
+    const userInfo = JSON.parse(localStorage.getItem(USER_INFO));
+    console.log(userInfo, "userInfo");
     if (userInfo && userInfo?.token) {
       config.headers.Authorization = `Bearer ${userInfo.token || ""}`;
     }
@@ -66,7 +66,7 @@ export const postRequest = async (path, body, isFormData = false) => {
   try {
     const headers = isFormData ? { "Content-Type": "multipart/form-data" } : {};
     const result = await api.post(path, body, { headers });
-    console.log(result, "login request");
+    console.log(result, "response result");
     return result?.data;
   } catch (error) {
     return GET_ERROR(error);
