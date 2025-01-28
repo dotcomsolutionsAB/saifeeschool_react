@@ -42,6 +42,7 @@ import ControlLabel from "./ControlLabel";
 import LoadingButton from "./LoadingButton";
 import IconButton from "./IconButton";
 import TextField from "./TextField";
+import DatePicker from "./DatePicker";
 
 export default function ComponentsOverrides(theme) {
   return Object.assign(
@@ -88,6 +89,7 @@ export default function ComponentsOverrides(theme) {
     ControlLabel(theme),
     ToggleButton(theme),
     LoadingButton(theme),
-    TextField(theme)
+    TextField(theme),
+    DatePicker(theme)
   );
 }

@@ -1,4 +1,5 @@
 import {
+  Autocomplete,
   Card,
   Divider,
   FormControlLabel,
@@ -15,10 +16,12 @@ import { DatePicker } from "@mui/x-date-pickers";
 
 import PropTypes from "prop-types";
 import { useState } from "react";
-import OtherDetails from "./tabs/other-details";
-import AddressDetails from "./tabs/address-details";
-import FatherDetails from "./tabs/father-details";
-import MotherDetails from "./tabs/mother-details";
+import OtherDetailsTab from "./create-edit-tabs/other-details-tab";
+import AddressDetailsTab from "./create-edit-tabs/address-details-tab";
+import FatherDetailsTab from "./create-edit-tabs/father-details-tab";
+import MotherDetailsTab from "./create-edit-tabs/mother-details-tab";
+import { useGetApi } from "../../../hooks/useGetApi";
+import { getHouse } from "../../../services/students-management.service";
 
 const CreateEditStudent = ({ isEdit = false }) => {
   const [activeTab, setActiveTab] = useState(0);
@@ -26,6 +29,11 @@ const CreateEditStudent = ({ isEdit = false }) => {
   const handleTabChange = (event, newValue) => {
     setActiveTab(newValue);
   };
+
+  const { dataList: houseList } = useGetApi({
+    apiFunction: getHouse,
+  });
+
   return (
     <Card sx={{ p: 2 }}>
       <Typography>Add Student</Typography>
@@ -34,12 +42,17 @@ const CreateEditStudent = ({ isEdit = false }) => {
       <Grid container spacing={4}>
         {/* First Name */}
         <Grid item xs={12} sm={6} md={4} lg={3}>
-          <TextField name="st_first_name" label="First Name" fullWidth />
+          <TextField
+            name="st_first_name"
+            label="First Name"
+            required
+            fullWidth
+          />
         </Grid>
 
         {/* Last Name */}
         <Grid item xs={12} sm={6} md={4} lg={3}>
-          <TextField name="st_last_name" label="Last Name" fullWidth />
+          <TextField name="st_last_name" label="Last Name" required fullWidth />
         </Grid>
 
         {/* Gender */}
@@ -62,8 +75,8 @@ const CreateEditStudent = ({ isEdit = false }) => {
             label="Date of Birth"
             slotProps={{
               textField: {
-                size: "small",
-                sx: { width: "200px" },
+                required: true,
+                fullWidth: true,
               },
             }}
             disableFuture
@@ -72,7 +85,7 @@ const CreateEditStudent = ({ isEdit = false }) => {
 
         {/* Roll No */}
         <Grid item xs={12} sm={6} md={4} lg={3}>
-          <TextField name="st_roll_no" label="Roll No" fullWidth />
+          <TextField name="st_roll_no" label="Roll No" required fullWidth />
         </Grid>
 
         {/* External (Yes/No) */}
@@ -86,7 +99,13 @@ const CreateEditStudent = ({ isEdit = false }) => {
 
         {/* Mobile */}
         <Grid item xs={12} sm={6} md={4} lg={3}>
-          <TextField name="st_mobile" label="Mobile" type="tel" fullWidth />
+          <TextField
+            name="st_mobile"
+            label="Mobile"
+            type="tel"
+            required
+            fullWidth
+          />
         </Grid>
 
         {/* Bohra (Yes/No) */}
@@ -100,12 +119,29 @@ const CreateEditStudent = ({ isEdit = false }) => {
 
         {/* Email */}
         <Grid item xs={12} sm={6} md={4} lg={3}>
-          <TextField name="st_email" label="Email" type="email" fullWidth />
+          <TextField
+            name="st_email"
+            label="Email"
+            type="email"
+            required
+            fullWidth
+          />
         </Grid>
 
         {/* House */}
         <Grid item xs={12} sm={6} md={4} lg={3}>
-          <TextField name="st_house" label="House" fullWidth />
+          <Autocomplete
+            options={houseList}
+            renderInput={(params) => (
+              <TextField
+                {...params}
+                name="st_house"
+                label="House"
+                required
+                fullWidth
+              />
+            )}
+          />
         </Grid>
       </Grid>
 
@@ -126,10 +162,10 @@ const CreateEditStudent = ({ isEdit = false }) => {
       <Divider sx={{ mb: 2 }} />
 
       {/* Tab Content */}
-      {activeTab === 0 && <OtherDetails />}
-      {activeTab === 1 && <AddressDetails />}
-      {activeTab === 2 && <FatherDetails />}
-      {activeTab === 3 && <MotherDetails />}
+      {activeTab === 0 && <OtherDetailsTab />}
+      {activeTab === 1 && <AddressDetailsTab />}
+      {activeTab === 2 && <FatherDetailsTab />}
+      {activeTab === 3 && <MotherDetailsTab />}
     </Card>
   );
 };

@@ -17,6 +17,7 @@ import Login from "../pages/login";
 import Dashboard from "../pages/dashboard";
 import Students from "../sections/student-management/students/students";
 import CreateEditStudent from "../sections/student-management/students/create-edit-student";
+import StudentDetail from "../sections/student-management/students/student-detail";
 
 export default function Router() {
   const { isLoggedIn, logout } = useAuth();
@@ -60,6 +61,7 @@ export default function Router() {
               path: "students",
               children: [
                 { index: true, path: "", element: <Students /> },
+                { path: "student-detail", element: <StudentDetail /> },
                 {
                   path: "add-student",
                   element: <CreateEditStudent />,

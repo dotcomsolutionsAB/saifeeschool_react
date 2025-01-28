@@ -3,9 +3,15 @@ import { getRequest, postRequest } from "./api.request";
 const STUDENTS_PATH = "/student";
 const CLASS_PATH = "/class_group";
 const ACADEMIC_PATH = "/academic_year";
+const BLOOD_GROUP_PATH = "/blood-groups";
+const HOUSE_PATH = "/house-options";
 
 export const getAllStudents = async (body) =>
   await postRequest(`${STUDENTS_PATH}/view`, body);
+
+export const getHouse = async () => await getRequest(HOUSE_PATH);
+
+export const getBloodGroups = async () => await getRequest(BLOOD_GROUP_PATH);
 
 // to download the report
 export const exportStudents = async (body) =>

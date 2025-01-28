@@ -41,7 +41,6 @@ import { DEFAULT_LIMIT, emptyRows } from "../../../utils/constants";
 import Loader from "../../../components/loader/loader";
 import MessageBox from "../../../components/error/message-box";
 import { DatePicker } from "@mui/x-date-pickers";
-import * as XLSX from "xlsx";
 import {
   CheckBox,
   CheckBoxOutlineBlank,
@@ -188,14 +187,10 @@ export default function Students() {
     setIsExportLoading(false);
 
     if (response?.code === 200) {
-      // Create a blob from the response data
-
       const link = document.createElement("a");
       link.href = response?.data?.file_url || "";
-
-      // Suggest a file name for the download
-      link.download =
-        response?.data?.file_name || `students_data_${Date.now()}.${type}`;
+      link.target = "_blank"; // Open in a new tab
+      link.rel = "noopener noreferrer"; // Add security attributes
 
       // Append the link to the document and trigger the download
       document.body.appendChild(link);
@@ -204,7 +199,7 @@ export default function Students() {
       // Remove the link after triggering the download
       document.body.removeChild(link);
 
-      toast.success("File downloaded successfully!");
+      toast.success(response?.message || "File downloaded successfully!");
     } else if (response?.code === 401) {
       logout();
       toast.error(response?.message || "Unauthorized");
@@ -309,7 +304,9 @@ export default function Students() {
   };
 
   // on row click
-  const handleRowClick = () => {};
+  const handleRowClick = (row) => {
+    navigate("/students-management/students/student-detail", { state: row });
+  };
 
   return (
     <>
@@ -349,7 +346,7 @@ export default function Students() {
           sx={{ color: "primary.main" }}
         >
           <MenuItem
-            onClick={() => handleExport("xlsx")}
+            onClick={() => handleExport("excel")}
             sx={{ color: "primary.main" }}
           >
             <Iconify icon="uiw:file-excel" sx={{ mr: 1 }} />
@@ -555,23 +552,33 @@ export default function Students() {
                         onChange={() => handleClick(row?.id)}
                       />
                     </TableCell>
-                    <TableCell>{row?.id}</TableCell>
+                    <TableCell>{row?.id || ""}</TableCell>
 
-                    <TableCell>
+                    <TableCell
+                      sx={{ cursor: "pointer" }}
+                      onClick={() => handleRowClick(row)}
+                    >
                       <Stack direction="row" alignItems="center" spacing={2}>
-                        <Avatar alt={row?.st_first_name} />
+                        <Avatar
+                          alt={`${row?.st_first_name || ""} ${
+                            row?.st_last_name || ""
+                          }`}
+                          src={row?.photo}
+                        />
                         <Typography variant="subtitle2" noWrap>
-                          {row?.st_first_name}
+                          {`${row?.st_first_name || ""} ${
+                            row?.st_last_name || ""
+                          }`}
                         </Typography>
                       </Stack>
                     </TableCell>
 
-                    <TableCell>{row?.st_roll_no}</TableCell>
+                    <TableCell>{row?.st_roll_no || ""}</TableCell>
 
-                    <TableCell>{row?.st_gender}</TableCell>
+                    <TableCell>{row?.st_gender || ""}</TableCell>
 
-                    <TableCell>{row?.st_dob}</TableCell>
-                    <TableCell>{row?.st_mobile}</TableCell>
+                    <TableCell>{row?.st_dob || ""}</TableCell>
+                    <TableCell>{row?.st_mobile || ""}</TableCell>
                   </TableRow>
                 ))}
 
