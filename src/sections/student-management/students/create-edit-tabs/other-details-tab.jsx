@@ -1,46 +1,22 @@
-import { useState } from "react";
-import {
-  getAllAcademicYears,
-  getAllClasses,
-  getBloodGroups,
-} from "../../../../services/students-management.service";
-import { useGetApi } from "../../../../hooks/useGetApi";
+import PropTypes from "prop-types";
 import { Autocomplete, Box, Grid, TextField } from "@mui/material";
-import useAuth from "../../../../hooks/useAuth";
 import { DatePicker } from "@mui/x-date-pickers";
 
-const OtherDetailsTab = () => {
-  const { userInfo } = useAuth();
-
-  const [academicYear, setAcademicYear] = useState(null);
-
-  const { dataList: bloodGroupList } = useGetApi({
-    apiFunction: getBloodGroups,
-  });
-
-  // api to get classList
-
-  const { dataList: classList } = useGetApi({
-    apiFunction: getAllClasses,
-    body: {
-      ay_id: academicYear?.id || userInfo?.ay_id,
-    },
-    dependencies: [academicYear],
-  });
-
-  // api to get academicYearList
-
-  const { dataList: academicYearList } = useGetApi({
-    apiFunction: getAllAcademicYears,
-  });
-
+const OtherDetailsTab = ({ props }) => {
+  const {
+    formData,
+    handleChange,
+    bloodGroupList = [],
+    classList = [],
+    academicYearList = [],
+  } = props;
   return (
     <Box>
       <Grid container spacing={4}>
         {/* Blood Group */}
         <Grid item xs={12} sm={6} md={4} lg={3}>
           <Autocomplete
-            options={bloodGroupList}
+            options={bloodGroupList || []}
             renderInput={(params) => (
               <TextField
                 {...params}
@@ -49,12 +25,24 @@ const OtherDetailsTab = () => {
                 fullWidth
               />
             )}
+            value={formData?.st_blood_group || ""}
+            onChange={(_, newValue) =>
+              handleChange({
+                target: { name: "st_blood_group", value: newValue },
+              })
+            }
           />
         </Grid>
 
         {/* Aadhaar No */}
         <Grid item xs={12} sm={6} md={4} lg={3}>
-          <TextField name="aadhaar_id" label="Aadhaar No" fullWidth />
+          <TextField
+            name="aadhaar_no"
+            label="Aadhaar No"
+            fullWidth
+            value={formData?.aadhaar_no || ""}
+            onChange={handleChange}
+          />
         </Grid>
 
         {/* Date of Admission */}
@@ -64,6 +52,12 @@ const OtherDetailsTab = () => {
             slotProps={{
               textField: { name: "st_year_of_admission", fullWidth: true },
             }}
+            value={formData?.st_year_of_admission || null}
+            onChange={(newValue) =>
+              handleChange({
+                target: { name: "st_year_of_admission", value: newValue },
+              })
+            }
           />
         </Grid>
 
@@ -75,8 +69,12 @@ const OtherDetailsTab = () => {
             renderInput={(params) => (
               <TextField {...params} label="Select Year" fullWidth />
             )}
-            value={academicYear || null}
-            onChange={(_, newValue) => setAcademicYear(newValue)}
+            value={formData?.academicYear || null}
+            onChange={(_, newValue) =>
+              handleChange({
+                target: { name: "academicYear", value: newValue },
+              })
+            }
           />
         </Grid>
 
@@ -84,20 +82,30 @@ const OtherDetailsTab = () => {
         <Grid item xs={12} sm={6} md={4} lg={3}>
           <Autocomplete
             options={classList || []}
-            getOptionLabel={(option) => option?.cg_name}
+            getOptionLabel={(option) => option?.cg_name || ""}
             renderInput={(params) => (
-              <TextField
-                {...params}
-                name="class_name"
-                label="Class Group"
-                fullWidth
-              />
+              <TextField {...params} label="Class Group" fullWidth />
             )}
+            value={formData?.class_group || null}
+            onChange={(_, newValue) =>
+              handleChange({
+                target: { name: "class_group", value: newValue },
+              })
+            }
           />
         </Grid>
       </Grid>
     </Box>
   );
+};
+
+OtherDetailsTab.propTypes = {
+  props: PropTypes.object,
+  formData: PropTypes.object,
+  handleChange: PropTypes.func,
+  bloodGroupList: PropTypes.array,
+  academicYearList: PropTypes.array,
+  classList: PropTypes.array,
 };
 
 export default OtherDetailsTab;

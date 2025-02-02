@@ -11,21 +11,23 @@ import {
   Typography,
 } from "@mui/material";
 import { useState } from "react";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import Iconify from "../../../components/iconify/iconify";
 import OtherDetailsTab from "./detail-tabs/other-details-tab";
 import PendingFeesTab from "./detail-tabs/pending-fees-tab";
 import PaidFeesTab from "./detail-tabs/paid-fees-tab";
 import LateFeesTab from "./detail-tabs/late-fees-tab";
 import AttachmentsTab from "./detail-tabs/attachments-tab";
-import { MoreVertRounded } from "@mui/icons-material";
+import { Logout, MoreVertRounded } from "@mui/icons-material";
+import { uploadStudentImage } from "../../../services/students-management.service";
+import { toast } from "react-toastify";
 
 const StudentDetail = () => {
   const location = useLocation();
+  const navigate = useNavigate();
   const detail = location?.state;
 
   const [previewImage, setPreviewImage] = useState(detail?.photo || "");
-  const [selectedFile, setSelectedFile] = useState(null);
 
   const [activeTab, setActiveTab] = useState(0);
 
@@ -34,16 +36,34 @@ const StudentDetail = () => {
   };
 
   // Handle image upload
-  const handleImageUpload = (e) => {
+  const handleImageUpload = async (e) => {
     const file = e.target.files[0];
     if (file) {
-      setSelectedFile(file);
-      const reader = new FileReader();
-      reader.onload = () => {
-        setPreviewImage(reader?.result);
-      };
-      reader.readAsDataURL(file);
+      const response = await uploadStudentImage({
+        st_roll_no: detail?.st_roll_no,
+        st_id: detail?.id,
+        file: [file],
+        file_type: ["photo"],
+      });
+      if (response?.code === 200) {
+        const reader = new FileReader();
+        reader.onload = () => {
+          setPreviewImage(reader?.result);
+        };
+        reader.readAsDataURL(file);
+        toast.success(response?.message || "Image uploaded successfully");
+      } else if (response?.code === 401) {
+        Logout();
+        toast.error(response?.message || "Unauthorized");
+      } else {
+        toast.error(response?.message || "Some error occurred.");
+      }
     }
+    e.target.value = ""; // to select the same file again if there is any error
+  };
+
+  const handleEdit = () => {
+    navigate("/students-management/students/edit-student", { state: detail });
   };
 
   return (
@@ -209,6 +229,7 @@ const StudentDetail = () => {
                   bgcolor: "primary.dark",
                 },
               }}
+              onClick={handleEdit}
             >
               <MoreVertRounded />
             </IconButton>
@@ -219,8 +240,8 @@ const StudentDetail = () => {
 
         {/* Tab Content */}
         {activeTab === 0 && <OtherDetailsTab detail={detail} />}
-        {activeTab === 1 && <PendingFeesTab />}
-        {activeTab === 2 && <PaidFeesTab />}
+        {activeTab === 1 && <PendingFeesTab detail={detail} />}
+        {activeTab === 2 && <PaidFeesTab detail={detail} />}
         {activeTab === 3 && <LateFeesTab />}
         {activeTab === 4 && <AttachmentsTab />}
       </CardContent>

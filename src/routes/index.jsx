@@ -18,6 +18,8 @@ import Dashboard from "../pages/dashboard";
 import Students from "../sections/student-management/students/students";
 import CreateEditStudent from "../sections/student-management/students/create-edit-student";
 import StudentDetail from "../sections/student-management/students/student-detail";
+import TransferCertificate from "../sections/report-card-module/transfer-certificate/transfer-certificate";
+import CharacterCertificate from "../sections/report-card-module/character-certificate/character-certificate";
 
 export default function Router() {
   const { isLoggedIn, logout } = useAuth();
@@ -70,6 +72,27 @@ export default function Router() {
                   path: "edit-student",
                   element: <CreateEditStudent isEdit={true} />,
                 },
+              ],
+            },
+          ],
+        },
+        {
+          path: "report-card-module",
+          children: [
+            {
+              index: true,
+              element: <Navigate to="transfer-certificate" replace />,
+            },
+            {
+              path: "transfer-certificate",
+              children: [
+                { index: true, path: "", element: <TransferCertificate /> },
+              ],
+            },
+            {
+              path: "character-certificate",
+              children: [
+                { index: true, path: "", element: <CharacterCertificate /> },
               ],
             },
           ],

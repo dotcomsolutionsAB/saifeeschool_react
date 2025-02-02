@@ -25,11 +25,9 @@ import {
   Checkbox,
   Chip,
   CircularProgress,
-  lighten,
   Menu,
   MenuItem,
   Stack,
-  styled,
   TableCell,
   TableHead,
   TableRow,
@@ -50,6 +48,8 @@ import {
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 import Iconify from "../../../components/iconify/iconify";
+import UpgradeStudentModal from "./modals/upgrade-student-modal";
+import ApplyFeePlanModal from "./modals/apply-fee-plan-modal";
 
 // ----------------------------------------------------------------------
 
@@ -61,18 +61,6 @@ const HEAD_LABEL = [
   { id: "st_dob", label: "Date of Birth" },
   { id: "st_mobile", label: "Phone" },
 ];
-
-const GroupHeader = styled("div")(({ theme }) => ({
-  position: "sticky",
-  top: "-8px",
-  padding: "4px 10px",
-  color: theme.palette.primary.main,
-  backgroundColor: lighten(theme.palette.primary.light, 0.85),
-}));
-
-const GroupItems = styled("ul")({
-  padding: 0,
-});
 
 const BOHRA_LIST = [
   { label: "Bohra", value: "1" },
@@ -104,6 +92,9 @@ export default function Students() {
   const [anchorEl, setAnchorEl] = useState(null);
   const [selectedRows, setSelectedRows] = useState([]);
   const [isExportLoading, setIsExportLoading] = useState(false);
+
+  const [upgradeStudentOpen, setUpgradeStudentOpen] = useState(false);
+  const [applyFeePlanOpen, setApplyFeePlanOpen] = useState(false);
 
   const dataSendToBackend = {
     ay_id: academicYear?.id || userInfo?.ay_id,
@@ -170,12 +161,6 @@ export default function Students() {
     setAnchorEl(null);
   };
 
-  // upgrade student handler
-
-  const handleUpgradeStudent = () => {
-    handleMenuClose();
-  };
-
   // function to export students data as pdf
   const handleExport = async (type) => {
     handleMenuClose();
@@ -208,38 +193,61 @@ export default function Students() {
     }
   };
 
-  const handleAppyFeePlan = async () => {};
+  // upgrade student handler
+
+  const handleUpgradeStudentOpen = () => {
+    handleMenuClose();
+    if (!selectedRows?.length) {
+      toast.info("Select the students to upgrade");
+      return;
+    }
+    setUpgradeStudentOpen(true);
+  };
+
+  const handleUpgradeStudentClose = () => {
+    setUpgradeStudentOpen(false);
+  };
+
+  // apply fee plan handler
+
+  const handleApplyFeePlanOpen = () => {
+    handleMenuClose();
+    if (!selectedRows?.length) {
+      toast.info("Select the students to apply fee plan");
+      return;
+    }
+    setApplyFeePlanOpen(true);
+  };
+
+  const handleApplyFeePlanClose = () => {
+    setApplyFeePlanOpen(false);
+  };
 
   // select all
   const handleSelectAllClick = (event) => {
     if (event.target.checked) {
-      // Select only rows visible on the current page
-      const newSelecteds = studentsList?.map((student) => student?.id);
-      setSelectedRows((prevSelected) => [
-        ...prevSelected.filter((id) => !newSelecteds?.includes(id)), // Avoid duplicates
-        ...newSelecteds,
-      ]);
-    } else {
-      // Deselect only rows visible on the current page
-      const newSelecteds = studentsList?.map((student) => student?.id);
-      setSelectedRows((prevSelected) =>
-        prevSelected?.filter((id) => !newSelecteds?.includes(id))
-      );
+      const newSelecteds = studentsList?.map((n) => n?.id);
+      setSelectedRows(newSelecteds);
+      return;
     }
+    setSelectedRows([]);
   };
 
   const handleClick = (id) => {
     const selectedIndex = selectedRows?.indexOf(id);
-    let newSelected = [...selectedRows];
-
+    let newSelected = [];
     if (selectedIndex === -1) {
-      // Add the new ID to the selected rows
-      newSelected?.push(id);
-    } else {
-      // Remove the ID from the selected rows
-      newSelected?.splice(selectedIndex, 1);
+      newSelected = newSelected?.concat(selectedRows, id);
+    } else if (selectedIndex === 0) {
+      newSelected = newSelected?.concat(selectedRows?.slice(1));
+    } else if (selectedIndex === selectedRows?.length - 1) {
+      newSelected = newSelected?.concat(selectedRows?.slice(0, -1));
+    } else if (selectedIndex > 0) {
+      newSelected = newSelected?.concat(
+        selectedRows?.slice(0, selectedIndex),
+        selectedRows?.slice(selectedIndex + 1)
+      );
     }
-
     setSelectedRows(newSelected);
   };
 
@@ -320,9 +328,12 @@ export default function Students() {
           width: "100%",
         }}
       >
+        {/* Add Student */}
         <Button variant="contained" onClick={handleAddStudent}>
           Add Student
         </Button>
+
+        {/* Bulk Actions */}
         <Button
           variant="contained"
           onClick={handleMenuOpen}
@@ -331,6 +342,8 @@ export default function Students() {
         >
           {isExportLoading ? <CircularProgress size={24} /> : `Bulk Actions`}
         </Button>
+
+        {/* Menu  */}
         <Menu
           anchorEl={anchorEl}
           anchorOrigin={{
@@ -345,6 +358,7 @@ export default function Students() {
           onClose={handleMenuClose}
           sx={{ color: "primary.main" }}
         >
+          {/* export excel */}
           <MenuItem
             onClick={() => handleExport("excel")}
             sx={{ color: "primary.main" }}
@@ -352,6 +366,8 @@ export default function Students() {
             <Iconify icon="uiw:file-excel" sx={{ mr: 1 }} />
             Export Excel
           </MenuItem>
+
+          {/* export pdf */}
           <MenuItem
             onClick={() => handleExport("pdf")}
             sx={{ color: "primary.main" }}
@@ -359,18 +375,43 @@ export default function Students() {
             <Iconify icon="uiw:file-pdf" sx={{ mr: 1 }} />
             Export PDF
           </MenuItem>
+
+          {/* upgrade student */}
           <MenuItem
-            onClick={handleUpgradeStudent}
+            onClick={handleUpgradeStudentOpen}
             sx={{ color: "primary.main" }}
           >
             <Iconify icon="game-icons:team-upgrade" sx={{ mr: 1 }} />
             Upgrade Student
           </MenuItem>
-          <MenuItem onClick={handleAppyFeePlan} sx={{ color: "primary.main" }}>
+
+          {/* apply fee plan */}
+          <MenuItem
+            onClick={handleApplyFeePlanOpen}
+            sx={{ color: "primary.main" }}
+          >
             <Iconify icon="ep:calendar" sx={{ mr: 1 }} />
             Apply Fee Plan
           </MenuItem>
         </Menu>
+
+        {/*Upgrade Student Dialog */}
+        <UpgradeStudentModal
+          open={upgradeStudentOpen}
+          onClose={handleUpgradeStudentClose}
+          selectedRows={selectedRows}
+          setSelectedRows={setSelectedRows}
+          refetch={refetch}
+        />
+
+        {/*Apply Fee Plan Dialog */}
+        <ApplyFeePlanModal
+          open={applyFeePlanOpen}
+          onClose={handleApplyFeePlanClose}
+          selectedRows={selectedRows}
+          setSelectedRows={setSelectedRows}
+          refetch={refetch}
+        />
       </Box>
 
       <Card sx={{ p: 2, width: "100%" }}>
@@ -457,6 +498,7 @@ export default function Students() {
             disableCloseOnSelect
             limitTags={1}
             options={classList || []}
+            getOptionLabel={(option) => option?.cg_name || ""} // it is necessary for searching the options
             renderInput={(params) => (
               <TextField {...params} label="Class" size="small" />
             )}

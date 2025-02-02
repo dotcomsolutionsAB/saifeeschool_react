@@ -1,4 +1,3 @@
-import PropTypes from "prop-types";
 import { useState } from "react";
 
 import Card from "@mui/material/Card";
@@ -19,37 +18,53 @@ import {
   TableSortLabel,
   TextField,
 } from "@mui/material";
+import { DatePicker } from "@mui/x-date-pickers";
 import { toast } from "react-toastify";
-import useAuth from "../../../../hooks/useAuth";
-import { DEFAULT_LIMIT, emptyRows } from "../../../../utils/constants";
-import { useGetApi } from "../../../../hooks/useGetApi";
-import TableEmptyRows from "../../../../components/table/table-empty-rows";
-import TableNoData from "../../../../components/table/table-no-data";
-import MessageBox from "../../../../components/error/message-box";
-import Loader from "../../../../components/loader/loader";
-import PendingFeesTableRow from "./pending-fees-table-row";
-import { getAllPendingFees } from "../../../../services/students-management.service";
+import useAuth from "../../../hooks/useAuth";
+import { DEFAULT_LIMIT, emptyRows } from "../../../utils/constants";
+import { useGetApi } from "../../../hooks/useGetApi";
+import {
+  exportTCDetails,
+  getTransferCertificates,
+} from "../../../services/report-card-module.service";
+import TableEmptyRows from "../../../components/table/table-empty-rows";
+import TableNoData from "../../../components/table/table-no-data";
+import MessageBox from "../../../components/error/message-box";
+import Loader from "../../../components/loader/loader";
+import CreateEditTCModal from "./modals/create-edit-tc-modal";
+import TransferCertificateTableRow from "./transfer-certificate-table-row";
 // ----------------------------------------------------------------------
 
 const HEAD_LABEL = [
-  { id: "fpp_name", label: "Fee" },
-  { id: "fpp_amount", label: "Fee Amount" },
-  { id: "fpp_due_date", label: "Due Date" },
-  { id: "f_concession", label: "Concession" },
-  { id: "fpp_late_fee", label: "Late Fee" },
-  { id: "fpp_late_fee_applicable", label: "Late Fee Applicable" },
-  { id: "total_amount", label: "Total Amount" },
-  { id: "actions", label: "Actions" },
+  { id: "st_roll_no", label: "Roll No" },
+  { id: "name", label: "Name" },
+  { id: "joining_date", label: "Admitted Date" },
+  { id: "leaving_date", label: "Leaving Date" },
+  { id: "actions", label: "Actions", align: "center" },
 ];
 
-export default function PendingFees({ detail }) {
+export default function TransferCertificate() {
   const { logout } = useAuth();
 
   const [page, setPage] = useState(0);
 
   const [rowsPerPage, setRowsPerPage] = useState(DEFAULT_LIMIT);
 
+  const [search, setSearch] = useState("");
+
+  const [leavingDateFrom, setLeavingDateFrom] = useState(null);
+  const [leavingDateTo, setLeavingDateTo] = useState(null);
+
   const [selectedRows, setSelectedRows] = useState([]);
+  const [isExportLoading, setIsExportLoading] = useState(false);
+
+  const [tcCreateModalOpen, setTcCreateModalOpen] = useState(false);
+
+  const dataSendToBackend = {
+    search: search || "",
+    leaving_date_from: leavingDateFrom || "",
+    leaving_date_to: leavingDateTo || "",
+  };
 
   // api to get students list
 
@@ -60,15 +75,56 @@ export default function PendingFees({ detail }) {
     isError,
     refetch,
   } = useGetApi({
-    apiFunction: getAllPendingFees,
+    apiFunction: getTransferCertificates,
     body: {
-      st_id: detail?.id,
+      ...dataSendToBackend,
       offset: page * rowsPerPage,
       limit: rowsPerPage,
     },
-    dependencies: [page, rowsPerPage],
+    dependencies: [page, rowsPerPage, search, leavingDateFrom, leavingDateTo],
     debounceDelay: 500,
   });
+
+  // function to export students data
+  const handleExcelExport = async () => {
+    setIsExportLoading(true);
+    const response = await exportTCDetails({
+      ...dataSendToBackend,
+      type: "excel",
+    });
+    setIsExportLoading(false);
+
+    if (response?.code === 200) {
+      const link = document.createElement("a");
+      link.href = response?.data?.file_url || "";
+      link.target = "_blank"; // Open in a new tab
+      link.rel = "noopener noreferrer"; // Add security attributes
+
+      // Append the link to the document and trigger the download
+      document.body.appendChild(link);
+      link.click();
+
+      // Remove the link after triggering the download
+      document.body.removeChild(link);
+
+      toast.success(response?.message || "File downloaded successfully!");
+    } else if (response?.code === 401) {
+      logout();
+      toast.error(response?.message || "Unauthorized");
+    } else {
+      toast.error(response?.message || "Some error occurred.");
+    }
+  };
+
+  // transfer certificate modal handler
+
+  const handleTcCreateModalOpen = () => {
+    setTcCreateModalOpen(true);
+  };
+
+  const handleTcCreateModalClose = () => {
+    setTcCreateModalOpen(false);
+  };
 
   // select all
   const handleSelectAllClick = (event) => {
@@ -110,12 +166,112 @@ export default function PendingFees({ detail }) {
     setRowsPerPage(parseInt(event.target.value, 10));
   };
 
+  // for searching
+  const handleSearch = (event) => {
+    setPage(0);
+    setSearch(event.target.value);
+  };
+
+  // for filtering
+  const handleChange = (field, value) => {
+    switch (field) {
+      case "leavingDateFrom":
+        setLeavingDateFrom(value);
+        break;
+      case "leavingDateTo":
+        setLeavingDateTo(value);
+        break;
+      default:
+        break;
+    }
+    setPage(0); // Reset page to 0 whenever a filter is changed
+  };
+
   // if no search result is found
-  const notFound = !transferCertificateCount;
+  const notFound = !transferCertificateCount && !!search;
 
   return (
     <>
-      <Box sx={{ width: "100%" }}>
+      <Box
+        sx={{
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "end",
+          gap: 1,
+          mb: 1,
+          width: "100%",
+        }}
+      >
+        {/* Export Excel */}
+        <Button
+          variant="contained"
+          onClick={handleExcelExport}
+          disabled={isExportLoading}
+          sx={{ bgcolor: "success.main", color: "success.contrastText" }}
+        >
+          {isExportLoading ? <CircularProgress size={24} /> : `Export Excel`}
+        </Button>
+
+        {/* Add Transfer Certificate */}
+        <Button variant="contained" onClick={() => handleTcCreateModalOpen()}>
+          +Add TC
+        </Button>
+
+        {/* Create TC Dialog */}
+        <CreateEditTCModal
+          open={tcCreateModalOpen}
+          onClose={handleTcCreateModalClose}
+          refetch={refetch}
+        />
+      </Box>
+
+      <Card sx={{ p: 2, width: "100%" }}>
+        <Typography>Transfer Certificate</Typography>
+
+        {/* Search and Filters */}
+        <Box
+          sx={{
+            display: "flex",
+            flexWrap: "wrap",
+            alignItems: "center",
+            gap: 2,
+            my: 2,
+          }}
+        >
+          <TextField
+            value={search || ""}
+            onChange={handleSearch}
+            placeholder="Search by Name or Roll No..."
+            size="small"
+            sx={{ width: "300px" }}
+          />
+
+          <DatePicker
+            label="Date From"
+            slotProps={{
+              textField: {
+                size: "small",
+                sx: { width: "200px" },
+              },
+            }}
+            disableFuture
+            value={leavingDateFrom || null}
+            onChange={(newDate) => handleChange("leavingDateFrom", newDate)}
+          />
+          <DatePicker
+            label="Date To"
+            slotProps={{
+              textField: {
+                size: "small",
+                sx: { width: "200px" },
+              },
+            }}
+            disableFuture
+            value={leavingDateTo || null}
+            onChange={(newDate) => handleChange("leavingDateTo", newDate)}
+          />
+        </Box>
+
         {/* Table */}
 
         {isLoading ? (
@@ -175,7 +331,7 @@ export default function PendingFees({ detail }) {
                   const isRowSelected = selectedRows?.indexOf(row?.id) !== -1;
 
                   return (
-                    <PendingFeesTableRow
+                    <TransferCertificateTableRow
                       key={row?.id}
                       isRowSelected={isRowSelected}
                       row={row}
@@ -194,7 +350,7 @@ export default function PendingFees({ detail }) {
                   )}
                 />
 
-                {notFound && <TableNoData />}
+                {notFound && <TableNoData query={search} />}
               </TableBody>
             </Table>
           </TableContainer>
@@ -211,14 +367,7 @@ export default function PendingFees({ detail }) {
           rowsPerPageOptions={[5, 10, 25, 50, 100]}
           onRowsPerPageChange={handleChangeRowsPerPage}
         />
-        <Box sx={{ textAlign: "right" }}>
-          <Button variant="contained">Save</Button>
-        </Box>
-      </Box>
+      </Card>
     </>
   );
 }
-
-PendingFees.propTypes = {
-  detail: PropTypes.object,
-};

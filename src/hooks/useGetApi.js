@@ -25,7 +25,7 @@ export const useGetApi = ({
 
     if (response?.code === 200) {
       setDataList(response?.data || []);
-      setDataCount(response?.count || 0);
+      setDataCount(response?.total || response?.count || 0);
     } else if (response?.code === 401) {
       logout();
       toast.error(response?.message || "Unauthorized");
