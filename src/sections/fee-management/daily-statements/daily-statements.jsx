@@ -8,139 +8,98 @@ import Typography from "@mui/material/Typography";
 import TableContainer from "@mui/material/TableContainer";
 import TablePagination from "@mui/material/TablePagination";
 
+import TableNoData from "../../../components/table/table-no-data";
+import TableEmptyRows from "../../../components/table/table-empty-rows";
+
 import {
+  Autocomplete,
   Box,
   Checkbox,
-  CircularProgress,
   TableCell,
   TableHead,
   TableRow,
   TableSortLabel,
   TextField,
 } from "@mui/material";
-import { DatePicker } from "@mui/x-date-pickers";
-import { toast } from "react-toastify";
-import useAuth from "../../../hooks/useAuth";
-import { DEFAULT_LIMIT, emptyRows } from "../../../utils/constants";
 import { useGetApi } from "../../../hooks/useGetApi";
-import {
-  exportTCDetails,
-  getTransferCertificates,
-} from "../../../services/report-card-module.service";
-import TableEmptyRows from "../../../components/table/table-empty-rows";
-import TableNoData from "../../../components/table/table-no-data";
-import MessageBox from "../../../components/error/message-box";
+import { DEFAULT_LIMIT, emptyRows } from "../../../utils/constants";
 import Loader from "../../../components/loader/loader";
-import CreateEditTCModal from "./modals/create-edit-tc-modal";
-import TransferCertificateTableRow from "./transfer-certificate-table-row";
+import MessageBox from "../../../components/error/message-box";
+import {
+  getPaymentModes,
+  getRecords,
+} from "../../../services/transactions.service";
+import { DatePicker } from "@mui/x-date-pickers";
 // ----------------------------------------------------------------------
 
 const HEAD_LABEL = [
-  { id: "st_roll_no", label: "Roll No" },
-  { id: "name", label: "Name" },
-  { id: "joining_date", label: "Admitted Date" },
-  { id: "leaving_date", label: "Leaving Date" },
-  { id: "actions", label: "Actions", align: "center" },
+  { id: "SN", label: "SN" },
+  { id: "Name", label: "Name" },
+  { id: "Date", label: "Date" },
+  { id: "Unique_Ref_No", label: "Ref No" },
+  { id: "Total_Amount", label: "Amount" },
+  { id: "Mode", label: "Mode" },
+  { id: "Status", label: "Status" },
 ];
 
-export default function TransferCertificate() {
-  const { logout } = useAuth();
-
+export default function DailyStatements() {
   const [page, setPage] = useState(0);
 
   const [rowsPerPage, setRowsPerPage] = useState(DEFAULT_LIMIT);
 
   const [search, setSearch] = useState("");
 
-  const [leavingDateFrom, setLeavingDateFrom] = useState(null);
-  const [leavingDateTo, setLeavingDateTo] = useState(null);
-
+  const [mode, setMode] = useState(null);
+  const [dueFrom, setDueFrom] = useState(null);
+  const [dueTill, setDueTill] = useState(null);
   const [selectedRows, setSelectedRows] = useState([]);
-  const [isExportLoading, setIsExportLoading] = useState(false);
-
-  const [tcCreateModalOpen, setTcCreateModalOpen] = useState(false);
 
   const dataSendToBackend = {
     search: search || "",
-    leaving_date_from: leavingDateFrom || "",
-    leaving_date_to: leavingDateTo || "",
+    mode: mode || "",
+    date_from: dueFrom || "",
+    date_to: dueTill || "",
   };
-
   // api to get students list
 
   const {
-    dataList: transferCertificateList,
-    dataCount: transferCertificateCount,
+    dataList: paymentAttemptsList,
+    dataCount: paymentAttemptsCount,
     isLoading,
     isError,
-    refetch,
+    allResponse,
   } = useGetApi({
-    apiFunction: getTransferCertificates,
+    apiFunction: getRecords,
     body: {
       ...dataSendToBackend,
       offset: page * rowsPerPage,
       limit: rowsPerPage,
     },
-    dependencies: [page, rowsPerPage, search, leavingDateFrom, leavingDateTo],
+    dependencies: [page, rowsPerPage, search, mode, dueFrom, dueTill],
     debounceDelay: 500,
   });
 
-  // function to export students data
-  const handleExcelExport = async () => {
-    setIsExportLoading(true);
-    const response = await exportTCDetails({
-      ...dataSendToBackend,
-      type: "excel",
-    });
-    setIsExportLoading(false);
+  // api to get mode list
 
-    if (response?.code === 200) {
-      const link = document.createElement("a");
-      link.href = response?.data?.file_url || "";
-      link.target = "_blank"; // Open in a new tab
-      link.rel = "noopener noreferrer"; // Add security attributes
-
-      // Append the link to the document and trigger the download
-      document.body.appendChild(link);
-      link.click();
-
-      // Remove the link after triggering the download
-      document.body.removeChild(link);
-
-      toast.success(response?.message || "File downloaded successfully!");
-    } else if (response?.code === 401) {
-      logout();
-      toast.error(response?.message || "Unauthorized");
-    } else {
-      toast.error(response?.message || "Some error occurred.");
-    }
-  };
-
-  // transfer certificate modal handler
-
-  const handleTcCreateModalOpen = () => {
-    setTcCreateModalOpen(true);
-  };
-
-  const handleTcCreateModalClose = () => {
-    setTcCreateModalOpen(false);
-  };
+  const { dataList: modeList } = useGetApi({
+    apiFunction: getPaymentModes,
+  });
 
   // select all
   const handleSelectAllClick = (event) => {
     if (event.target.checked) {
-      const newSelecteds = transferCertificateList?.map((n) => n?.id);
+      const newSelecteds = paymentAttemptsList?.map((n) => n?.SN);
       setSelectedRows(newSelecteds);
       return;
     }
     setSelectedRows([]);
   };
 
-  const handleClick = (id) => {
-    const selectedIndex = selectedRows?.indexOf(id);
+  const handleClick = (SN) => {
+    const selectedIndex = selectedRows?.indexOf(SN);
     let newSelected = [];
     if (selectedIndex === -1) {
-      newSelected = newSelected?.concat(selectedRows, id);
+      newSelected = newSelected?.concat(selectedRows, SN);
     } else if (selectedIndex === 0) {
       newSelected = newSelected?.concat(selectedRows?.slice(1));
     } else if (selectedIndex === selectedRows?.length - 1) {
@@ -175,11 +134,14 @@ export default function TransferCertificate() {
   // for filtering
   const handleChange = (field, value) => {
     switch (field) {
-      case "leavingDateFrom":
-        setLeavingDateFrom(value);
+      case "mode":
+        setMode(value);
         break;
-      case "leavingDateTo":
-        setLeavingDateTo(value);
+      case "dueFrom":
+        setDueFrom(value);
+        break;
+      case "dueTill":
+        setDueTill(value);
         break;
       default:
         break;
@@ -188,7 +150,7 @@ export default function TransferCertificate() {
   };
 
   // if no search result is found
-  const notFound = !transferCertificateCount && !!search;
+  const notFound = !paymentAttemptsCount && !!search;
 
   return (
     <>
@@ -202,31 +164,14 @@ export default function TransferCertificate() {
           width: "100%",
         }}
       >
-        {/* Export Excel */}
-        <Button
-          variant="contained"
-          onClick={handleExcelExport}
-          disabled={isExportLoading}
-          sx={{ bgcolor: "success.main", color: "success.contrastText" }}
-        >
-          {isExportLoading ? <CircularProgress size={24} /> : `Export Excel`}
+        {/* Total Due */}
+        <Button variant="outlined">
+          Total Amount: ₹ {allResponse?.page_total_amount || "0"}/-
         </Button>
-
-        {/* Add Transfer Certificate */}
-        <Button variant="contained" onClick={() => handleTcCreateModalOpen()}>
-          +Add TC
-        </Button>
-
-        {/* Create TC Dialog */}
-        <CreateEditTCModal
-          open={tcCreateModalOpen}
-          onClose={handleTcCreateModalClose}
-          refetch={refetch}
-        />
       </Box>
 
       <Card sx={{ p: 2, width: "100%" }}>
-        <Typography>Transfer Certificate</Typography>
+        <Typography>Daily Statments</Typography>
 
         {/* Search and Filters */}
         <Box
@@ -246,20 +191,18 @@ export default function TransferCertificate() {
             sx={{ width: "200px" }}
           />
 
-          <DatePicker
-            label="Date From"
-            slotProps={{
-              textField: {
-                size: "small",
-                sx: { width: "200px" },
-              },
-            }}
-            disableFuture
-            value={leavingDateFrom || null}
-            onChange={(newDate) => handleChange("leavingDateFrom", newDate)}
+          <Autocomplete
+            options={modeList || []}
+            renderInput={(params) => (
+              <TextField {...params} label="Select Mode" size="small" />
+            )}
+            value={mode || null}
+            onChange={(_, newValue) => handleChange("mode", newValue)}
+            sx={{ width: "200px" }}
           />
+
           <DatePicker
-            label="Date To"
+            label="Due From"
             slotProps={{
               textField: {
                 size: "small",
@@ -267,8 +210,21 @@ export default function TransferCertificate() {
               },
             }}
             disableFuture
-            value={leavingDateTo || null}
-            onChange={(newDate) => handleChange("leavingDateTo", newDate)}
+            value={dueFrom || null}
+            onChange={(newDate) => handleChange("dueFrom", newDate)}
+          />
+
+          <DatePicker
+            label="Due Till"
+            slotProps={{
+              textField: {
+                size: "small",
+                sx: { width: "200px" },
+              },
+            }}
+            disableFuture
+            value={dueTill || null}
+            onChange={(newDate) => handleChange("dueTill", newDate)}
           />
         </Box>
 
@@ -286,24 +242,24 @@ export default function TransferCertificate() {
                   <TableCell padding="checkbox">
                     <Checkbox
                       indeterminate={
-                        selectedRows?.filter((id) =>
-                          transferCertificateList?.some(
-                            (student) => student?.id === id
+                        selectedRows?.filter((SN) =>
+                          paymentAttemptsList?.some(
+                            (student) => student?.SN === SN
                           )
                         )?.length > 0 &&
-                        selectedRows?.filter((id) =>
-                          transferCertificateList?.some(
-                            (student) => student?.id === id
+                        selectedRows?.filter((SN) =>
+                          paymentAttemptsList?.some(
+                            (student) => student?.SN === SN
                           )
-                        )?.length < transferCertificateList?.length
+                        )?.length < paymentAttemptsList?.length
                       }
                       checked={
-                        transferCertificateList?.length > 0 &&
-                        selectedRows?.filter((id) =>
-                          transferCertificateList?.some(
-                            (student) => student?.id === id
+                        paymentAttemptsList?.length > 0 &&
+                        selectedRows?.filter((SN) =>
+                          paymentAttemptsList?.some(
+                            (student) => student?.SN === SN
                           )
-                        )?.length === transferCertificateList?.length
+                        )?.length === paymentAttemptsList?.length
                       }
                       onChange={handleSelectAllClick}
                     />
@@ -327,27 +283,41 @@ export default function TransferCertificate() {
               </TableHead>
 
               <TableBody>
-                {transferCertificateList?.map((row) => {
-                  const isRowSelected = selectedRows?.indexOf(row?.id) !== -1;
+                {paymentAttemptsList?.map((row) => (
+                  <TableRow
+                    hover
+                    tabIndex={-1}
+                    key={row?.id}
+                    role="checkbox"
+                    selected={selectedRows?.indexOf(row?.SN) !== -1}
+                  >
+                    <TableCell padding="checkbox">
+                      <Checkbox
+                        disableRipple
+                        checked={selectedRows?.indexOf(row?.SN) !== -1}
+                        onChange={() => handleClick(row?.SN)}
+                      />
+                    </TableCell>
 
-                  return (
-                    <TransferCertificateTableRow
-                      key={row?.id}
-                      isRowSelected={isRowSelected}
-                      row={row}
-                      handleClick={handleClick}
-                      refetch={refetch}
-                    />
-                  );
-                })}
+                    <TableCell>{row?.SN || ""}</TableCell>
+
+                    <TableCell sx={{ cursor: "pointer" }}>
+                      <Typography variant="subtitle2" noWrap>
+                        {row?.Name || ""}
+                      </Typography>
+                    </TableCell>
+
+                    <TableCell>{row?.Date || ""}</TableCell>
+                    <TableCell>{row?.Unique_Ref_No || ""}</TableCell>
+                    <TableCell>{row?.Total_Amount || ""}</TableCell>
+                    <TableCell>{row?.Mode || ""}</TableCell>
+                    <TableCell>{row?.Status || ""}</TableCell>
+                  </TableRow>
+                ))}
 
                 <TableEmptyRows
                   height={77}
-                  emptyRows={emptyRows(
-                    page,
-                    rowsPerPage,
-                    transferCertificateCount
-                  )}
+                  emptyRows={emptyRows(page, rowsPerPage, paymentAttemptsCount)}
                 />
 
                 {notFound && <TableNoData query={search} />}
@@ -361,7 +331,7 @@ export default function TransferCertificate() {
         <TablePagination
           page={page}
           component="div"
-          count={transferCertificateCount}
+          count={paymentAttemptsCount}
           rowsPerPage={rowsPerPage}
           onPageChange={handleChangePage}
           rowsPerPageOptions={[5, 10, 25, 50, 100]}

@@ -16,11 +16,11 @@ import Iconify from "../../../components/iconify/iconify";
 import OtherDetailsTab from "./detail-tabs/other-details-tab";
 import PendingFeesTab from "./detail-tabs/pending-fees-tab";
 import PaidFeesTab from "./detail-tabs/paid-fees-tab";
-import LateFeesTab from "./detail-tabs/late-fees-tab";
 import AttachmentsTab from "./detail-tabs/attachments-tab";
 import { Logout, MoreVertRounded } from "@mui/icons-material";
 import { uploadStudentImage } from "../../../services/students-management.service";
 import { toast } from "react-toastify";
+import WalletModal from "./modals/wallet";
 
 const StudentDetail = () => {
   const location = useLocation();
@@ -28,8 +28,8 @@ const StudentDetail = () => {
   const detail = location?.state;
 
   const [previewImage, setPreviewImage] = useState(detail?.photo || "");
-
   const [activeTab, setActiveTab] = useState(0);
+  const [walletModalOpen, setWalletModalOpen] = useState(false);
 
   const handleTabChange = (event, newValue) => {
     setActiveTab(newValue);
@@ -60,6 +60,14 @@ const StudentDetail = () => {
       }
     }
     e.target.value = ""; // to select the same file again if there is any error
+  };
+
+  const handleWalletModalClose = () => {
+    setWalletModalOpen(false);
+  };
+
+  const handleWalletClick = () => {
+    setWalletModalOpen(true);
   };
 
   const handleEdit = () => {
@@ -201,7 +209,6 @@ const StudentDetail = () => {
           <Tab label="Other Details" />
           <Tab label="Pending Fees" />
           <Tab label="Paid Fees" />
-          <Tab label="Late Fees/Concession" />
           <Tab label="Attachments" />
           <Box
             sx={{
@@ -216,6 +223,7 @@ const StudentDetail = () => {
             <Button
               variant="standard"
               sx={{ bgcolor: "primary.main", color: "primary.contrastText" }}
+              onClick={handleWalletClick}
             >
               +Wallet: ₹{detail?.wallet || 0}/-
             </Button>
@@ -242,8 +250,13 @@ const StudentDetail = () => {
         {activeTab === 0 && <OtherDetailsTab detail={detail} />}
         {activeTab === 1 && <PendingFeesTab detail={detail} />}
         {activeTab === 2 && <PaidFeesTab detail={detail} />}
-        {activeTab === 3 && <LateFeesTab />}
-        {activeTab === 4 && <AttachmentsTab />}
+        {activeTab === 3 && <AttachmentsTab />}
+
+        <WalletModal
+          open={walletModalOpen}
+          onClose={handleWalletModalClose}
+          detail={detail}
+        />
       </CardContent>
     </Card>
   );

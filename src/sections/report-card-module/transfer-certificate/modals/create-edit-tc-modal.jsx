@@ -1,5 +1,5 @@
 import PropTypes from "prop-types";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 import {
   Autocomplete,
@@ -16,9 +16,11 @@ import { CancelOutlined } from "@mui/icons-material";
 import useAuth from "../../../../hooks/useAuth";
 import {
   createTransferCertificate,
+  getStudentByRollNo,
   updateTransferCertificate,
 } from "../../../../services/report-card-module.service";
 import { DatePicker } from "@mui/x-date-pickers";
+import dayjs from "dayjs";
 
 const PROMOTION_LIST = [
   {
@@ -49,7 +51,7 @@ const CreateEditTCModal = ({ open, onClose, refetch, detail }) => {
     father_name: detail?.father_name || "",
     joining_class: detail?.joining_class || "",
     joining_date: detail?.joining_date || "",
-    leaving_date: detail?.leaving_date || "",
+    leaving_date: detail?.leaving_date || dayjs(),
     prev_school: detail?.prev_school || "",
     character: detail?.character || "",
     class: detail?.class || "",
@@ -106,6 +108,42 @@ const CreateEditTCModal = ({ open, onClose, refetch, detail }) => {
       toast.error(response?.message || "Some error occurred.");
     }
   };
+
+  const fetchStudentDetail = async () => {
+    const response = await getStudentByRollNo({
+      st_roll_no: formData?.st_roll_no,
+    });
+
+    const studentDetail = response?.data;
+
+    setFormData((prev) => ({
+      ...prev,
+      name: studentDetail?.name || "",
+      father_name: studentDetail?.fathers_name || "",
+      joining_class: studentDetail?.st_admitted_class || "",
+      // joining_date: studentDetail?.st_admitted
+      //   ? dayjs(studentDetail?.st_admitted, "DD-MM-YYYY").isValid()
+      //     ? dayjs(studentDetail?.st_admitted, "DD-MM-YYYY")
+      //     : null
+      //   : null,
+      // dob: studentDetail?.st_dob
+      //   ? dayjs(studentDetail?.st_dob).format("YYYY-MM-DD")
+      //   : "",
+    }));
+  };
+
+  useEffect(() => {
+    let timer = null;
+
+    if (!detail?.id && formData?.st_roll_no) {
+      timer = setTimeout(fetchStudentDetail, 500);
+    }
+
+    return () => {
+      if (timer) clearTimeout(timer);
+    };
+  }, [formData?.st_roll_no]);
+
   return (
     <Dialog
       open={open}

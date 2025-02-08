@@ -7,25 +7,13 @@ const BLOOD_GROUP_PATH = "/blood-groups";
 const HOUSE_PATH = "/house-options";
 const FEE_PLAN_PATH = "/fee_plan";
 
+// students apis
+
 export const getAllStudents = async (body) =>
   await postRequest(`${STUDENTS_PATH}/view`, body);
 
-export const getHouse = async () => await getRequest(HOUSE_PATH);
-
-export const getBloodGroups = async () => await getRequest(BLOOD_GROUP_PATH);
-
-export const getFeePlan = async (body) =>
-  await postRequest(`${FEE_PLAN_PATH}/view`, body);
-
-// to download the report
 export const exportStudents = async (body) =>
-  await postRequest(`${STUDENTS_PATH}/export`, body);
-
-export const getAllClasses = async (body) =>
-  await postRequest(`${CLASS_PATH}/view`, body);
-
-export const getAllAcademicYears = async () =>
-  await getRequest(`${ACADEMIC_PATH}/view`);
+  await postRequest(`${STUDENTS_PATH}/export`, body); // to download the report
 
 export const uploadStudentImage = async (body) =>
   await postRequest(`${STUDENTS_PATH}/upload`, body, true);
@@ -44,3 +32,18 @@ export const getAllPendingFees = async (body) =>
 
 export const getAllPaidFees = async (body) =>
   await postRequest(`${STUDENTS_PATH}/paid_fees`, body);
+
+// other apis
+
+export const getHouse = async () => await getRequest(HOUSE_PATH);
+
+export const getBloodGroups = async () => await getRequest(BLOOD_GROUP_PATH);
+
+export const getFeePlan = async (body) =>
+  await postRequest(`${FEE_PLAN_PATH}/view`, body);
+
+export const getAllClasses = async (body) =>
+  await postRequest(`${CLASS_PATH}/view`, body);
+
+export const getAllAcademicYears = async () =>
+  await getRequest(`${ACADEMIC_PATH}/view`);

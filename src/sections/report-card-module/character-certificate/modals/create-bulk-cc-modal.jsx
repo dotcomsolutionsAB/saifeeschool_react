@@ -18,13 +18,14 @@ import { createBulkCharacterCertificate } from "../../../../services/report-card
 import { DatePicker } from "@mui/x-date-pickers";
 import { getAllClasses } from "../../../../services/students-management.service";
 import { useGetApi } from "../../../../hooks/useGetApi";
+import dayjs from "dayjs";
 
 const CreateBulkCCModal = ({ open, onClose, refetch, detail }) => {
   const { logout, userInfo } = useAuth();
   const [isLoading, setIsLoading] = useState(false);
 
   const initialState = {
-    leaving_date: detail?.leaving_date || "",
+    leaving_date: detail?.leaving_date || dayjs(),
     stream: detail?.stream || "",
     date_from: detail?.date_from || "",
     dob: detail?.dob || "",
@@ -72,6 +73,7 @@ const CreateBulkCCModal = ({ open, onClose, refetch, detail }) => {
       toast.error(response?.message || "Some error occurred.");
     }
   };
+
   return (
     <Dialog
       open={open}

@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { Navigate, useRoutes } from "react-router-dom";
+import { Navigate, Outlet, useRoutes } from "react-router-dom";
 import { toast } from "react-toastify";
 
 // hooks
@@ -20,6 +20,11 @@ import CreateEditStudent from "../sections/student-management/students/create-ed
 import StudentDetail from "../sections/student-management/students/student-detail";
 import TransferCertificate from "../sections/report-card-module/transfer-certificate/transfer-certificate";
 import CharacterCertificate from "../sections/report-card-module/character-certificate/character-certificate";
+import StudentProvider from "../contexts/student-context";
+import Fees from "../sections/fee-management/fees/fees";
+import PaymentAttempts from "../sections/fee-management/payment-attempts/payment-attempts";
+import Transactions from "../sections/fee-management/transactions/transactions";
+import DailyStatements from "../sections/fee-management/daily-statements/daily-statements";
 
 export default function Router() {
   const { isLoggedIn, logout } = useAuth();
@@ -61,16 +66,70 @@ export default function Router() {
             },
             {
               path: "students",
+              element: (
+                <StudentProvider>
+                  <Outlet />
+                </StudentProvider>
+              ),
               children: [
-                { index: true, path: "", element: <Students /> },
-                { path: "student-detail", element: <StudentDetail /> },
                 {
-                  path: "add-student",
-                  element: <CreateEditStudent />,
+                  index: true,
+                  element: <Students />,
                 },
+                { path: "student-detail", element: <StudentDetail /> },
+                { path: "add-student", element: <CreateEditStudent /> },
                 {
                   path: "edit-student",
                   element: <CreateEditStudent isEdit={true} />,
+                },
+              ],
+            },
+          ],
+        },
+        {
+          path: "fees-management",
+          children: [
+            {
+              index: true,
+              element: <Navigate to="fees" replace />,
+            },
+            {
+              path: "fees",
+              element: <Outlet />,
+              children: [
+                {
+                  index: true,
+                  element: <Fees />,
+                },
+              ],
+            },
+            {
+              path: "payment-attempts",
+              element: <Outlet />,
+              children: [
+                {
+                  index: true,
+                  element: <PaymentAttempts />,
+                },
+              ],
+            },
+            {
+              path: "transactions",
+              element: <Outlet />,
+              children: [
+                {
+                  index: true,
+                  element: <Transactions />,
+                },
+              ],
+            },
+            {
+              path: "daily-statements",
+              element: <Outlet />,
+              children: [
+                {
+                  index: true,
+                  element: <DailyStatements />,
                 },
               ],
             },

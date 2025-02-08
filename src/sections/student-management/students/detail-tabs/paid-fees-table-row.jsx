@@ -30,8 +30,6 @@ const PaidFeesTableRow = ({ row, isRowSelected, handleClick, refetch }) => {
 
         <TableCell>{row?.fpp_due_date || "-"}</TableCell>
 
-        <TableCell>{row?.date_paid || "-"}</TableCell>
-
         <TableCell>{row?.f_concession || "-"}</TableCell>
 
         <TableCell>{row?.fpp_late_fee || "-"}</TableCell>

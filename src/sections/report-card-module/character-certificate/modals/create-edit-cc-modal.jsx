@@ -1,5 +1,5 @@
 import PropTypes from "prop-types";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 import {
   Box,
@@ -15,9 +15,11 @@ import { CancelOutlined } from "@mui/icons-material";
 import useAuth from "../../../../hooks/useAuth";
 import {
   createCharacterCertificate,
+  getStudentByRollNo,
   updateCharacterCertificate,
 } from "../../../../services/report-card-module.service";
 import { DatePicker } from "@mui/x-date-pickers";
+import dayjs from "dayjs";
 
 const CreateEditCCModal = ({ open, onClose, refetch, detail }) => {
   const { logout } = useAuth();
@@ -27,7 +29,7 @@ const CreateEditCCModal = ({ open, onClose, refetch, detail }) => {
     st_roll_no: detail?.st_roll_no || "",
     name: detail?.name || "",
     joining_date: detail?.joining_date || "",
-    leaving_date: detail?.leaving_date || "",
+    leaving_date: detail?.leaving_date || dayjs(),
     stream: detail?.stream || "",
     date_from: detail?.date_from || "",
     dob: detail?.dob || "",
@@ -82,6 +84,39 @@ const CreateEditCCModal = ({ open, onClose, refetch, detail }) => {
       toast.error(response?.message || "Some error occurred.");
     }
   };
+
+  const fetchStudentDetail = async () => {
+    const response = await getStudentByRollNo({
+      st_roll_no: formData?.st_roll_no,
+    });
+
+    const studentDetail = response?.data;
+
+    setFormData((prev) => ({
+      ...prev,
+      name: studentDetail?.name || "",
+      // joining_date: studentDetail?.st_admitted
+      //   ? dayjs(studentDetail?.st_admitted, "DD-MM-YYYY").isValid()
+      //     ? dayjs(studentDetail?.st_admitted, "DD-MM-YYYY")
+      //     : null
+      //   : null,
+      // dob: studentDetail?.st_dob
+      //   ? dayjs(studentDetail?.st_dob).format("YYYY-MM-DD")
+      //   : "",
+    }));
+  };
+
+  useEffect(() => {
+    let timer = null;
+
+    if (!detail?.id && formData?.st_roll_no) {
+      timer = setTimeout(fetchStudentDetail, 500);
+    }
+
+    return () => {
+      if (timer) clearTimeout(timer);
+    };
+  }, [formData?.st_roll_no]);
   return (
     <Dialog
       open={open}

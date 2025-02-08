@@ -19,22 +19,19 @@ import {
 import useAuth from "../../../hooks/useAuth";
 import {
   Autocomplete,
-  Avatar,
   Box,
   Checkbox,
   Chip,
   CircularProgress,
   Menu,
   MenuItem,
-  Stack,
   TableCell,
   TableHead,
   TableRow,
-  TableSortLabel,
   TextField,
 } from "@mui/material";
 import { useGetApi } from "../../../hooks/useGetApi";
-import { emptyRows } from "../../../utils/constants";
+import { DEFAULT_LIMIT, emptyRows } from "../../../utils/constants";
 import Loader from "../../../components/loader/loader";
 import MessageBox from "../../../components/error/message-box";
 import { DatePicker } from "@mui/x-date-pickers";
@@ -45,72 +42,91 @@ import {
   ExpandMoreRounded,
 } from "@mui/icons-material";
 import { toast } from "react-toastify";
-import { useNavigate } from "react-router-dom";
 import Iconify from "../../../components/iconify/iconify";
-import UpgradeStudentModal from "./modals/upgrade-student-modal";
-import ApplyFeePlanModal from "./modals/apply-fee-plan-modal";
-import useStudent from "../../../hooks/useStudent";
-
+import { getAllFees } from "../../../services/fees-management.service";
 // ----------------------------------------------------------------------
 
 const HEAD_LABEL = [
-  { id: "id", label: "ID" },
-  { id: "st_first_name", label: "Name" },
-  { id: "st_roll_no", label: "Roll No" },
-  { id: "st_gender", label: "Gender" },
-  { id: "st_dob", label: "Date of Birth" },
-  { id: "st_mobile", label: "Phone" },
+  { id: "SN", label: "SN" },
+  { id: "Name", label: "Name" },
+  { id: "Fee Name", label: "Fee" },
+  { id: "Base Amount", label: "Fee Amount" },
+  { id: "Due Date", label: "Due Date" },
+  { id: "Late Fee", label: "Late Fee Applicable" },
+  { id: "Total Amount", label: "Total Amount" },
+  { id: "Status", label: "Status", align: "center" },
 ];
 
-const BOHRA_LIST = [
-  { label: "Bohra", value: "1" },
-  { label: "Non Bohra", value: "0" },
+const STATUS_LIST = [
+  { label: "Paid", value: "paid" },
+  { label: "UnPaid", value: "unpaid" },
 ];
 
-const GENDER_LIST = [
-  { label: "Male", value: "M" },
-  { label: "Female", value: "F" },
+const TYPE_LIST = [
+  { label: "Monthly Fees", value: "monthly" },
+  { label: "Admission Fees", value: "admission" },
+  { label: "One-Time Fees", value: "one_time" },
+  { label: "Recurring Fees", value: "recurring" },
 ];
 
-export default function Students() {
-  const navigate = useNavigate();
+export default function Fees() {
   const { userInfo, logout } = useAuth();
+
+  const [page, setPage] = useState(0);
+
+  const [rowsPerPage, setRowsPerPage] = useState(DEFAULT_LIMIT);
+
+  const [search, setSearch] = useState("");
+
+  const [status, setStatus] = useState(null);
+  const [cgId, setCgId] = useState(null);
+  const [selectedOptions, setSelectedOptions] = useState([]); // to select multiple checkboxes in class field
+  const [type, setType] = useState(null);
+  const [dueFrom, setDueFrom] = useState(null);
+  const [dueTill, setDueTill] = useState(null);
+  const [academicYear, setAcademicYear] = useState(null);
+  const [anchorEl, setAnchorEl] = useState(null);
+  const [selectedRows, setSelectedRows] = useState([]);
+  const [isExportLoading, setIsExportLoading] = useState(false);
+
+  const dataSendToBackend = {
+    ay_id: academicYear?.id || userInfo?.ay_id,
+    search: search || "",
+    status: status?.value || "",
+    cg_id: cgId || "",
+    type: type?.value || "",
+    date_from: dueFrom || "",
+    date_to: dueTill || "",
+  };
+
+  // api to get students list
+
   const {
-    bohra,
-    selectedOptions,
-    gender,
-    dobFrom,
-    dobTo,
-    academicYear,
-    anchorEl,
-    selectedRows,
-    isExportLoading,
-    page,
-    rowsPerPage,
-    search,
-    setPage,
-    setRowsPerPage,
-    setSearch,
-    setBohra,
-    setCgId,
-    setSelectedOptions,
-    setGender,
-    setDobFrom,
-    setDobTo,
-    setAcademicYear,
-    setAnchorEl,
-    setSelectedRows,
-    setIsExportLoading,
-    dataSendToBackend,
-    studentsList,
-    studentsCount,
+    dataList: feesList,
+    dataCount: feesCount,
+    allResponse,
     isLoading,
     isError,
-    refetch,
-  } = useStudent();
-
-  const [upgradeStudentOpen, setUpgradeStudentOpen] = useState(false);
-  const [applyFeePlanOpen, setApplyFeePlanOpen] = useState(false);
+  } = useGetApi({
+    apiFunction: getAllFees,
+    body: {
+      ...dataSendToBackend,
+      offset: page * rowsPerPage,
+      limit: rowsPerPage,
+    },
+    dependencies: [
+      academicYear,
+      page,
+      rowsPerPage,
+      search,
+      status,
+      cgId,
+      type,
+      dueFrom,
+      dueTill,
+    ],
+    debounceDelay: 500,
+  });
 
   // api to get classList
 
@@ -170,51 +186,21 @@ export default function Students() {
     }
   };
 
-  // upgrade student handler
-
-  const handleUpgradeStudentOpen = () => {
-    handleMenuClose();
-    if (!selectedRows?.length) {
-      toast.info("Select the students to upgrade");
-      return;
-    }
-    setUpgradeStudentOpen(true);
-  };
-
-  const handleUpgradeStudentClose = () => {
-    setUpgradeStudentOpen(false);
-  };
-
-  // apply fee plan handler
-
-  const handleApplyFeePlanOpen = () => {
-    handleMenuClose();
-    if (!selectedRows?.length) {
-      toast.info("Select the students to apply fee plan");
-      return;
-    }
-    setApplyFeePlanOpen(true);
-  };
-
-  const handleApplyFeePlanClose = () => {
-    setApplyFeePlanOpen(false);
-  };
-
   // select all
   const handleSelectAllClick = (event) => {
     if (event.target.checked) {
-      const newSelecteds = studentsList?.map((n) => n?.id);
+      const newSelecteds = feesList?.map((n) => n?.SN);
       setSelectedRows(newSelecteds);
       return;
     }
     setSelectedRows([]);
   };
 
-  const handleClick = (id) => {
-    const selectedIndex = selectedRows?.indexOf(id);
+  const handleClick = (SN) => {
+    const selectedIndex = selectedRows?.indexOf(SN);
     let newSelected = [];
     if (selectedIndex === -1) {
-      newSelected = newSelected?.concat(selectedRows, id);
+      newSelected = newSelected?.concat(selectedRows, SN);
     } else if (selectedIndex === 0) {
       newSelected = newSelected?.concat(selectedRows?.slice(1));
     } else if (selectedIndex === selectedRows?.length - 1) {
@@ -257,20 +243,20 @@ export default function Students() {
   // for filtering
   const handleChange = (field, value) => {
     switch (field) {
-      case "bohra":
-        setBohra(value);
+      case "status":
+        setStatus(value);
         break;
       case "cgId":
         setCgId(value);
         break;
-      case "gender":
-        setGender(value);
+      case "type":
+        setType(value);
         break;
-      case "dobFrom":
-        setDobFrom(value);
+      case "dueFrom":
+        setDueFrom(value);
         break;
-      case "dobTo":
-        setDobTo(value);
+      case "dueTill":
+        setDueTill(value);
         break;
       case "academicYear":
         setAcademicYear(value);
@@ -282,16 +268,7 @@ export default function Students() {
   };
 
   // if no search result is found
-  const notFound = !studentsCount && !!search;
-
-  const handleAddStudent = () => {
-    navigate("/students-management/students/add-student");
-  };
-
-  // on row click
-  const handleRowClick = (row) => {
-    navigate("/students-management/students/student-detail", { state: row });
-  };
+  const notFound = !feesCount && !!search;
 
   return (
     <>
@@ -305,94 +282,64 @@ export default function Students() {
           width: "100%",
         }}
       >
-        {/* Add Student */}
-        <Button variant="contained" onClick={handleAddStudent}>
-          Add Student
+        {/* Total Paid */}
+        <Button variant="outlined">
+          Total Paid:₹ {allResponse?.page_total_paid || "0"}/-
+        </Button>
+        {/* Total Due */}
+        <Button variant="outlined">
+          Total Due: ₹ {allResponse?.page_total_due || "0"}/-
         </Button>
 
         {/* Bulk Actions */}
-        <Button
-          variant="contained"
-          onClick={handleMenuOpen}
-          endIcon={anchorEl ? <ExpandLessRounded /> : <ExpandMoreRounded />}
-          disabled={isExportLoading}
-        >
-          {isExportLoading ? <CircularProgress size={24} /> : `Bulk Actions`}
-        </Button>
+        <Box>
+          <Button
+            variant="contained"
+            onClick={handleMenuOpen}
+            endIcon={anchorEl ? <ExpandLessRounded /> : <ExpandMoreRounded />}
+            disabled={isExportLoading}
+          >
+            {isExportLoading ? <CircularProgress size={24} /> : `Bulk Actions`}
+          </Button>
 
-        {/* Menu  */}
-        <Menu
-          anchorEl={anchorEl}
-          anchorOrigin={{
-            vertical: "bottom",
-            horizontal: "right",
-          }}
-          transformOrigin={{
-            vertical: "top",
-            horizontal: "right",
-          }}
-          open={Boolean(anchorEl)}
-          onClose={handleMenuClose}
-          sx={{ color: "primary.main" }}
-        >
-          {/* export excel */}
-          <MenuItem
-            onClick={() => handleExport("excel")}
+          {/* Menu  */}
+          <Menu
+            anchorEl={anchorEl}
+            anchorOrigin={{
+              vertical: "bottom",
+              horizontal: "right",
+            }}
+            transformOrigin={{
+              vertical: "top",
+              horizontal: "right",
+            }}
+            open={Boolean(anchorEl)}
+            onClose={handleMenuClose}
             sx={{ color: "primary.main" }}
           >
-            <Iconify icon="uiw:file-excel" sx={{ mr: 1 }} />
-            Export Excel
-          </MenuItem>
+            {/* export excel */}
+            <MenuItem
+              onClick={() => handleExport("excel")}
+              sx={{ color: "primary.main" }}
+            >
+              <Iconify icon="uiw:file-excel" sx={{ mr: 1 }} />
+              Export Excel
+            </MenuItem>
 
-          {/* export pdf */}
-          <MenuItem
-            onClick={() => handleExport("pdf")}
-            sx={{ color: "primary.main" }}
-          >
-            <Iconify icon="uiw:file-pdf" sx={{ mr: 1 }} />
-            Export PDF
-          </MenuItem>
-
-          {/* upgrade student */}
-          <MenuItem
-            onClick={handleUpgradeStudentOpen}
-            sx={{ color: "primary.main" }}
-          >
-            <Iconify icon="game-icons:team-upgrade" sx={{ mr: 1 }} />
-            Upgrade Student
-          </MenuItem>
-
-          {/* apply fee plan */}
-          <MenuItem
-            onClick={handleApplyFeePlanOpen}
-            sx={{ color: "primary.main" }}
-          >
-            <Iconify icon="ep:calendar" sx={{ mr: 1 }} />
-            Apply Fee Plan
-          </MenuItem>
-        </Menu>
-
-        {/*Upgrade Student Dialog */}
-        <UpgradeStudentModal
-          open={upgradeStudentOpen}
-          onClose={handleUpgradeStudentClose}
-          selectedRows={selectedRows}
-          setSelectedRows={setSelectedRows}
-          refetch={refetch}
-        />
-
-        {/*Apply Fee Plan Dialog */}
-        <ApplyFeePlanModal
-          open={applyFeePlanOpen}
-          onClose={handleApplyFeePlanClose}
-          selectedRows={selectedRows}
-          setSelectedRows={setSelectedRows}
-          refetch={refetch}
-        />
+            {/* export pdf */}
+            <MenuItem
+              onClick={() => handleExport("pdf")}
+              sx={{ color: "primary.main" }}
+            >
+              <Iconify icon="uiw:file-pdf" sx={{ mr: 1 }} />
+              Export PDF
+            </MenuItem>
+          </Menu>
+        </Box>
       </Box>
 
       <Card sx={{ p: 2, width: "100%" }}>
-        <Typography>All Students Data</Typography>
+        <Typography>Fees</Typography>
 
         {/* Search and Filters */}
         <Box
@@ -413,53 +360,6 @@ export default function Students() {
           />
 
           <Autocomplete
-            options={BOHRA_LIST || []}
-            getOptionLabel={(option) => option?.label || ""}
-            renderInput={(params) => (
-              <TextField {...params} label="Bohra/Non-Bohra" size="small" />
-            )}
-            value={bohra || null}
-            onChange={(_, newValue) => handleChange("bohra", newValue)}
-            sx={{ width: "200px" }}
-          />
-
-          <Autocomplete
-            options={GENDER_LIST || []}
-            getOptionLabel={(option) => option?.label || ""}
-            renderInput={(params) => (
-              <TextField {...params} label="Gender" size="small" />
-            )}
-            value={gender || null}
-            onChange={(_, newValue) => handleChange("gender", newValue)}
-            sx={{ width: "200px" }}
-          />
-
-          <DatePicker
-            label="DOB From"
-            slotProps={{
-              textField: {
-                size: "small",
-                sx: { width: "200px" },
-              },
-            }}
-            disableFuture
-            value={dobFrom || null}
-            onChange={(newDate) => handleChange("dobFrom", newDate)}
-          />
-          <DatePicker
-            label="DOB To"
-            slotProps={{
-              textField: {
-                size: "small",
-                sx: { width: "200px" },
-              },
-            }}
-            disableFuture
-            value={dobTo || null}
-            onChange={(newDate) => handleChange("dobTo", newDate)}
-          />
-
-          <Autocomplete
             options={academicYearList || []}
             getOptionLabel={(option) => option?.ay_name || ""}
             renderInput={(params) => (
@@ -468,6 +368,53 @@ export default function Students() {
             value={academicYear || null}
             onChange={(_, newValue) => handleChange("academicYear", newValue)}
             sx={{ width: "200px" }}
+          />
+
+          <Autocomplete
+            options={STATUS_LIST || []}
+            getOptionLabel={(option) => option?.label || ""}
+            renderInput={(params) => (
+              <TextField {...params} label="Select Status" size="small" />
+            )}
+            value={status || null}
+            onChange={(_, newValue) => handleChange("status", newValue)}
+            sx={{ width: "200px" }}
+          />
+
+          <Autocomplete
+            options={TYPE_LIST || []}
+            getOptionLabel={(option) => option?.label || ""}
+            renderInput={(params) => (
+              <TextField {...params} label="Select Type" size="small" />
+            )}
+            value={type || null}
+            onChange={(_, newValue) => handleChange("type", newValue)}
+            sx={{ width: "200px" }}
+          />
+
+          <DatePicker
+            label="Due From"
+            slotProps={{
+              textField: {
+                size: "small",
+                sx: { width: "200px" },
+              },
+            }}
+            disableFuture
+            value={dueFrom || null}
+            onChange={(newDate) => handleChange("dueFrom", newDate)}
+          />
+          <DatePicker
+            label="Due Till"
+            slotProps={{
+              textField: {
+                size: "small",
+                sx: { width: "200px" },
+              },
+            }}
+            disableFuture
+            value={dueTill || null}
+            onChange={(newDate) => handleChange("dueTill", newDate)}
           />
 
           <Autocomplete
@@ -480,7 +427,7 @@ export default function Students() {
               <TextField {...params} label="Class" size="small" />
             )}
             renderOption={(props, option, { selected }) => (
-              <li {...props} key={option?.id}>
+              <li {...props}>
                 <Checkbox
                   size="small"
                   icon={<CheckBoxOutlineBlank fontSize="small" />}
@@ -521,18 +468,18 @@ export default function Students() {
                   <TableCell padding="checkbox">
                     <Checkbox
                       indeterminate={
-                        selectedRows?.filter((id) =>
-                          studentsList?.some((student) => student?.id === id)
+                        selectedRows?.filter((SN) =>
+                          feesList?.some((student) => student?.SN === SN)
                         )?.length > 0 &&
-                        selectedRows?.filter((id) =>
-                          studentsList?.some((student) => student?.id === id)
-                        )?.length < studentsList?.length
+                        selectedRows?.filter((SN) =>
+                          feesList?.some((student) => student?.SN === SN)
+                        )?.length < feesList?.length
                       }
                       checked={
-                        studentsList?.length > 0 &&
-                        selectedRows?.filter((id) =>
-                          studentsList?.some((student) => student?.id === id)
-                        )?.length === studentsList?.length
+                        feesList?.length > 0 &&
+                        selectedRows?.filter((SN) =>
+                          feesList?.some((student) => student?.SN === SN)
+                        )?.length === feesList?.length
                       }
                       onChange={handleSelectAllClick}
                     />
@@ -547,63 +494,69 @@ export default function Students() {
                         whiteSpace: "nowrap",
                       }}
                     >
-                      <TableSortLabel hideSortIcon>
-                        {headCell?.label}
-                      </TableSortLabel>
+                      {headCell?.label}
                     </TableCell>
                   ))}
                 </TableRow>
               </TableHead>
 
               <TableBody>
-                {studentsList?.map((row) => (
+                {feesList?.map((row) => (
                   <TableRow
                     hover
                     tabIndex={-1}
-                    key={row?.id}
+                    key={row?.SN}
                     role="checkbox"
-                    selected={selectedRows?.indexOf(row?.id) !== -1}
+                    selected={selectedRows?.indexOf(row?.SN) !== -1}
                   >
                     <TableCell padding="checkbox">
                       <Checkbox
                         disableRipple
-                        checked={selectedRows?.indexOf(row?.id) !== -1}
-                        onChange={() => handleClick(row?.id)}
+                        checked={selectedRows?.indexOf(row?.SN) !== -1}
+                        onChange={() => handleClick(row?.SN)}
                       />
                     </TableCell>
-                    <TableCell>{row?.id || ""}</TableCell>
+                    <TableCell>{row?.SN || ""}</TableCell>
 
-                    <TableCell
-                      sx={{ cursor: "pointer" }}
-                      onClick={() => handleRowClick(row)}
-                    >
-                      <Stack direction="row" alignItems="center" spacing={2}>
-                        <Avatar
-                          alt={`${row?.st_first_name || ""} ${
-                            row?.st_last_name || ""
-                          }`}
-                          src={row?.photo}
-                        />
-                        <Typography variant="subtitle2" noWrap>
-                          {`${row?.st_first_name || ""} ${
-                            row?.st_last_name || ""
-                          }`}
-                        </Typography>
-                      </Stack>
+                    <TableCell sx={{ cursor: "pointer" }}>
+                      <Typography variant="subtitle2" noWrap>
+                        {row?.Name || ""}
+                      </Typography>
                     </TableCell>
 
-                    <TableCell>{row?.st_roll_no || ""}</TableCell>
+                    <TableCell>
+                      <Typography noWrap>{row["Fee Name"] || ""} </Typography>
+                    </TableCell>
 
-                    <TableCell>{row?.st_gender || ""}</TableCell>
+                    <TableCell>{row["Base Amount"] || ""}</TableCell>
 
-                    <TableCell>{row?.st_dob || ""}</TableCell>
-                    <TableCell>{row?.st_mobile || ""}</TableCell>
+                    <TableCell>
+                      <Typography noWrap>{row["Due Date"] || ""}</Typography>
+                    </TableCell>
+                    <TableCell>{row["Late Fee"] || ""}</TableCell>
+                    <TableCell>{row["Total Amount"] || ""}</TableCell>
+                    <TableCell align="center">
+                      <Box
+                        sx={{
+                          borderRadius: "15px",
+                          px: 1,
+                          py: 0.5,
+                          width: "80px",
+                          textAlign: "center",
+                          background:
+                            row?.Status === "Paid" ? "#28A745" : "#D60A0B",
+                          color: "white",
+                        }}
+                      >
+                        {row?.Status || ""}
+                      </Box>
+                    </TableCell>
                   </TableRow>
                 ))}
 
                 <TableEmptyRows
                   height={77}
-                  emptyRows={emptyRows(page, rowsPerPage, studentsCount)}
+                  emptyRows={emptyRows(page, rowsPerPage, feesCount)}
                 />
 
                 {notFound && <TableNoData query={search} />}
@@ -617,7 +570,7 @@ export default function Students() {
         <TablePagination
           page={page}
           component="div"
-          count={studentsCount}
+          count={feesCount}
           rowsPerPage={rowsPerPage}
           onPageChange={handleChangePage}
           rowsPerPageOptions={[5, 10, 25, 50, 100]}

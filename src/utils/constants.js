@@ -29,28 +29,28 @@ export const MAIN_SIDEBAR_ITEMS = [
   },
   {
     _id: 3,
-    displayName: "Fee Management",
+    displayName: "Fees Management",
     iconName: "fee_management",
     children: [
       {
         _id: 31,
         displayName: "Fees",
-        linkName: "/fee-management/fees",
+        linkName: "/fees-management/fees",
       },
       {
         _id: 32,
         displayName: "Payment Attempts",
-        linkName: "/fee-management/payment-attempts",
+        linkName: "/fees-management/payment-attempts",
       },
       {
         _id: 33,
         displayName: "Transactions",
-        linkName: "/fee-management/transactions",
+        linkName: "/fees-management/transactions",
       },
       {
         _id: 34,
         displayName: "Daily Statements",
-        linkName: "/fee-management/daily-statements",
+        linkName: "/fees-management/daily-statements",
       },
     ],
   },

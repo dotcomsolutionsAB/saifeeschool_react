@@ -34,8 +34,6 @@ const PendingFeesTableRow = ({ row, isRowSelected, handleClick, refetch }) => {
 
         <TableCell>{row?.fpp_late_fee || "-"}</TableCell>
 
-        <TableCell>{row?.fpp_late_fee_applicable || "-"}</TableCell>
-
         <TableCell>{row?.total_amount || "-"}</TableCell>
 
         <TableCell align="center">

@@ -13,6 +13,7 @@ export const useGetApi = ({
 
   const [dataList, setDataList] = useState(null);
   const [dataCount, setDataCount] = useState(0);
+  const [allResponse, setAllResponse] = useState(null);
 
   const [isLoading, setIsLoading] = useState(false);
   const [isError, setIsError] = useState(false);
@@ -26,6 +27,7 @@ export const useGetApi = ({
     if (response?.code === 200) {
       setDataList(response?.data || []);
       setDataCount(response?.total || response?.count || 0);
+      setAllResponse(response || {});
     } else if (response?.code === 401) {
       logout();
       toast.error(response?.message || "Unauthorized");
@@ -49,5 +51,12 @@ export const useGetApi = ({
     };
   }, [...dependencies]);
 
-  return { dataList, dataCount, isLoading, isError, refetch: fetchData };
+  return {
+    dataList,
+    dataCount,
+    isLoading,
+    isError,
+    refetch: fetchData,
+    allResponse,
+  };
 };

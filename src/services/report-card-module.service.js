@@ -7,6 +7,9 @@ const CHARACTER_CERTIFICATE = "/character_certificate";
 export const getTransferCertificates = async (body) =>
   await postRequest(`${TRANSFER_CERTIFICATE}/view`, body);
 
+export const getStudentByRollNo = async (body) =>
+  await postRequest(`${TRANSFER_CERTIFICATE}/student-details`, body);
+
 export const exportTCDetails = async (body) =>
   await postRequest(`${TRANSFER_CERTIFICATE}/export`, body);
 
