@@ -19,7 +19,7 @@ const AttachmentsTab = ({ detail }) => {
   const theme = useTheme();
   const [files, setFiles] = useState([]);
 
-  const { dataList: attachmentsList } = useGetApi({
+  const { dataList: attachmentsList, refetch } = useGetApi({
     apiFunction: getAttachments,
     body: {
       st_id: detail?.id,
@@ -100,6 +100,7 @@ const AttachmentsTab = ({ detail }) => {
     });
 
     if (response?.code === 200) {
+      refetch();
       setFiles([]);
       toast.success(response?.message || "Image uploaded successfully");
     } else if (response?.code === 401) {
