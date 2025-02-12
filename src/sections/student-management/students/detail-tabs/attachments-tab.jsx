@@ -6,27 +6,41 @@ import InsertDriveFile from "@mui/icons-material/InsertDriveFile";
 import Delete from "@mui/icons-material/Delete";
 import { toast } from "react-toastify";
 import useAuth from "../../../../hooks/useAuth";
-import { uploadStudentImage } from "../../../../services/students-management.service";
+import {
+  getAttachments,
+  uploadStudentImage,
+} from "../../../../services/students-management.service";
 import Iconify from "../../../../components/iconify/iconify";
+import { useGetApi } from "../../../../hooks/useGetApi";
+import { DownloadRounded } from "@mui/icons-material";
 
 const AttachmentsTab = ({ detail }) => {
   const { logout } = useAuth();
   const theme = useTheme();
   const [files, setFiles] = useState([]);
 
+  const { dataList: attachmentsList } = useGetApi({
+    apiFunction: getAttachments,
+    body: {
+      st_id: detail?.id,
+    },
+  });
+
   const getFileIcon = (file) => {
-    if (file.type.includes("pdf"))
+    if (file?.type?.includes("pdf") || file?.file_ext === "pdf")
       return <Iconify icon="vscode-icons:file-type-pdf2" width={150} />;
     if (
-      file.type.includes("excel") ||
-      file.name.endsWith(".xls") ||
-      file.name.endsWith(".xlsx")
+      file?.type?.includes("excel") ||
+      file?.name?.endsWith(".xls") ||
+      file?.name?.endsWith(".xlsx") ||
+      file?.file_ext === "xlsx"
     )
       return <Iconify icon="vscode-icons:file-type-excel2" width={150} />;
     if (
-      file.type.includes("word") ||
-      file.name.endsWith(".doc") ||
-      file.name.endsWith(".docx")
+      file?.type?.includes("word") ||
+      file?.name?.endsWith(".doc") ||
+      file?.name?.endsWith(".docx") ||
+      file?.file_ext === "docx"
     )
       return <Iconify icon="vscode-icons:file-type-word" width={150} />;
     return (
@@ -67,6 +81,11 @@ const AttachmentsTab = ({ detail }) => {
 
   const handleRemoveFile = (index) => {
     setFiles((prevFiles) => prevFiles.filter((_, i) => i !== index));
+  };
+
+  const handleDownload = (file) => {
+    if (file?.file_url)
+      window.open(file?.file_url, "_blank", "noopener noreferrer");
   };
 
   const handleUploadToServer = async (e) => {
@@ -161,7 +180,7 @@ const AttachmentsTab = ({ detail }) => {
               }}
             >
               <Typography variant="body2" noWrap>
-                {file.name}
+                {file?.name}
               </Typography>
 
               <Delete
@@ -186,6 +205,84 @@ const AttachmentsTab = ({ detail }) => {
                   component="img"
                   src={URL.createObjectURL(file)}
                   alt={file?.name}
+                  sx={{
+                    width: "100%",
+                    height: "100%",
+                    objectFit: "cover",
+                    borderBottomLeftRadius: "10px",
+                    borderBottomRightRadius: "10px",
+                  }}
+                />
+              ) : (
+                getFileIcon(file)
+              )}
+            </Box>
+          </Box>
+        ))}
+      </Box>
+
+      {/* display files from apis */}
+      <Box
+        sx={{
+          display: "flex",
+          alignItems: "center",
+          flexWrap: "wrap",
+          gap: 4,
+          my: 2,
+        }}
+      >
+        {attachmentsList?.map((file, index) => (
+          <Box
+            key={index}
+            sx={{
+              height: "200px",
+              width: "200px",
+              border: `2px solid ${theme.palette.primary.main}`,
+              borderRadius: "12px",
+              overflow: "hidden",
+            }}
+          >
+            {/* title */}
+            <Box
+              sx={{
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "space-between",
+                bgcolor: "primary.main",
+                color: "primary.contrastText",
+                p: 0.5,
+                width: "100%",
+                height: "35px",
+              }}
+            >
+              <Typography variant="body2" noWrap>
+                {file?.file_name || "Untitled"}
+              </Typography>
+
+              <DownloadRounded
+                fontSize="small"
+                onClick={() => handleDownload(file)}
+                sx={{ cursor: "pointer" }}
+              />
+            </Box>
+
+            {/* icon or images */}
+            <Box
+              sx={{
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+                height: "calc(100% - 35px)",
+                p: 0.5,
+              }}
+            >
+              {["jpg", "jpeg", "svg", "png"].includes(
+                file?.file_ext?.toLowerCase()
+              ) ? (
+                <Box
+                  component="img"
+                  src={file?.file_url}
+                  alt={file?.file_name || "Pic"}
                   sx={{
                     width: "100%",
                     height: "100%",

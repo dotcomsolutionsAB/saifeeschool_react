@@ -1,26 +1,13 @@
 import PropTypes from "prop-types";
 import { useState } from "react";
 
-import Card from "@mui/material/Card";
 import Table from "@mui/material/Table";
 import Button from "@mui/material/Button";
 import TableBody from "@mui/material/TableBody";
-import Typography from "@mui/material/Typography";
 import TableContainer from "@mui/material/TableContainer";
 import TablePagination from "@mui/material/TablePagination";
 
-import {
-  Box,
-  Checkbox,
-  CircularProgress,
-  TableCell,
-  TableHead,
-  TableRow,
-  TableSortLabel,
-  TextField,
-} from "@mui/material";
-import { toast } from "react-toastify";
-import useAuth from "../../../../hooks/useAuth";
+import { Box, Checkbox, TableCell, TableHead, TableRow } from "@mui/material";
 import { DEFAULT_LIMIT, emptyRows } from "../../../../utils/constants";
 import { useGetApi } from "../../../../hooks/useGetApi";
 import TableEmptyRows from "../../../../components/table/table-empty-rows";
@@ -35,15 +22,13 @@ const HEAD_LABEL = [
   { id: "fpp_name", label: "Fee" },
   { id: "fpp_amount", label: "Fee Amount" },
   { id: "fpp_due_date", label: "Due Date" },
-  { id: "f_concession", label: "Concession" },
-  { id: "fpp_late_fee", label: "Late Fee" },
+  { id: "f_concession", label: "Concession", width: "110px" },
+  { id: "fpp_late_fee", label: "Late Fee", width: "110px" },
   { id: "total_amount", label: "Total Amount" },
   { id: "actions", label: "Actions" },
 ];
 
 export default function PaidFees({ detail }) {
-  const { logout } = useAuth();
-
   const [page, setPage] = useState(0);
 
   const [rowsPerPage, setRowsPerPage] = useState(DEFAULT_LIMIT);
@@ -161,9 +146,7 @@ export default function PaidFees({ detail }) {
                         whiteSpace: "nowrap",
                       }}
                     >
-                      <TableSortLabel hideSortIcon>
-                        {headCell?.label}
-                      </TableSortLabel>
+                      {headCell?.label}
                     </TableCell>
                   ))}
                 </TableRow>
@@ -180,6 +163,7 @@ export default function PaidFees({ detail }) {
                       row={row}
                       handleClick={handleClick}
                       refetch={refetch}
+                      detail={detail}
                     />
                   );
                 })}

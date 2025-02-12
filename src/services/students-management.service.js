@@ -33,6 +33,12 @@ export const getAllPendingFees = async (body) =>
 export const getAllPaidFees = async (body) =>
   await postRequest(`${STUDENTS_PATH}/paid_fees`, body);
 
+export const getAttachments = async (body) =>
+  await postRequest(`${STUDENTS_PATH}/files`, body);
+
+export const applyConcession = async (body) =>
+  await postRequest(`${STUDENTS_PATH}/apply_concession`, body);
+
 // other apis
 
 export const getHouse = async () => await getRequest(HOUSE_PATH);
