@@ -17,12 +17,14 @@ import OtherDetailsTab from "./detail-tabs/other-details-tab";
 import PendingFeesTab from "./detail-tabs/pending-fees-tab";
 import PaidFeesTab from "./detail-tabs/paid-fees-tab";
 import AttachmentsTab from "./detail-tabs/attachments-tab";
-import { Logout, MoreVertRounded } from "@mui/icons-material";
+import { MoreVertRounded } from "@mui/icons-material";
 import { uploadStudentImage } from "../../../services/students-management.service";
 import { toast } from "react-toastify";
 import WalletModal from "./modals/wallet";
+import useAuth from "../../../hooks/useAuth";
 
 const StudentDetail = () => {
+  const { logout } = useAuth();
   const location = useLocation();
   const navigate = useNavigate();
   const detail = location?.state;
@@ -53,7 +55,7 @@ const StudentDetail = () => {
         reader.readAsDataURL(file);
         toast.success(response?.message || "Image uploaded successfully");
       } else if (response?.code === 401) {
-        Logout();
+        logout();
         toast.error(response?.message || "Unauthorized");
       } else {
         toast.error(response?.message || "Some error occurred.");
@@ -250,7 +252,7 @@ const StudentDetail = () => {
         {activeTab === 0 && <OtherDetailsTab detail={detail} />}
         {activeTab === 1 && <PendingFeesTab detail={detail} />}
         {activeTab === 2 && <PaidFeesTab detail={detail} />}
-        {activeTab === 3 && <AttachmentsTab />}
+        {activeTab === 3 && <AttachmentsTab detail={detail} />}
 
         <WalletModal
           open={walletModalOpen}
