@@ -2,7 +2,6 @@ import PropTypes from "prop-types";
 import { useState } from "react";
 
 import Table from "@mui/material/Table";
-import Button from "@mui/material/Button";
 import TableBody from "@mui/material/TableBody";
 import TableContainer from "@mui/material/TableContainer";
 import TablePagination from "@mui/material/TablePagination";
@@ -194,9 +193,6 @@ export default function PaidFees({ detail }) {
           rowsPerPageOptions={[5, 10, 25, 50, 100]}
           onRowsPerPageChange={handleChangeRowsPerPage}
         />
-        <Box sx={{ textAlign: "right" }}>
-          <Button variant="contained">Save</Button>
-        </Box>
       </Box>
     </>
   );

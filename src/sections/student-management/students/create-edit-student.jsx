@@ -27,7 +27,7 @@ import { useGetApi } from "../../../hooks/useGetApi";
 import {
   createStudent,
   getAllAcademicYears,
-  getAllClasses,
+  getClasses,
   getBloodGroups,
   getHouse,
 } from "../../../services/students-management.service";
@@ -41,7 +41,6 @@ const CreateEditStudent = ({ isEdit = false }) => {
   const navigate = useNavigate();
 
   const detail = location?.state;
-  console.log(detail, "detail in edit student");
 
   const initialState = {
     st_first_name: detail?.st_first_name || "",
@@ -109,7 +108,7 @@ const CreateEditStudent = ({ isEdit = false }) => {
 
   // api to get classList
   const { dataList: classList } = useGetApi({
-    apiFunction: getAllClasses,
+    apiFunction: getClasses,
     body: {
       ay_id: formData?.academicYear?.id || userInfo?.ay_id,
     },

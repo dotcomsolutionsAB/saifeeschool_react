@@ -14,7 +14,7 @@ import TableEmptyRows from "../../../components/table/table-empty-rows";
 import {
   exportStudents,
   getAllAcademicYears,
-  getAllClasses,
+  getClasses,
 } from "../../../services/students-management.service";
 import useAuth from "../../../hooks/useAuth";
 import {
@@ -115,7 +115,7 @@ export default function Students() {
   // api to get classList
 
   const { dataList: classList } = useGetApi({
-    apiFunction: getAllClasses,
+    apiFunction: getClasses,
     body: {
       ay_id: academicYear?.id || userInfo?.ay_id,
     },

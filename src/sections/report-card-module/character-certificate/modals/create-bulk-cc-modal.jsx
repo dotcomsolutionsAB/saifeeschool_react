@@ -16,7 +16,7 @@ import { CancelOutlined } from "@mui/icons-material";
 import useAuth from "../../../../hooks/useAuth";
 import { createBulkCharacterCertificate } from "../../../../services/report-card-module.service";
 import { DatePicker } from "@mui/x-date-pickers";
-import { getAllClasses } from "../../../../services/students-management.service";
+import { getClasses } from "../../../../services/students-management.service";
 import { useGetApi } from "../../../../hooks/useGetApi";
 import dayjs from "dayjs";
 
@@ -36,7 +36,7 @@ const CreateBulkCCModal = ({ open, onClose, refetch, detail }) => {
   // api to get classList
 
   const { dataList: classList } = useGetApi({
-    apiFunction: getAllClasses,
+    apiFunction: getClasses,
     body: {
       ay_id: userInfo?.ay_id,
     },

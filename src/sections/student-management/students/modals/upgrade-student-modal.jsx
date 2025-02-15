@@ -1,7 +1,7 @@
 import PropTypes from "prop-types";
 import { useState } from "react";
 import {
-  getAllClasses,
+  getClasses,
   upgradeStudent,
 } from "../../../../services/students-management.service";
 import {
@@ -32,7 +32,7 @@ const UpgradeStudentModal = ({
 
   // api to get classList
   const { dataList: classList } = useGetApi({
-    apiFunction: getAllClasses,
+    apiFunction: getClasses,
     body: {
       ay_id: userInfo?.ay_id,
     },

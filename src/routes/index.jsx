@@ -25,6 +25,7 @@ import Fees from "../sections/fee-management/fees/fees";
 import PaymentAttempts from "../sections/fee-management/payment-attempts/payment-attempts";
 import Transactions from "../sections/fee-management/transactions/transactions";
 import DailyStatements from "../sections/fee-management/daily-statements/daily-statements";
+import AcademicYear from "../sections/settings/academic-year/academic-year";
 
 export default function Router() {
   const { isLoggedIn, logout } = useAuth();
@@ -91,47 +92,23 @@ export default function Router() {
           children: [
             {
               index: true,
-              element: <Navigate to="fees" replace />,
+              element: <Navigate to="fees" />,
             },
             {
               path: "fees",
-              element: <Outlet />,
-              children: [
-                {
-                  index: true,
-                  element: <Fees />,
-                },
-              ],
+              element: <Fees />,
             },
             {
               path: "payment-attempts",
-              element: <Outlet />,
-              children: [
-                {
-                  index: true,
-                  element: <PaymentAttempts />,
-                },
-              ],
+              element: <PaymentAttempts />,
             },
             {
               path: "transactions",
-              element: <Outlet />,
-              children: [
-                {
-                  index: true,
-                  element: <Transactions />,
-                },
-              ],
+              element: <Transactions />,
             },
             {
               path: "daily-statements",
-              element: <Outlet />,
-              children: [
-                {
-                  index: true,
-                  element: <DailyStatements />,
-                },
-              ],
+              element: <DailyStatements />,
             },
           ],
         },
@@ -140,19 +117,28 @@ export default function Router() {
           children: [
             {
               index: true,
-              element: <Navigate to="transfer-certificate" replace />,
+              element: <Navigate to="transfer-certificate" />,
             },
             {
               path: "transfer-certificate",
-              children: [
-                { index: true, path: "", element: <TransferCertificate /> },
-              ],
+              element: <TransferCertificate />,
             },
             {
               path: "character-certificate",
-              children: [
-                { index: true, path: "", element: <CharacterCertificate /> },
-              ],
+              element: <CharacterCertificate />,
+            },
+          ],
+        },
+        {
+          path: "settings",
+          children: [
+            {
+              index: true,
+              element: <Navigate to="academic-year" replace />,
+            },
+            {
+              path: "academic-year",
+              element: <AcademicYear />,
             },
           ],
         },

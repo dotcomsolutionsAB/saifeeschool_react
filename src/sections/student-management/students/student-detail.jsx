@@ -17,7 +17,6 @@ import OtherDetailsTab from "./detail-tabs/other-details-tab";
 import PendingFeesTab from "./detail-tabs/pending-fees-tab";
 import PaidFeesTab from "./detail-tabs/paid-fees-tab";
 import AttachmentsTab from "./detail-tabs/attachments-tab";
-import { MoreVertRounded } from "@mui/icons-material";
 import { uploadStudentImage } from "../../../services/students-management.service";
 import { toast } from "react-toastify";
 import WalletModal from "./modals/wallet";
@@ -234,14 +233,16 @@ const StudentDetail = () => {
                 bgcolor: "primary.main",
                 color: "primary.contrastText",
                 borderRadius: "5px",
-                px: "2px",
+                p: "2px",
+                height: "35px",
+                width: "35px",
                 "&:hover": {
                   bgcolor: "primary.dark",
                 },
               }}
               onClick={handleEdit}
             >
-              <MoreVertRounded />
+              <Iconify icon="lucide:edit" />
             </IconButton>
           </Box>
         </Tabs>

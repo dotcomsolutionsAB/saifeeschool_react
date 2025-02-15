@@ -48,7 +48,7 @@ export const getBloodGroups = async () => await getRequest(BLOOD_GROUP_PATH);
 export const getFeePlan = async (body) =>
   await postRequest(`${FEE_PLAN_PATH}/view`, body);
 
-export const getAllClasses = async (body) =>
+export const getClasses = async (body) =>
   await postRequest(`${CLASS_PATH}/view`, body);
 
 export const getAllAcademicYears = async () =>

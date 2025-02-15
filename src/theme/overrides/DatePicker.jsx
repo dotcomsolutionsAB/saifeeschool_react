@@ -5,6 +5,7 @@ export default function DatePicker() {
         slotProps: {
           field: {
             clearable: true,
+            format: "YYYY-MM-DD",
           },
         },
       },

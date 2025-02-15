@@ -7,67 +7,69 @@ import TableContainer from "@mui/material/TableContainer";
 import TablePagination from "@mui/material/TablePagination";
 
 import { Box, Checkbox, TableCell, TableHead, TableRow } from "@mui/material";
-import { DEFAULT_LIMIT, emptyRows } from "../../../../utils/constants";
-import { useGetApi } from "../../../../hooks/useGetApi";
-import TableEmptyRows from "../../../../components/table/table-empty-rows";
-import TableNoData from "../../../../components/table/table-no-data";
-import MessageBox from "../../../../components/error/message-box";
-import Loader from "../../../../components/loader/loader";
-import PendingFeesTableRow from "./pending-fees-table-row";
-import { getAllPendingFees } from "../../../../services/students-management.service";
+import {
+  DEFAULT_LIMIT,
+  emptyRows,
+  TYPE_LIST,
+} from "../../../../../utils/constants";
+import { useGetApi } from "../../../../../hooks/useGetApi";
+import TableEmptyRows from "../../../../../components/table/table-empty-rows";
+import TableNoData from "../../../../../components/table/table-no-data";
+import MessageBox from "../../../../../components/error/message-box";
+import Loader from "../../../../../components/loader/loader";
+import { getAllFeePlan } from "../../../../../services/fee-plan.service";
+import AddNewFeePlanModal from "../modals/add-new-fee-plan-modal";
+import OneTimeFeesTableRow from "../table-rows/one-time-fees-table-row";
 // ----------------------------------------------------------------------
 
 const HEAD_LABEL = [
-  { id: "fpp_name", label: "Fee" },
-  { id: "fpp_amount", label: "Fee Amount" },
-  { id: "fpp_due_date", label: "Due Date" },
-  { id: "f_concession", label: "Concession", width: "110px" },
-  { id: "fpp_late_fee", label: "Late Fee", width: "110px" },
-  { id: "total_amount", label: "Total Amount" },
+  { id: "fp_name", label: "Name" },
+  { id: "last_due_date", label: "Due Date" },
+  { id: "last_fpp_amount", label: "Amount" },
+  { id: "applied_students", label: "Applied To Count" },
   { id: "actions", label: "Actions" },
 ];
 
-export default function PendingFees({ detail }) {
+const OneTimeFees = ({ academicYear, open, onClose }) => {
   const [page, setPage] = useState(0);
 
   const [rowsPerPage, setRowsPerPage] = useState(DEFAULT_LIMIT);
 
   const [selectedRows, setSelectedRows] = useState([]);
 
-  // api to get students list
+  // api to get admission fees list
 
   const {
-    dataList: transferCertificateList,
-    dataCount: transferCertificateCount,
+    dataList: feesList,
+    dataCount: feesCount,
     isLoading,
     isError,
     refetch,
   } = useGetApi({
-    apiFunction: getAllPendingFees,
+    apiFunction: getAllFeePlan,
     body: {
-      st_id: detail?.id,
+      ay_id: Number(academicYear?.ay_id),
+      type: "one_time",
       offset: page * rowsPerPage,
       limit: rowsPerPage,
     },
-    dependencies: [page, rowsPerPage],
-    debounceDelay: 500,
   });
 
   // select all
   const handleSelectAllClick = (event) => {
     if (event.target.checked) {
-      const newSelecteds = transferCertificateList?.map((n) => n?.id);
+      const newSelecteds = feesList?.map((n) => n?.fp_id);
       setSelectedRows(newSelecteds);
       return;
     }
     setSelectedRows([]);
   };
 
-  const handleClick = (id) => {
-    const selectedIndex = selectedRows?.indexOf(id);
+  const handleClick = (fp_id) => {
+    const selectedIndex = selectedRows?.indexOf(fp_id);
     let newSelected = [];
     if (selectedIndex === -1) {
-      newSelected = newSelected?.concat(selectedRows, id);
+      newSelected = newSelected?.concat(selectedRows, fp_id);
     } else if (selectedIndex === 0) {
       newSelected = newSelected?.concat(selectedRows?.slice(1));
     } else if (selectedIndex === selectedRows?.length - 1) {
@@ -94,7 +96,7 @@ export default function PendingFees({ detail }) {
   };
 
   // if no search result is found
-  const notFound = !transferCertificateCount;
+  const notFound = !feesCount;
 
   return (
     <>
@@ -113,24 +115,18 @@ export default function PendingFees({ detail }) {
                   <TableCell padding="checkbox">
                     <Checkbox
                       indeterminate={
-                        selectedRows?.filter((id) =>
-                          transferCertificateList?.some(
-                            (student) => student?.id === id
-                          )
+                        selectedRows?.filter((fp_id) =>
+                          feesList?.some((student) => student?.fp_id === fp_id)
                         )?.length > 0 &&
-                        selectedRows?.filter((id) =>
-                          transferCertificateList?.some(
-                            (student) => student?.id === id
-                          )
-                        )?.length < transferCertificateList?.length
+                        selectedRows?.filter((fp_id) =>
+                          feesList?.some((student) => student?.fp_id === fp_id)
+                        )?.length < feesList?.length
                       }
                       checked={
-                        transferCertificateList?.length > 0 &&
-                        selectedRows?.filter((id) =>
-                          transferCertificateList?.some(
-                            (student) => student?.id === id
-                          )
-                        )?.length === transferCertificateList?.length
+                        feesList?.length > 0 &&
+                        selectedRows?.filter((fp_id) =>
+                          feesList?.some((student) => student?.fp_id === fp_id)
+                        )?.length === feesList?.length
                       }
                       onChange={handleSelectAllClick}
                     />
@@ -152,28 +148,25 @@ export default function PendingFees({ detail }) {
               </TableHead>
 
               <TableBody>
-                {transferCertificateList?.map((row) => {
-                  const isRowSelected = selectedRows?.indexOf(row?.id) !== -1;
+                {feesList?.map((row) => {
+                  const isRowSelected =
+                    selectedRows?.indexOf(row?.fp_id) !== -1;
 
                   return (
-                    <PendingFeesTableRow
-                      key={row?.id}
+                    <OneTimeFeesTableRow
+                      key={row?.fp_id}
                       isRowSelected={isRowSelected}
-                      row={row}
                       handleClick={handleClick}
+                      row={row}
                       refetch={refetch}
-                      detail={detail}
+                      academicYear={academicYear}
                     />
                   );
                 })}
 
                 <TableEmptyRows
                   height={77}
-                  emptyRows={emptyRows(
-                    page,
-                    rowsPerPage,
-                    transferCertificateCount
-                  )}
+                  emptyRows={emptyRows(page, rowsPerPage, feesCount)}
                 />
 
                 {notFound && <TableNoData />}
@@ -187,17 +180,31 @@ export default function PendingFees({ detail }) {
         <TablePagination
           page={page}
           component="div"
-          count={transferCertificateCount}
+          count={feesCount}
           rowsPerPage={rowsPerPage}
           onPageChange={handleChangePage}
           rowsPerPageOptions={[5, 10, 25, 50, 100]}
           onRowsPerPageChange={handleChangeRowsPerPage}
         />
+
+        {/* modal */}
+
+        <AddNewFeePlanModal
+          open={open}
+          onClose={onClose}
+          academicYear={academicYear}
+          refetch={refetch}
+          type={TYPE_LIST[2]}
+        />
       </Box>
     </>
   );
-}
-
-PendingFees.propTypes = {
-  detail: PropTypes.object,
 };
+
+OneTimeFees.propTypes = {
+  academicYear: PropTypes.object,
+  open: PropTypes.bool,
+  onClose: PropTypes.func,
+};
+
+export default OneTimeFees;

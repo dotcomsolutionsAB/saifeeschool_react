@@ -144,6 +144,13 @@ export const CAPITALIZE = (text) => {
     .join(" ");
 };
 
+export const TYPE_LIST = [
+  { label: "Admission Fee", value: "admission" },
+  { label: "Monthly Fee", value: "monthly" },
+  { label: "One Time Fee", value: "one_time" },
+  { label: "Recurring Fee", value: "recurring" },
+];
+
 export function emptyRows(page, rowsPerPage, arrayLength) {
   console.log(arrayLength, "arrayLength");
   return page ? Math.max(0, (1 + page) * rowsPerPage - arrayLength) : 0;

@@ -1,4 +1,3 @@
-import { ClearRounded, DoneRounded } from "@mui/icons-material";
 import {
   Dialog,
   DialogActions,
@@ -27,34 +26,11 @@ const ConfirmationDialog = ({
         {title || "Are you sure you want to proceed?"}
       </DialogTitle>
       <DialogActions>
-        <Button
-          onClick={onCancel}
-          disabled={isLoading}
-          sx={{
-            bgcolor: "error.main",
-            color: "error.contrastText",
-          }}
-        >
-          <ClearRounded sx={{ fontSize: "18px" }} />
+        <Button onClick={onCancel} variant="outlined" disabled={isLoading}>
+          No
         </Button>
-        <Button
-          onClick={onConfirm}
-          variant="contained"
-          disabled={isLoading}
-          sx={{
-            bgcolor: "secondary.main",
-            color: "secondary.contrastText",
-            "&:hover": {
-              bgcolor: "secondary.dark",
-              color: "secondary.contrastText",
-            },
-          }}
-        >
-          {isLoading ? (
-            <CircularProgress size={27} color="inherit" />
-          ) : (
-            <DoneRounded sx={{ fontSize: "18px" }} />
-          )}
+        <Button onClick={onConfirm} variant="contained" disabled={isLoading}>
+          {isLoading ? <CircularProgress size={27} color="inherit" /> : "Yes"}
         </Button>
       </DialogActions>
     </Dialog>

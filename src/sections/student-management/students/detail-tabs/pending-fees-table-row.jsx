@@ -47,6 +47,15 @@ const PendingFeesTableRow = ({
   };
 
   const handleSave = async () => {
+    if (formData?.concession_amount > Number(row?.fpp_amount)) {
+      toast.error("Concession cannot be more than the total amount.");
+      return;
+    }
+
+    if (formData?.late_fee < 0) {
+      toast.error("Late fee cannot be negative.");
+      return;
+    }
     const response = await applyConcession(formData);
     if (response?.code === 200) {
       refetch();
