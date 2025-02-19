@@ -21,7 +21,11 @@ import {
 import { DatePicker } from "@mui/x-date-pickers";
 import { toast } from "react-toastify";
 import useAuth from "../../../hooks/useAuth";
-import { DEFAULT_LIMIT, emptyRows } from "../../../utils/constants";
+import {
+  DEFAULT_LIMIT,
+  emptyRows,
+  ROWS_PER_PAGE_OPTIONS,
+} from "../../../utils/constants";
 import { useGetApi } from "../../../hooks/useGetApi";
 import {
   exportTCDetails,
@@ -364,7 +368,7 @@ export default function TransferCertificate() {
           count={transferCertificateCount}
           rowsPerPage={rowsPerPage}
           onPageChange={handleChangePage}
-          rowsPerPageOptions={[5, 10, 25, 50, 100]}
+          rowsPerPageOptions={ROWS_PER_PAGE_OPTIONS}
           onRowsPerPageChange={handleChangeRowsPerPage}
         />
       </Card>

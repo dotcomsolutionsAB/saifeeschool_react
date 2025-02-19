@@ -10,16 +10,12 @@ import Typography from "@mui/material/Typography";
 export default function TableNoData({ query }) {
   return (
     <TableRow>
-      <TableCell align="center" colSpan={6} sx={{ py: 3 }}>
+      <TableCell align="center" colSpan={12} sx={{ py: 3 }}>
         <Paper
           sx={{
             textAlign: "center",
           }}
         >
-          <Typography variant="h6" paragraph>
-            Not found
-          </Typography>
-
           {query ? (
             <Typography variant="body2">
               No results found for &nbsp;
@@ -27,7 +23,7 @@ export default function TableNoData({ query }) {
               <br /> Try checking for typos or using complete words.
             </Typography>
           ) : (
-            <Typography variant="body2">No results found</Typography>
+            <Typography variant="h6">No results found</Typography>
           )}
         </Paper>
       </TableCell>

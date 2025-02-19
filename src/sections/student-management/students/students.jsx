@@ -34,7 +34,7 @@ import {
   TextField,
 } from "@mui/material";
 import { useGetApi } from "../../../hooks/useGetApi";
-import { emptyRows } from "../../../utils/constants";
+import { emptyRows, ROWS_PER_PAGE_OPTIONS } from "../../../utils/constants";
 import Loader from "../../../components/loader/loader";
 import MessageBox from "../../../components/error/message-box";
 import { DatePicker } from "@mui/x-date-pickers";
@@ -620,7 +620,7 @@ export default function Students() {
           count={studentsCount}
           rowsPerPage={rowsPerPage}
           onPageChange={handleChangePage}
-          rowsPerPageOptions={[5, 10, 25, 50, 100]}
+          rowsPerPageOptions={ROWS_PER_PAGE_OPTIONS}
           onRowsPerPageChange={handleChangeRowsPerPage}
         />
       </Card>

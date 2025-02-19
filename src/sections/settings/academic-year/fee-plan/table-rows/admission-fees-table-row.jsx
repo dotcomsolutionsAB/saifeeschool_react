@@ -1,7 +1,6 @@
 import PropTypes from "prop-types";
 import {
   Box,
-  Checkbox,
   IconButton,
   TableCell,
   TableRow,
@@ -16,13 +15,7 @@ import AddNewFeePlanModal from "../modals/add-new-fee-plan-modal";
 import { TYPE_LIST } from "../../../../../utils/constants";
 import ConfirmationDialog from "../../../../../components/confirmation-dialog/confirmation-dialog";
 
-const AdmissionFeesTableRow = ({
-  isRowSelected,
-  handleClick,
-  row,
-  refetch,
-  academicYear,
-}) => {
+const AdmissionFeesTableRow = ({ row, refetch, academicYear }) => {
   const { logout } = useAuth();
   const [modalOpen, setModalOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -66,15 +59,7 @@ const AdmissionFeesTableRow = ({
 
   return (
     <>
-      <TableRow hover tabIndex={-1} role="checkbox" selected={isRowSelected}>
-        <TableCell padding="checkbox">
-          <Checkbox
-            disableRipple
-            checked={isRowSelected}
-            onChange={() => handleClick(row?.fp_id)}
-          />
-        </TableCell>
-
+      <TableRow hover tabIndex={-1}>
         <TableCell>
           <Typography variant="subtitle2" noWrap>
             {row?.fp_name || "-"}
@@ -126,8 +111,6 @@ const AdmissionFeesTableRow = ({
 };
 
 AdmissionFeesTableRow.propTypes = {
-  isRowSelected: PropTypes.bool,
-  handleClick: PropTypes.func,
   row: PropTypes.object,
   refetch: PropTypes.func,
   academicYear: PropTypes.object,

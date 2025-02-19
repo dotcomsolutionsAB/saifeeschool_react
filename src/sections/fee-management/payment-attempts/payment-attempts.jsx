@@ -31,7 +31,11 @@ import {
   TextField,
 } from "@mui/material";
 import { useGetApi } from "../../../hooks/useGetApi";
-import { DEFAULT_LIMIT, emptyRows } from "../../../utils/constants";
+import {
+  DEFAULT_LIMIT,
+  emptyRows,
+  ROWS_PER_PAGE_OPTIONS,
+} from "../../../utils/constants";
 import Loader from "../../../components/loader/loader";
 import MessageBox from "../../../components/error/message-box";
 import {
@@ -497,7 +501,7 @@ export default function PaymentAttempts() {
           count={paymentAttemptsCount}
           rowsPerPage={rowsPerPage}
           onPageChange={handleChangePage}
-          rowsPerPageOptions={[5, 10, 25, 50, 100]}
+          rowsPerPageOptions={ROWS_PER_PAGE_OPTIONS}
           onRowsPerPageChange={handleChangeRowsPerPage}
         />
       </Card>

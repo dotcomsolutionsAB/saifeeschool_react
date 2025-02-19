@@ -7,7 +7,11 @@ import TableContainer from "@mui/material/TableContainer";
 import TablePagination from "@mui/material/TablePagination";
 
 import { Box, Checkbox, TableCell, TableHead, TableRow } from "@mui/material";
-import { DEFAULT_LIMIT, emptyRows } from "../../../../utils/constants";
+import {
+  DEFAULT_LIMIT,
+  emptyRows,
+  ROWS_PER_PAGE_OPTIONS,
+} from "../../../../utils/constants";
 import { useGetApi } from "../../../../hooks/useGetApi";
 import TableEmptyRows from "../../../../components/table/table-empty-rows";
 import TableNoData from "../../../../components/table/table-no-data";
@@ -190,7 +194,7 @@ export default function PaidFees({ detail }) {
           count={transferCertificateCount}
           rowsPerPage={rowsPerPage}
           onPageChange={handleChangePage}
-          rowsPerPageOptions={[5, 10, 25, 50, 100]}
+          rowsPerPageOptions={ROWS_PER_PAGE_OPTIONS}
           onRowsPerPageChange={handleChangeRowsPerPage}
         />
       </Box>

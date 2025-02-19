@@ -3,6 +3,8 @@ export const IS_LOGGED_IN = "isLoggedIn";
 
 export const DEFAULT_LIMIT = 10;
 
+export const ROWS_PER_PAGE_OPTIONS = [5, 10, 25, 50, 100];
+
 export const MAIN_SIDEBAR_ITEMS = [
   {
     _id: 1,

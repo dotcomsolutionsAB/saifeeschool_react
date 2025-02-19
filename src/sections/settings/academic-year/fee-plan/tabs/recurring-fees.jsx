@@ -19,8 +19,8 @@ import TableNoData from "../../../../../components/table/table-no-data";
 import MessageBox from "../../../../../components/error/message-box";
 import Loader from "../../../../../components/loader/loader";
 import { getAllFeePlan } from "../../../../../services/fee-plan.service";
-import AdmissionFeesTableRow from "../table-rows/admission-fees-table-row";
 import AddNewFeePlanModal from "../modals/add-new-fee-plan-modal";
+import RecurringFeesTableRow from "../table-rows/recurring-fees-table-row";
 // ----------------------------------------------------------------------
 
 const HEAD_LABEL = [
@@ -31,7 +31,7 @@ const HEAD_LABEL = [
   { id: "actions", label: "Actions" },
 ];
 
-const AdmissionFees = ({ academicYear, open, onClose }) => {
+const RecurringFees = ({ academicYear, open, onClose }) => {
   const [page, setPage] = useState(0);
 
   const [rowsPerPage, setRowsPerPage] = useState(DEFAULT_LIMIT);
@@ -48,7 +48,7 @@ const AdmissionFees = ({ academicYear, open, onClose }) => {
     apiFunction: getAllFeePlan,
     body: {
       ay_id: Number(academicYear?.ay_id),
-      type: "admission",
+      type: "recurring",
       offset: page * rowsPerPage,
       limit: rowsPerPage,
     },
@@ -103,7 +103,7 @@ const AdmissionFees = ({ academicYear, open, onClose }) => {
               <TableBody>
                 {feesList?.map((row) => {
                   return (
-                    <AdmissionFeesTableRow
+                    <RecurringFeesTableRow
                       key={row?.fp_id}
                       row={row}
                       refetch={refetch}
@@ -142,17 +142,17 @@ const AdmissionFees = ({ academicYear, open, onClose }) => {
           onClose={onClose}
           academicYear={academicYear}
           refetch={refetch}
-          type={TYPE_LIST[0]}
+          type={TYPE_LIST[3]}
         />
       </Box>
     </>
   );
 };
 
-AdmissionFees.propTypes = {
+RecurringFees.propTypes = {
   academicYear: PropTypes.object,
   open: PropTypes.bool,
   onClose: PropTypes.func,
 };
 
-export default AdmissionFees;
+export default RecurringFees;

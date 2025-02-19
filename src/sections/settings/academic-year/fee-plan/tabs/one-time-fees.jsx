@@ -6,10 +6,11 @@ import TableBody from "@mui/material/TableBody";
 import TableContainer from "@mui/material/TableContainer";
 import TablePagination from "@mui/material/TablePagination";
 
-import { Box, Checkbox, TableCell, TableHead, TableRow } from "@mui/material";
+import { Box, TableCell, TableHead, TableRow } from "@mui/material";
 import {
   DEFAULT_LIMIT,
   emptyRows,
+  ROWS_PER_PAGE_OPTIONS,
   TYPE_LIST,
 } from "../../../../../utils/constants";
 import { useGetApi } from "../../../../../hooks/useGetApi";
@@ -35,8 +36,6 @@ const OneTimeFees = ({ academicYear, open, onClose }) => {
 
   const [rowsPerPage, setRowsPerPage] = useState(DEFAULT_LIMIT);
 
-  const [selectedRows, setSelectedRows] = useState([]);
-
   // api to get admission fees list
 
   const {
@@ -53,35 +52,8 @@ const OneTimeFees = ({ academicYear, open, onClose }) => {
       offset: page * rowsPerPage,
       limit: rowsPerPage,
     },
+    dependencies: [page, rowsPerPage],
   });
-
-  // select all
-  const handleSelectAllClick = (event) => {
-    if (event.target.checked) {
-      const newSelecteds = feesList?.map((n) => n?.fp_id);
-      setSelectedRows(newSelecteds);
-      return;
-    }
-    setSelectedRows([]);
-  };
-
-  const handleClick = (fp_id) => {
-    const selectedIndex = selectedRows?.indexOf(fp_id);
-    let newSelected = [];
-    if (selectedIndex === -1) {
-      newSelected = newSelected?.concat(selectedRows, fp_id);
-    } else if (selectedIndex === 0) {
-      newSelected = newSelected?.concat(selectedRows?.slice(1));
-    } else if (selectedIndex === selectedRows?.length - 1) {
-      newSelected = newSelected?.concat(selectedRows?.slice(0, -1));
-    } else if (selectedIndex > 0) {
-      newSelected = newSelected?.concat(
-        selectedRows?.slice(0, selectedIndex),
-        selectedRows?.slice(selectedIndex + 1)
-      );
-    }
-    setSelectedRows(newSelected);
-  };
 
   // change to next or prev page
 
@@ -112,25 +84,6 @@ const OneTimeFees = ({ academicYear, open, onClose }) => {
             <Table sx={{ minWidth: 800 }}>
               <TableHead>
                 <TableRow>
-                  <TableCell padding="checkbox">
-                    <Checkbox
-                      indeterminate={
-                        selectedRows?.filter((fp_id) =>
-                          feesList?.some((student) => student?.fp_id === fp_id)
-                        )?.length > 0 &&
-                        selectedRows?.filter((fp_id) =>
-                          feesList?.some((student) => student?.fp_id === fp_id)
-                        )?.length < feesList?.length
-                      }
-                      checked={
-                        feesList?.length > 0 &&
-                        selectedRows?.filter((fp_id) =>
-                          feesList?.some((student) => student?.fp_id === fp_id)
-                        )?.length === feesList?.length
-                      }
-                      onChange={handleSelectAllClick}
-                    />
-                  </TableCell>
                   {HEAD_LABEL?.map((headCell) => (
                     <TableCell
                       key={headCell?.id}
@@ -149,14 +102,9 @@ const OneTimeFees = ({ academicYear, open, onClose }) => {
 
               <TableBody>
                 {feesList?.map((row) => {
-                  const isRowSelected =
-                    selectedRows?.indexOf(row?.fp_id) !== -1;
-
                   return (
                     <OneTimeFeesTableRow
                       key={row?.fp_id}
-                      isRowSelected={isRowSelected}
-                      handleClick={handleClick}
                       row={row}
                       refetch={refetch}
                       academicYear={academicYear}
@@ -183,7 +131,7 @@ const OneTimeFees = ({ academicYear, open, onClose }) => {
           count={feesCount}
           rowsPerPage={rowsPerPage}
           onPageChange={handleChangePage}
-          rowsPerPageOptions={[5, 10, 25, 50, 100]}
+          rowsPerPageOptions={ROWS_PER_PAGE_OPTIONS}
           onRowsPerPageChange={handleChangeRowsPerPage}
         />
 

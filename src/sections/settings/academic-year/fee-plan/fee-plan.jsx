@@ -3,7 +3,8 @@ import { Box, Button, Divider, Tab, Tabs } from "@mui/material";
 import { useState } from "react";
 import AdmissionFees from "./tabs/admission-fees";
 import OneTimeFees from "./tabs/one-time-fees";
-// import AddNewFeePlanModal from "./modals/add-new-fee-plan-modal";
+import MonthlyFees from "./tabs/monthly-fees";
+import RecurringFees from "./tabs/recurring-fees";
 
 const FeePlan = ({ academicYear }) => {
   const [activeTab, setActiveTab] = useState(0);
@@ -62,8 +63,22 @@ const FeePlan = ({ academicYear }) => {
           onClose={handleModalClose}
         />
       )}
+      {activeTab === 1 && (
+        <MonthlyFees
+          academicYear={academicYear}
+          open={modalOpen}
+          onClose={handleModalClose}
+        />
+      )}
       {activeTab === 2 && (
         <OneTimeFees
+          academicYear={academicYear}
+          open={modalOpen}
+          onClose={handleModalClose}
+        />
+      )}
+      {activeTab === 3 && (
+        <RecurringFees
           academicYear={academicYear}
           open={modalOpen}
           onClose={handleModalClose}

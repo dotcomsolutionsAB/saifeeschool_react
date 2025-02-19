@@ -15,7 +15,10 @@ import Loader from "../../../../components/loader/loader";
 import MessageBox from "../../../../components/error/message-box";
 import Iconify from "../../../../components/iconify/iconify";
 import AddNewClassModal from "./modals/add-new-class-modal";
-import { DEFAULT_LIMIT } from "../../../../utils/constants";
+import {
+  DEFAULT_LIMIT,
+  ROWS_PER_PAGE_OPTIONS,
+} from "../../../../utils/constants";
 
 const Classes = ({ academicYear }) => {
   const theme = useTheme();
@@ -202,7 +205,7 @@ const Classes = ({ academicYear }) => {
             count={classCount}
             rowsPerPage={rowsPerPage}
             onPageChange={handleChangePage}
-            rowsPerPageOptions={[5, 10, 25, 50, 100]}
+            rowsPerPageOptions={ROWS_PER_PAGE_OPTIONS}
             onRowsPerPageChange={handleChangeRowsPerPage}
           />
         </Box>
