@@ -5,6 +5,9 @@ import {
   AccordionSummary,
   Box,
   Button,
+  IconButton,
+  MenuItem,
+  Popover,
   Typography,
   useTheme,
 } from "@mui/material";
@@ -16,6 +19,7 @@ import Classes from "./classes/classes";
 import FeePlan from "./fee-plan/fee-plan";
 import Loader from "../../../components/loader/loader";
 import MessageBox from "../../../components/error/message-box";
+import Iconify from "../../../components/iconify/iconify";
 
 const AcademicYear = () => {
   const theme = useTheme();
@@ -23,6 +27,8 @@ const AcademicYear = () => {
   const [activeTab, setActiveTab] = useState("Classes");
 
   const [newYearModalOpen, setNewYearModalOpen] = useState(false);
+  const [anchorEl, setAnchorEl] = useState(null);
+  const [selectedRow, setSelectedRow] = useState();
 
   const {
     dataList: academicYearList,
@@ -40,8 +46,20 @@ const AcademicYear = () => {
   const handleModalOpen = () => {
     setNewYearModalOpen(true);
   };
+
   const handleModalClose = () => {
     setNewYearModalOpen(false);
+  };
+
+  const handlePopoverOpen = (e, option) => {
+    e.stopPropagation();
+    setAnchorEl(e.currentTarget);
+    setSelectedRow(option);
+  };
+
+  const handlePopoverClose = () => {
+    setAnchorEl(null);
+    setSelectedRow(null);
   };
   return (
     <Box>
@@ -64,6 +82,7 @@ const AcademicYear = () => {
           open={newYearModalOpen}
           onClose={handleModalClose}
           refetch={refetch}
+          detail={selectedRow}
         />
       </Box>
       {/* Accordions */}
@@ -109,7 +128,11 @@ const AcademicYear = () => {
                     academicYear?.total_fee_plans || ""
                   } Fee Plans`}</Typography>
 
-                  <MoreVertRounded />
+                  <IconButton
+                    onClick={(e) => handlePopoverOpen(e, academicYear)}
+                  >
+                    <MoreVertRounded />
+                  </IconButton>
                 </Box>
               </AccordionSummary>
               <AccordionDetails>
@@ -173,6 +196,45 @@ const AcademicYear = () => {
               </AccordionDetails>
             </Accordion>
           ))}
+
+          <Popover
+            open={Boolean(anchorEl)}
+            anchorEl={anchorEl}
+            onClose={handlePopoverClose}
+            anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
+            transformOrigin={{ vertical: "top", horizontal: "right" }}
+            slotProps={{
+              paper: {
+                sx: {
+                  p: 0,
+                  mt: 1,
+                  ml: 0.75,
+                  width: 200,
+                },
+              },
+            }}
+          >
+            <MenuItem
+              sx={{ display: "flex", alignItems: "center", gap: 1 }}
+              onClick={handleModalOpen}
+            >
+              <IconButton>
+                <Iconify icon="lucide-edit" />
+              </IconButton>
+              <Typography sx={{ color: "primary.main", fontWeight: 500 }}>
+                Edit
+              </Typography>
+            </MenuItem>
+
+            <MenuItem sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+              <IconButton>
+                <Iconify icon="fluent:double-swipe-up-20-regular" />
+              </IconButton>
+              <Typography sx={{ color: "primary.main", fontWeight: 500 }}>
+                Make Current
+              </Typography>
+            </MenuItem>
+          </Popover>
         </Box>
       )}
     </Box>

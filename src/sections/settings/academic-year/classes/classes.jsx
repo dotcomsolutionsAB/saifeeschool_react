@@ -3,6 +3,7 @@ import {
   Box,
   Button,
   Grid,
+  TablePagination,
   TextField,
   Typography,
   useTheme,
@@ -14,16 +15,31 @@ import Loader from "../../../../components/loader/loader";
 import MessageBox from "../../../../components/error/message-box";
 import Iconify from "../../../../components/iconify/iconify";
 import AddNewClassModal from "./modals/add-new-class-modal";
+import { DEFAULT_LIMIT } from "../../../../utils/constants";
 
 const Classes = ({ academicYear }) => {
   const theme = useTheme();
 
+  const [page, setPage] = useState(0);
+  const [rowsPerPage, setRowsPerPage] = useState(DEFAULT_LIMIT);
   const [search, setSearch] = useState("");
   const [modalOpen, setModalOpen] = useState(false);
   const [selectedRow, setSelectedRow] = useState();
 
   const handleSearch = (e) => {
     setSearch(e.target.value);
+  };
+
+  // change to next or prev page
+
+  const handleChangePage = (_, newPage) => {
+    if (!isLoading) setPage(newPage);
+  };
+
+  // change rows per page
+  const handleChangeRowsPerPage = (event) => {
+    setPage(0);
+    setRowsPerPage(parseInt(event.target.value, 10));
   };
 
   const handleModalOpen = (option) => {
@@ -39,6 +55,7 @@ const Classes = ({ academicYear }) => {
 
   const {
     dataList: classList,
+    dataCount: classCount,
     isLoading,
     isError,
     refetch,
@@ -46,11 +63,16 @@ const Classes = ({ academicYear }) => {
     apiFunction: getAllClassGroup,
     body: {
       ay_id: academicYear?.ay_id,
+      offset: page * rowsPerPage,
+      limit: rowsPerPage,
       search,
     },
-    dependencies: [search],
+    dependencies: [page, rowsPerPage, search],
     debounceDelay: 500,
   });
+
+  // if no search result is found
+  const notFound = !classCount;
 
   return (
     <Box>
@@ -163,6 +185,26 @@ const Classes = ({ academicYear }) => {
               </Grid>
             ))}
           </Grid>
+          {notFound && (
+            <Box
+              sx={{ height: "150px", display: "grid", placeItems: "center" }}
+            >
+              <Typography variant="h4" sx={{ textAlign: "center" }}>
+                No Data Found
+              </Typography>
+            </Box>
+          )}
+          {/* Pagination */}
+
+          <TablePagination
+            page={page}
+            component="div"
+            count={classCount}
+            rowsPerPage={rowsPerPage}
+            onPageChange={handleChangePage}
+            rowsPerPageOptions={[5, 10, 25, 50, 100]}
+            onRowsPerPageChange={handleChangeRowsPerPage}
+          />
         </Box>
       )}
     </Box>

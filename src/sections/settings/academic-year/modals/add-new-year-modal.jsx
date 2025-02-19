@@ -1,5 +1,5 @@
 import PropTypes from "prop-types";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   Box,
   Button,
@@ -12,13 +12,23 @@ import {
 import { toast } from "react-toastify";
 import useAuth from "../../../../hooks/useAuth";
 import { CancelOutlined } from "@mui/icons-material";
-import { createAcademicYear } from "../../../../services/settings.service";
+import {
+  createAcademicYear,
+  updateAcademicYear,
+} from "../../../../services/settings.service";
 import { DatePicker } from "@mui/x-date-pickers";
 
-const AddNewYearModal = ({ open, onClose, refetch }) => {
+const AddNewYearModal = ({ open, onClose, refetch, detail }) => {
   const { logout } = useAuth();
+
+  const initialState = {
+    ay_name: "",
+    start_date: null,
+    end_date: null,
+  };
+
   const [isLoading, setIsLoading] = useState(false);
-  const [formData, setFormData] = useState(null);
+  const [formData, setFormData] = useState(initialState);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -27,8 +37,13 @@ const AddNewYearModal = ({ open, onClose, refetch }) => {
 
   const handleFeePlan = async (e) => {
     e.preventDefault();
+    let response;
     setIsLoading(true);
-    const response = await createAcademicYear(formData);
+    if (detail?.ay_id) {
+      response = await updateAcademicYear(formData);
+    } else {
+      response = await createAcademicYear(formData);
+    }
     setIsLoading(false);
 
     if (response?.code === 200) {
@@ -42,6 +57,20 @@ const AddNewYearModal = ({ open, onClose, refetch }) => {
       toast.error(response?.message || "Some error occurred.");
     }
   };
+
+  useEffect(() => {
+    if (detail?.ay_id) {
+      setFormData({
+        ...initialState,
+        ay_id: detail.ay_id,
+        ay_name: detail?.ay_name || "",
+        start_date: detail?.start_date || null,
+        end_date: detail?.end_date || null,
+      });
+    } else {
+      setFormData(initialState);
+    }
+  }, [open]);
   return (
     <Dialog
       open={open}
@@ -74,7 +103,7 @@ const AddNewYearModal = ({ open, onClose, refetch }) => {
           fontWeight: 600,
         }}
       >
-        Add New Year
+        {detail?.ay_id ? "Edit New Year" : `Add New Year`}
       </Box>
 
       <DialogContent>
@@ -144,6 +173,7 @@ AddNewYearModal.propTypes = {
   open: PropTypes.bool,
   onClose: PropTypes.func,
   refetch: PropTypes.func,
+  detail: PropTypes.object,
 };
 
 export default AddNewYearModal;
