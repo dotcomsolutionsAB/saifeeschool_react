@@ -17,6 +17,7 @@ import {
   ExpandMoreRounded,
   ExpandLessRounded,
   AvTimerRounded,
+  CloseRounded,
 } from "@mui/icons-material";
 
 import { MAIN_SIDEBAR_ITEMS } from "../utils/constants";
@@ -27,6 +28,8 @@ import {
   ReportCardModuleIcon,
   StudentsManagementIcon,
 } from "../theme/overrides/CustomIcons";
+import useLayout from "../hooks/uesLayout";
+import Saifee_Logo from "../assets/logos/Saifee_Logo.png";
 
 const getIcon = (iconName) => {
   switch (iconName) {
@@ -49,19 +52,73 @@ const getIcon = (iconName) => {
 
 const Sidebar = () => {
   const pathname = usePathname();
-
   const theme = useTheme();
+  const { layout, handleDrawerClose } = useLayout();
 
   const [openItems, setOpenItems] = useState({});
 
   // Toggle open state for collapsible items
+
+  const [isImageError, setIsImageError] = useState(false);
+  const handleImageError = () => {
+    setIsImageError(true);
+  };
+
   const handleToggle = (id) => {
     setOpenItems((prev) => ({ ...prev, [id]: !prev[id] }));
   };
 
   return (
     <Box sx={{ width: "100%", height: "100%" }}>
-      <Box>
+      <>
+        {layout?.isLessThanMedium && (
+          <Box
+            sx={{
+              p: "10px",
+              bgcolor: "primary.light",
+              color: "primary.main",
+              height: layout?.headerHeight,
+              width: layout?.sidebarWidth,
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "space-between",
+            }}
+          >
+            {/* SAIFEE Logo */}
+            <Box sx={{ height: "100%", display: "flex", alignItems: "center" }}>
+              {!isImageError ? (
+                <Box
+                  component="img"
+                  src={Saifee_Logo}
+                  alt="SAIFEE Logo"
+                  sx={{
+                    width: "70px",
+                    height: "80%",
+                    objectFit: "contain",
+                  }}
+                  loading="lazy"
+                  onError={handleImageError} // Handles error state
+                />
+              ) : (
+                <Typography variant="h4">SAIFEE</Typography> // fallback text
+              )}
+            </Box>
+
+            <IconButton
+              sx={{
+                bgcolor: "primary.main",
+                color: "primary.contrastText",
+                "&:hover": {
+                  bgcolor: "primary.mainHover",
+                  color: "primary.contrastText",
+                },
+              }}
+              onClick={handleDrawerClose}
+            >
+              <CloseRounded />
+            </IconButton>
+          </Box>
+        )}
         {MAIN_SIDEBAR_ITEMS.map((item) => {
           const isActive = item?.linkName === pathname;
 
@@ -181,7 +238,7 @@ const Sidebar = () => {
             </React.Fragment>
           );
         })}
-      </Box>
+      </>
     </Box>
   );
 };

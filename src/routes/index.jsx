@@ -26,6 +26,8 @@ import PaymentAttempts from "../sections/fee-management/payment-attempts/payment
 import Transactions from "../sections/fee-management/transactions/transactions";
 import DailyStatements from "../sections/fee-management/daily-statements/daily-statements";
 import AcademicYear from "../sections/settings/academic-year/academic-year";
+import MarksGradeEntry from "../sections/report-card-module/marks-grade-entry/marks-grade-entry";
+import ReportCardDashboard from "../sections/report-card-module/dashboard/report-card-dashboard";
 
 export default function Router() {
   const { isLoggedIn, logout } = useAuth();
@@ -117,7 +119,15 @@ export default function Router() {
           children: [
             {
               index: true,
-              element: <Navigate to="transfer-certificate" />,
+              element: <Navigate to="dashboard" />,
+            },
+            {
+              path: "dashboard",
+              element: <ReportCardDashboard />,
+            },
+            {
+              path: "marks-grade-entry",
+              element: <MarksGradeEntry />,
             },
             {
               path: "transfer-certificate",

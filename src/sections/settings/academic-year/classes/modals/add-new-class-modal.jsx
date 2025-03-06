@@ -80,7 +80,7 @@ const AddNewClassModal = ({ open, onClose, refetch, academicYear, detail }) => {
         ...initialState,
         cg_id: detail.cg_id,
         cg_name: detail?.cg_name || "",
-        cg_order: detail?.cg_order || "",
+        cg_order: detail?.cg_group || detail?.cg_order || "",
         teacher_id: {
           id: detail?.teacher_id || "",
           name: detail?.class_teacher_name || "",

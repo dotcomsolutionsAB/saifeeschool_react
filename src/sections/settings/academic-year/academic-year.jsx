@@ -5,6 +5,7 @@ import {
   AccordionSummary,
   Box,
   Button,
+  CircularProgress,
   IconButton,
   MenuItem,
   Popover,
@@ -13,22 +14,31 @@ import {
 } from "@mui/material";
 import { useState } from "react";
 import { useGetApi } from "../../../hooks/useGetApi";
-import { getAcademicYear } from "../../../services/settings.service";
+import {
+  getAcademicYear,
+  makeYearCurrent,
+} from "../../../services/settings.service";
 import AddNewYearModal from "./modals/add-new-year-modal";
 import Classes from "./classes/classes";
 import FeePlan from "./fee-plan/fee-plan";
 import Loader from "../../../components/loader/loader";
 import MessageBox from "../../../components/error/message-box";
 import Iconify from "../../../components/iconify/iconify";
+import { toast } from "react-toastify";
+import useAuth from "../../../hooks/useAuth";
 
 const AcademicYear = () => {
   const theme = useTheme();
+  const { logout } = useAuth();
+
   const [expanded, setExpanded] = useState(0);
   const [activeTab, setActiveTab] = useState("Classes");
 
   const [newYearModalOpen, setNewYearModalOpen] = useState(false);
   const [anchorEl, setAnchorEl] = useState(null);
   const [selectedRow, setSelectedRow] = useState();
+
+  const [isMakeCurrentLoading, setIsMakeCurrentLoading] = useState(false);
 
   const {
     dataList: academicYearList,
@@ -60,6 +70,21 @@ const AcademicYear = () => {
   const handlePopoverClose = () => {
     setAnchorEl(null);
     setSelectedRow(null);
+  };
+
+  const handleMakeCurrent = async () => {
+    setIsMakeCurrentLoading(true);
+    const response = await makeYearCurrent({ ay_id: selectedRow?.ay_id });
+    setIsMakeCurrentLoading(false);
+
+    if (response?.code === 200) {
+      toast.success(response?.message || "");
+    } else if (response?.code === 401) {
+      logout();
+      toast.error(response?.message || "Unauthorized");
+    } else {
+      toast.error(response?.message || "Some error occurred.");
+    }
   };
   return (
     <Box>
@@ -226,13 +251,22 @@ const AcademicYear = () => {
               </Typography>
             </MenuItem>
 
-            <MenuItem sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-              <IconButton>
-                <Iconify icon="fluent:double-swipe-up-20-regular" />
-              </IconButton>
-              <Typography sx={{ color: "primary.main", fontWeight: 500 }}>
-                Make Current
-              </Typography>
+            <MenuItem
+              sx={{ display: "flex", alignItems: "center", gap: 1 }}
+              onClick={isMakeCurrentLoading ? null : handleMakeCurrent}
+            >
+              {isMakeCurrentLoading ? (
+                <CircularProgress size={24} />
+              ) : (
+                <>
+                  <IconButton>
+                    <Iconify icon="fluent:double-swipe-up-20-regular" />
+                  </IconButton>
+                  <Typography sx={{ color: "primary.main", fontWeight: 500 }}>
+                    Make Current
+                  </Typography>
+                </>
+              )}
             </MenuItem>
           </Popover>
         </Box>

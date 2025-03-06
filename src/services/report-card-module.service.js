@@ -2,6 +2,9 @@ import { getRequest, postRequest } from "./api.request";
 
 const TRANSFER_CERTIFICATE = "/transfer_certificate";
 const CHARACTER_CERTIFICATE = "/character_certificate";
+const TERMS_PATH = "/terms";
+const MARKS_PATH = "/marks";
+const SUBJECT_PATH = "/subject";
 
 // Transter Certificate
 export const getTransferCertificates = async (body) =>
@@ -40,3 +43,20 @@ export const printCCPdf = async (body) =>
 
 export const createBulkCharacterCertificate = async (body) =>
   await postRequest(`${CHARACTER_CERTIFICATE}/bulk`, body);
+
+// terms
+export const getTerms = async (body) => await postRequest(TERMS_PATH, body);
+
+// marks
+export const getMarksDetails = async (body) =>
+  await postRequest(`${MARKS_PATH}/details`, body);
+
+export const addMarks = async (body) =>
+  await postRequest(`${MARKS_PATH}/create`, body);
+
+// subject
+export const getSubjectsList = async (body) =>
+  await postRequest(`${SUBJECT_PATH}/class`, body);
+
+export const addAggregateColumn = async (body) =>
+  await postRequest(`${SUBJECT_PATH}/aggregate`, body);

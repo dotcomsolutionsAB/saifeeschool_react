@@ -21,6 +21,7 @@ export const useGetApi = ({
   const fetchData = async () => {
     setIsLoading(true);
     setIsError(false);
+    if (!apiFunction) return;
     const response = await apiFunction(body);
     setIsLoading(false);
 

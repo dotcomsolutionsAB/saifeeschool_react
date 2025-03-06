@@ -1,6 +1,7 @@
 import PropTypes from "prop-types";
-import { useEffect, useState } from "react";
+import { memo, useState } from "react";
 import {
+  Autocomplete,
   Box,
   Button,
   CircularProgress,
@@ -12,20 +13,19 @@ import {
 import { toast } from "react-toastify";
 import useAuth from "../../../../hooks/useAuth";
 import { CancelOutlined } from "@mui/icons-material";
+import { useGetApi } from "../../../../hooks/useGetApi";
 import {
-  createAcademicYear,
-  updateAcademicYear,
-} from "../../../../services/settings.service";
-import { DatePicker } from "@mui/x-date-pickers";
-import dayjs from "dayjs";
+  addAggregateColumn,
+  getSubjectsList,
+} from "../../../../services/report-card-module.service";
 
-const AddNewYearModal = ({ open, onClose, refetch, detail }) => {
+const AddAggregateColumnModal = ({ open, onClose, refetch, detail }) => {
   const { logout } = useAuth();
 
   const initialState = {
-    ay_name: "",
-    start_date: null,
-    end_date: null,
+    cg_id: detail?.cg_id?.id || "",
+    subj_name: "",
+    subj_ids: [],
   };
 
   const [isLoading, setIsLoading] = useState(false);
@@ -36,21 +36,28 @@ const AddNewYearModal = ({ open, onClose, refetch, detail }) => {
     setFormData((preValue) => ({ ...preValue, [name]: value }));
   };
 
-  const handleFeePlan = async (e) => {
+  // api to get classList
+
+  const { dataList: subjectsList } = useGetApi({
+    apiFunction: formData?.cg_id ? getSubjectsList : null,
+    body: { cg_id: formData?.cg_id },
+    dependencies: [formData?.cg_id],
+  });
+
+  const handleSave = async (e) => {
     e.preventDefault();
-    let response;
+    if (formData) return;
     setIsLoading(true);
-    if (detail?.ay_id) {
-      response = await updateAcademicYear(formData);
-    } else {
-      response = await createAcademicYear(formData);
-    }
+
+    const response = await addAggregateColumn(formData);
+
     setIsLoading(false);
 
     if (response?.code === 200) {
+      toast.success(response?.message || "Column added successfully");
+      setFormData(initialState);
       onClose();
       refetch();
-      toast.success(response?.message || "Fee plan added successfully");
     } else if (response?.code === 401) {
       logout();
       toast.error(response?.message || "Unauthorized");
@@ -58,39 +65,6 @@ const AddNewYearModal = ({ open, onClose, refetch, detail }) => {
       toast.error(response?.message || "Some error occurred.");
     }
   };
-
-  useEffect(() => {
-    if (detail?.ay_id) {
-      let startDate = detail?.start_date || null;
-      let endDate = detail?.end_date || null;
-
-      // Extract start and end dates from start_end_date if needed
-      if (!startDate || !endDate) {
-        const dateRange = detail?.start_end_date?.trim();
-        if (dateRange && dateRange.includes(" To ")) {
-          const [start, end] = dateRange
-            .split(" To ")
-            .map((date) => date.trim());
-          startDate =
-            startDate ||
-            (start ? dayjs(start, "DD-MM-YYYY").format("YYYY-MM-DD") : null);
-          endDate =
-            endDate ||
-            (end ? dayjs(end, "DD-MM-YYYY").format("YYYY-MM-DD") : null);
-        }
-      }
-
-      setFormData({
-        ...initialState,
-        ay_id: detail.ay_id,
-        ay_name: detail?.ay_name || "",
-        start_date: startDate,
-        end_date: endDate,
-      });
-    } else {
-      setFormData(initialState);
-    }
-  }, [open]);
 
   return (
     <Dialog
@@ -124,46 +98,46 @@ const AddNewYearModal = ({ open, onClose, refetch, detail }) => {
           fontWeight: 600,
         }}
       >
-        {detail?.ay_id ? "Edit New Year" : `Add New Year`}
+        Add Aggregate Column
       </Box>
 
       <DialogContent>
-        <Box component="form" onSubmit={handleFeePlan}>
+        <Box component="form" onSubmit={handleSave}>
           <Grid container spacing={2}>
             <Grid item xs={12}>
               <TextField
-                label="Name"
-                name="ay_name"
+                label="Name of Column"
+                name="subj_name"
                 fullWidth
-                required
-                value={formData?.ay_name || ""}
+                value={formData?.subj_name || ""}
                 onChange={handleChange}
               />
             </Grid>
-            <Grid item xs={12} sm={6}>
-              <DatePicker
-                label="From"
-                name="start_date"
-                slotProps={{ textField: { fullWidth: true, required: true } }}
-                value={formData?.start_date ? dayjs(formData.start_date) : null}
-                onChange={(newValue) =>
+            <Grid item xs={12}>
+              <Autocomplete
+                multiple
+                limitTags={2}
+                disableCloseOnSelect
+                options={subjectsList || []}
+                getOptionLabel={(option) => option?.subj_name || ""}
+                renderInput={(params) => (
+                  <TextField {...params} label="Subject Included" fullWidth />
+                )}
+                value={formData?.subj_ids || null}
+                onChange={(_, newValue) =>
                   handleChange({
-                    target: { name: "start_date", value: newValue },
+                    target: { name: "subj_ids", value: newValue },
                   })
                 }
               />
             </Grid>
-            <Grid item xs={12} sm={6}>
-              <DatePicker
-                label="To"
-                name="end_date"
-                slotProps={{ textField: { fullWidth: true, required: true } }}
-                value={formData?.end_date ? dayjs(formData.end_date) : null}
-                onChange={(newValue) =>
-                  handleChange({
-                    target: { name: "end_date", value: newValue },
-                  })
-                }
+            <Grid item xs={12}>
+              <TextField
+                label="Add After Which Column"
+                name="addAfterWhichColumn"
+                fullWidth
+                value={formData?.addAfterWhichColumn || ""}
+                onChange={handleChange}
               />
             </Grid>
           </Grid>
@@ -190,11 +164,11 @@ const AddNewYearModal = ({ open, onClose, refetch, detail }) => {
   );
 };
 
-AddNewYearModal.propTypes = {
+AddAggregateColumnModal.propTypes = {
   open: PropTypes.bool,
   onClose: PropTypes.func,
   refetch: PropTypes.func,
   detail: PropTypes.object,
 };
 
-export default AddNewYearModal;
+export default memo(AddAggregateColumnModal);

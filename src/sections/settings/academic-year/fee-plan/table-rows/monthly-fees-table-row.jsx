@@ -15,11 +15,12 @@ import {
   Tooltip,
   Typography,
 } from "@mui/material";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Iconify from "../../../../../components/iconify/iconify";
 import {
   createMonthlyFeePlan,
   deleteFeePlan,
+  getMonthlyFeePlan,
 } from "../../../../../services/fee-plan.service";
 import { toast } from "react-toastify";
 import useAuth from "../../../../../hooks/useAuth";
@@ -28,6 +29,7 @@ import { TYPE_LIST } from "../../../../../utils/constants";
 import ConfirmationDialog from "../../../../../components/confirmation-dialog/confirmation-dialog";
 import { DatePicker } from "@mui/x-date-pickers";
 import dayjs from "dayjs";
+import { useGetApi } from "../../../../../hooks/useGetApi";
 
 const MONTH_LIST = [
   { id: "1", label: "April", value: "april" },
@@ -52,6 +54,15 @@ const HEAD_LABEL = [
 
 const MonthlyFeesTableRow = ({ row, refetch, academicYear }) => {
   const { logout } = useAuth();
+
+  const { dataList: monthlyDetail } = useGetApi({
+    apiFunction: getMonthlyFeePlan,
+    body: {
+      fp_id: Number(row?.fp_id),
+      offset: 0,
+      limit: 100,
+    },
+  });
 
   const initialState = {
     ay_id: Number(academicYear?.ay_id),
@@ -89,7 +100,7 @@ const MonthlyFeesTableRow = ({ row, refetch, academicYear }) => {
     setConfirmationModalOpen(false);
   };
 
-  const handleGenerateMonthlyFeesOpen = (event, option) => {
+  const handleGenerateMonthlyFeesOpen = (event) => {
     setAnchorEl(event.currentTarget);
   };
 
@@ -150,6 +161,21 @@ const MonthlyFeesTableRow = ({ row, refetch, academicYear }) => {
       toast.error(response?.message || "Some error occurred.");
     }
   };
+
+  useEffect(() => {
+    setFormData((preValue) => ({
+      ...preValue,
+      fees: MONTH_LIST.map((month, index) => ({
+        amount: monthlyDetail?.[index]?.fpp_amount ?? 0, // Default empty amount
+        due_date:
+          monthlyDetail?.[index]?.fpp_due_date ||
+          dayjs()
+            .month(index + 3)
+            .date(10)
+            .format("YYYY-MM-DD"), // Starts from April (Month index 3)
+      })),
+    }));
+  }, [anchorEl]);
 
   return (
     <>

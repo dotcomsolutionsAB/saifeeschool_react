@@ -14,8 +14,8 @@ import useAuth from "../hooks/useAuth";
 import {
   ArrowDropDownRounded,
   HomeRounded,
+  MenuRounded,
   SearchRounded,
-  SettingsRounded,
   SortRounded,
   VerifiedUserRounded,
 } from "@mui/icons-material";
@@ -43,7 +43,7 @@ const MENU_OPTIONS = [
 const Header = () => {
   const pathname = usePathname();
   const { userInfo, logout } = useAuth();
-  const { layout } = useLayout();
+  const { layout, handleDrawerOpen } = useLayout();
 
   const [isImageError, setIsImageError] = useState(false);
   const [open, setOpen] = useState(null);
@@ -79,6 +79,7 @@ const Header = () => {
         zIndex: 10,
         height: layout?.headerHeight,
         width: "100%",
+        overflow: "hidden",
       }}
     >
       <Box
@@ -91,54 +92,70 @@ const Header = () => {
           overflow: "hidden",
         }}
       >
-        <Box
-          sx={{
-            p: "10px",
-            bgcolor: "primary.light",
-            color: "primary.main",
-            minWidth: layout?.sidebarWidth,
-            height: "100%",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "space-between",
-          }}
-        >
-          {/* SAIFEE Logo */}
-          <Box sx={{ height: "100%", display: "flex", alignItems: "center" }}>
-            {!isImageError ? (
-              <Box
-                component="img"
-                src={Saifee_Logo}
-                alt="SAIFEE Logo"
-                sx={{
-                  width: "70px",
-                  height: "80%",
-                  objectFit: "contain",
-                }}
-                loading="lazy"
-                onError={handleImageError} // Handles error state
-              />
-            ) : (
-              <Typography variant="h4">SAIFEE</Typography> // fallback text
-            )}
-          </Box>
+        {!layout?.isLessThanMedium && (
+          <Box
+            sx={{
+              p: "10px",
+              bgcolor: "primary.light",
+              color: "primary.main",
+              minWidth: layout?.sidebarWidth,
+              height: "100%",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "space-between",
+            }}
+          >
+            {/* SAIFEE Logo */}
+            <Box sx={{ height: "100%", display: "flex", alignItems: "center" }}>
+              {!isImageError ? (
+                <Box
+                  component="img"
+                  src={Saifee_Logo}
+                  alt="SAIFEE Logo"
+                  sx={{
+                    width: "70px",
+                    height: "80%",
+                    objectFit: "contain",
+                  }}
+                  loading="lazy"
+                  onError={handleImageError} // Handles error state
+                />
+              ) : (
+                <Typography variant="h4">SAIFEE</Typography> // fallback text
+              )}
+            </Box>
 
-          <IconButton>
-            <SortRounded />
-          </IconButton>
-        </Box>
+            <IconButton>
+              <SortRounded />
+            </IconButton>
+          </Box>
+        )}
         <Box
           sx={{
             display: "flex",
             alignItems: "center",
             justifyContent: "space-between",
             height: "100%",
+            width: "100%",
             flex: 1,
             px: 2,
           }}
         >
+          {layout?.isLessThanMedium && (
+            <IconButton onClick={handleDrawerOpen}>
+              <MenuRounded />
+            </IconButton>
+          )}
           {/* SAIFEE Logo */}
-          <Box sx={{ height: "100%", display: "flex", alignItems: "center" }}>
+          <Box
+            sx={{
+              height: "100%",
+              width: !layout?.isLessThanMedium ? "100%" : "calc(100% - 110px)",
+              display: "flex",
+              alignItems: "center",
+              flex: 1,
+            }}
+          >
             {pathname === MAIN_SIDEBAR_ITEMS[0]?.linkName ? (
               <Input
                 autoFocus
@@ -154,7 +171,14 @@ const Header = () => {
                 }
               />
             ) : (
-              <Typography variant="h4" sx={{ textTransform: "uppercase" }}>
+              <Typography
+                noWrap
+                sx={{
+                  textTransform: "uppercase",
+                  fontSize: { xs: "16px", sm: "20px", md: "24px" },
+                  fontWeight: { xs: "600" },
+                }}
+              >
                 SAIFEE GOLDEN JUBILEE PUBLIC SCHOOL
               </Typography>
             )}

@@ -1,19 +1,26 @@
 import { Link, Outlet } from "react-router-dom";
-import { Box, Breadcrumbs, Typography, useTheme } from "@mui/material";
+import { Box, Breadcrumbs, Drawer, Typography, useTheme } from "@mui/material";
 
 import Header from "./header";
 import Sidebar from "./sidebar";
 import useLayout from "../hooks/uesLayout";
 import { usePathname } from "../hooks/usePathname";
 import { CAPITALIZE, MAIN_SIDEBAR_ITEMS } from "../utils/constants";
+import { useEffect } from "react";
 
 const MainLayout = () => {
   const theme = useTheme();
   const pathname = usePathname();
   const pathSegments = pathname?.split("/")?.filter((path) => path);
-  const { layout } = useLayout();
+  const { layout, drawerOpen, handleDrawerClose } = useLayout();
   const screenHeight = "100svh";
   const screenWidth = "100vw";
+
+  useEffect(() => {
+    if (drawerOpen) {
+      handleDrawerClose();
+    }
+  }, [pathname]);
 
   return (
     <Box
@@ -47,19 +54,40 @@ const MainLayout = () => {
         }}
       >
         {/* sidebar */}
-        <Box
-          sx={{
-            width: layout?.sidebarWidth,
-            height: "100%",
-            bgcolor: "primary.main",
-            overflowX: "hidden",
-            overflowY: "auto",
-            transition: "width 0.5s ease",
-            zIndex: 10,
-          }}
-        >
-          <Sidebar />
-        </Box>
+        {layout?.isLessThanMedium ? (
+          <Drawer
+            role="presentation"
+            open={drawerOpen}
+            onClose={handleDrawerClose}
+            sx={{
+              "& .MuiDrawer-paper": {
+                width: layout?.sidebarWidth,
+                height: "100%",
+                bgcolor: "primary.main",
+                overflowX: "hidden",
+                overflowY: "auto",
+                transition: "width 0.5s ease",
+                zIndex: 10,
+              },
+            }}
+          >
+            <Sidebar />
+          </Drawer>
+        ) : (
+          <Box
+            sx={{
+              width: layout?.sidebarWidth,
+              height: "100%",
+              bgcolor: "primary.main",
+              overflowX: "hidden",
+              overflowY: "auto",
+              transition: "width 0.5s ease",
+              zIndex: 10,
+            }}
+          >
+            <Sidebar />
+          </Box>
+        )}
 
         {/* maincontent */}
 

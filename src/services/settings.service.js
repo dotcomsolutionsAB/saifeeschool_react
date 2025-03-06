@@ -20,3 +20,6 @@ export const updateAcademicYear = async (body) =>
 
 export const deleteAcademicYear = async (body) =>
   await deleteRequest(`${ACADEMIC_YEAR_PATH}/${body?.id}`);
+
+export const makeYearCurrent = async (body) =>
+  await postRequest(`${ACADEMIC_YEAR_PATH}/current`, body);
