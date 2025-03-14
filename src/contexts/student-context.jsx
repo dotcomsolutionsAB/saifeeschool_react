@@ -27,7 +27,7 @@ const StudentProvider = ({ children }) => {
   const [isExportLoading, setIsExportLoading] = useState(false);
 
   const dataSendToBackend = {
-    ay_id: academicYear?.id || userInfo?.ay_id,
+    ay_id: academicYear?.ay_id || userInfo?.ay_id,
     search: search || "",
     bohra: bohra?.value || "",
     cg_id: cgId || "",

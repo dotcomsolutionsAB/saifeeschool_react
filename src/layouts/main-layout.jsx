@@ -1,5 +1,13 @@
 import { Link, Outlet } from "react-router-dom";
-import { Box, Breadcrumbs, Drawer, Typography, useTheme } from "@mui/material";
+import {
+  Autocomplete,
+  Box,
+  Breadcrumbs,
+  Drawer,
+  TextField,
+  Typography,
+  useTheme,
+} from "@mui/material";
 
 import Header from "./header";
 import Sidebar from "./sidebar";
@@ -7,6 +15,8 @@ import useLayout from "../hooks/uesLayout";
 import { usePathname } from "../hooks/usePathname";
 import { CAPITALIZE, MAIN_SIDEBAR_ITEMS } from "../utils/constants";
 import { useEffect } from "react";
+import { useGetApi } from "../hooks/useGetApi";
+import { getAllAcademicYears } from "../services/students-management.service";
 
 const MainLayout = () => {
   const theme = useTheme();
@@ -15,6 +25,12 @@ const MainLayout = () => {
   const { layout, drawerOpen, handleDrawerClose } = useLayout();
   const screenHeight = "100svh";
   const screenWidth = "100vw";
+
+  // api to get academicYearList
+
+  const { dataList: academicYearList } = useGetApi({
+    apiFunction: getAllAcademicYears,
+  });
 
   useEffect(() => {
     if (drawerOpen) {
@@ -59,8 +75,8 @@ const MainLayout = () => {
             role="presentation"
             open={drawerOpen}
             onClose={handleDrawerClose}
-            sx={{
-              "& .MuiDrawer-paper": {
+            PaperProps={{
+              sx: {
                 width: layout?.sidebarWidth,
                 height: "100%",
                 bgcolor: "primary.main",
@@ -101,23 +117,42 @@ const MainLayout = () => {
             p: 2,
           }}
         >
-          <Typography
-            variant="h5"
+          <Box
             sx={{
-              position: "relative",
-              mb: 1,
-              "&::after": {
-                content: '""',
-                position: "absolute",
-                bottom: 0,
-                left: 0,
-                borderBottom: `3px solid ${theme.palette.error.main}`,
-                width: "50px",
-              },
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "space-between",
             }}
           >
-            {CAPITALIZE(pathSegments[pathSegments?.length - 1] || "Home")}
-          </Typography>
+            <Typography
+              variant="h5"
+              sx={{
+                position: "relative",
+                mb: 1,
+                "&::after": {
+                  content: '""',
+                  position: "absolute",
+                  bottom: 0,
+                  left: 0,
+                  borderBottom: `3px solid ${theme.palette.error.main}`,
+                  width: "50px",
+                },
+              }}
+            >
+              {CAPITALIZE(pathSegments[pathSegments?.length - 1] || "Home")}
+            </Typography>
+            <Autocomplete
+              options={academicYearList || []}
+              getOptionLabel={(option) => option?.ay_name || ""}
+              renderInput={(params) => (
+                <TextField {...params} label="Select Year" size="small" />
+              )}
+              sx={{
+                minWidth: "150px",
+                bgcolor: "white",
+              }}
+            />
+          </Box>
 
           <Breadcrumbs aria-label="breadcrumb" separator=">" sx={{ mb: 1 }}>
             {pathname !== "/" && (

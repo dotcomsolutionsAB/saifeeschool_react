@@ -117,7 +117,7 @@ export default function Students() {
   const { dataList: classList } = useGetApi({
     apiFunction: getClasses,
     body: {
-      ay_id: academicYear?.id || userInfo?.ay_id,
+      ay_id: academicYear?.ay_id || userInfo?.ay_id,
     },
     dependencies: [academicYear],
   });

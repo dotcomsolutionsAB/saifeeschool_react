@@ -11,25 +11,30 @@ import {
   StudentsManagementIcon,
   TeacherIcon,
 } from "../theme/overrides/CustomIcons";
+import { CurrencyRupee, PriorityHigh } from "@mui/icons-material";
 
 const Dashboard = () => {
+  const cardHeight = "200px";
   return (
     <Box
       sx={{
+        mt: 2,
         width: "100%",
         display: "flex",
         flexDirection: "column",
         gap: 1,
       }}
     >
-      <Grid container spacing={4}>
-        <Grid item xs={12} sm={6} md={3}>
+      <Grid container spacing={2}>
+        <Grid item xs={12} sm={6} md={4} lg={3}>
           <Card
             elevation={10}
             sx={{
+              height: cardHeight,
               display: "flex",
               flexDirection: "column",
               alignItems: "center",
+              justifyContent: "center",
               gap: 1,
               p: 1,
             }}
@@ -41,6 +46,7 @@ const Dashboard = () => {
                 width: "80px",
                 height: "80px",
               }}
+              disableRipple
             >
               <StudentsManagementIcon sx={{ fontSize: "50px" }} />
             </IconButton>
@@ -52,19 +58,24 @@ const Dashboard = () => {
                 bgcolor: "error.main",
               }}
             />
-            <Typography variant="h6" sx={{ color: "text.disabled" }}>
+            <Typography
+              variant="h6"
+              sx={{ color: "text.disabled", textAlign: "center" }}
+            >
               Students
             </Typography>
             <Typography variant="h4">2157</Typography>
           </Card>
         </Grid>
-        <Grid item xs={12} sm={6} md={3}>
+        <Grid item xs={12} sm={6} md={4} lg={3}>
           <Card
             elevation={10}
             sx={{
+              height: cardHeight,
               display: "flex",
               flexDirection: "column",
               alignItems: "center",
+              justifyContent: "center",
               gap: 1,
               p: 1,
             }}
@@ -76,6 +87,7 @@ const Dashboard = () => {
                 width: "80px",
                 height: "80px",
               }}
+              disableRipple
             >
               <TeacherIcon sx={{ fontSize: "50px" }} />
             </IconButton>
@@ -87,19 +99,24 @@ const Dashboard = () => {
                 bgcolor: "error.main",
               }}
             />
-            <Typography variant="h6" sx={{ color: "text.disabled" }}>
-              Students
+            <Typography
+              variant="h6"
+              sx={{ color: "text.disabled", textAlign: "center" }}
+            >
+              Teachers
             </Typography>
             <Typography variant="h4">2157</Typography>
           </Card>
         </Grid>
-        <Grid item xs={12} sm={6} md={3}>
+        <Grid item xs={12} sm={6} md={4} lg={3}>
           <Card
             elevation={10}
             sx={{
+              height: cardHeight,
               display: "flex",
               flexDirection: "column",
               alignItems: "center",
+              justifyContent: "center",
               gap: 1,
               p: 1,
             }}
@@ -111,6 +128,7 @@ const Dashboard = () => {
                 width: "80px",
                 height: "80px",
               }}
+              disableRipple
             >
               <MoneyDollarIcon sx={{ fontSize: "50px" }} />
             </IconButton>
@@ -122,11 +140,126 @@ const Dashboard = () => {
                 bgcolor: "error.main",
               }}
             />
-            <Typography variant="h6" sx={{ color: "text.disabled" }}>
-              Students
+            <Typography
+              variant="h6"
+              sx={{ color: "text.disabled", textAlign: "center" }}
+            >
+              Total Fees Due
             </Typography>
             <Typography variant="h4">2157</Typography>
           </Card>
+        </Grid>
+        <Grid item xs={12} sm={6} md={6} lg={3}>
+          <Grid container spacing={2}>
+            {/* Late Fees Card */}
+            <Grid item xs={12}>
+              <Card
+                elevation={10}
+                sx={{
+                  height: `calc(${cardHeight} / 2 - 8px)`,
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  px: 2,
+                }}
+              >
+                <Box
+                  sx={{
+                    height: "100%",
+                    display: "flex",
+                    alignItems: "center",
+                    gap: 2,
+                    width: { xs: "80%", md: "100%", lg: "90%", xl: "80%" },
+                  }}
+                >
+                  <IconButton
+                    sx={{
+                      bgcolor: "error.lightHover",
+                      color: "error.main",
+                      width: 60,
+                      height: 60,
+                    }}
+                    disableRipple
+                    aria-label="Late fees warning"
+                  >
+                    <PriorityHigh sx={{ fontSize: 40 }} />
+                  </IconButton>
+                  <Divider
+                    orientation="vertical"
+                    sx={{
+                      height: "40%",
+                      width: 2,
+                      bgcolor: "error.main",
+                    }}
+                  />
+                  <Box>
+                    <Typography sx={{ color: "text.disabled", fontSize: 14 }}>
+                      Late Fees
+                    </Typography>
+                    <Typography variant="h6">
+                      {Number(2157).toLocaleString()}
+                    </Typography>
+                  </Box>
+                </Box>
+              </Card>
+            </Grid>
+
+            {/* Fees Due Card */}
+            <Grid item xs={12}>
+              <Card
+                elevation={10}
+                sx={{
+                  height: `calc(${cardHeight} / 2 - 8px)`,
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  px: 2,
+                }}
+              >
+                <Box
+                  sx={{
+                    height: "100%",
+                    display: "flex",
+                    alignItems: "center",
+                    gap: 2,
+                    width: { xs: "80%", md: "100%", lg: "90%", xl: "80%" },
+                  }}
+                >
+                  <IconButton
+                    sx={{
+                      bgcolor: "error.lightHover",
+                      color: "error.main",
+                      width: 60,
+                      height: 60,
+                    }}
+                    disableRipple
+                    aria-label="Fees due indicator"
+                  >
+                    <CurrencyRupee sx={{ fontSize: 40 }} />
+                  </IconButton>
+                  <Divider
+                    orientation="vertical"
+                    sx={{
+                      height: "40%",
+                      width: 2,
+                      bgcolor: "error.main",
+                    }}
+                  />
+                  <Box>
+                    <Typography sx={{ color: "text.disabled", fontSize: 14 }}>
+                      Fees Due
+                    </Typography>
+                    <Typography sx={{ color: "text.disabled", fontSize: 10 }}>
+                      (Until Current Month)
+                    </Typography>
+                    <Typography variant="h6">
+                      {Number(2157).toLocaleString()}
+                    </Typography>
+                  </Box>
+                </Box>
+              </Card>
+            </Grid>
+          </Grid>
         </Grid>
       </Grid>
 
