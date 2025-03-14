@@ -134,7 +134,9 @@ const Sidebar = () => {
         </Box>
       )}
       {MAIN_SIDEBAR_ITEMS.map((item) => {
-        const isActive = item?.linkName === pathname;
+        const isActive =
+          item?.linkName === pathname ||
+          item?.children?.some((child) => pathname.startsWith(child?.linkName));
 
         return (
           <Box
@@ -213,7 +215,7 @@ const Sidebar = () => {
                   >
                     <Typography
                       sx={{
-                        fontWeight: isActive ? 800 : 400,
+                        fontWeight: isActive ? 600 : 400,
                         fontSize: "15px",
                       }}
                     >
@@ -273,7 +275,7 @@ const Sidebar = () => {
                 </>
               ) : (
                 <Typography
-                  sx={{ fontWeight: isActive ? 800 : 400, fontSize: "15px" }}
+                  sx={{ fontWeight: isActive ? 600 : 400, fontSize: "15px" }}
                 >
                   {item?.displayName}
                 </Typography>

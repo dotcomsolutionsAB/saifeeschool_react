@@ -1,13 +1,5 @@
 import { Link, Outlet } from "react-router-dom";
-import {
-  Autocomplete,
-  Box,
-  Breadcrumbs,
-  Drawer,
-  TextField,
-  Typography,
-  useTheme,
-} from "@mui/material";
+import { Box, Breadcrumbs, Drawer, Typography, useTheme } from "@mui/material";
 
 import Header from "./header";
 import Sidebar from "./sidebar";
@@ -15,8 +7,6 @@ import useLayout from "../hooks/uesLayout";
 import { usePathname } from "../hooks/usePathname";
 import { CAPITALIZE, MAIN_SIDEBAR_ITEMS } from "../utils/constants";
 import { useEffect } from "react";
-import { useGetApi } from "../hooks/useGetApi";
-import { getAllAcademicYears } from "../services/students-management.service";
 
 const MainLayout = () => {
   const theme = useTheme();
@@ -25,12 +15,6 @@ const MainLayout = () => {
   const { layout, drawerOpen, handleDrawerClose } = useLayout();
   const screenHeight = "100svh";
   const screenWidth = "100vw";
-
-  // api to get academicYearList
-
-  const { dataList: academicYearList } = useGetApi({
-    apiFunction: getAllAcademicYears,
-  });
 
   useEffect(() => {
     if (drawerOpen) {
@@ -141,17 +125,6 @@ const MainLayout = () => {
             >
               {CAPITALIZE(pathSegments[pathSegments?.length - 1] || "Home")}
             </Typography>
-            <Autocomplete
-              options={academicYearList || []}
-              getOptionLabel={(option) => option?.ay_name || ""}
-              renderInput={(params) => (
-                <TextField {...params} label="Select Year" size="small" />
-              )}
-              sx={{
-                minWidth: "150px",
-                bgcolor: "white",
-              }}
-            />
           </Box>
 
           <Breadcrumbs aria-label="breadcrumb" separator=">" sx={{ mb: 1 }}>

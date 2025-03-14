@@ -1,74 +1,122 @@
-import { Box } from "@mui/material";
-import ListTable from "./tables/list-table";
-import { v4 as uuidv4 } from "uuid";
+import PropTypes from "prop-types";
+import {
+  Box,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+} from "@mui/material";
+import MessageBox from "../../components/error/message-box";
+import Loader from "../../components/loader/loader";
+import PaymentSummaryTableRow from "./payment-summary-table-row";
+import { useGetApi } from "../../hooks/useGetApi";
+import useAuth from "../../hooks/useAuth";
+import { getFeeStats } from "../../services/dashboard.service";
+import { REMOVE_UNDERSCORE } from "../../utils/constants";
 
-const PaymentSummaryTable = () => {
-  const HEAD_LABEL = [
-    {
-      id: "sn",
-      label: "SN",
-      width: "50px",
-    },
-    {
-      id: "month",
-      label: "Month",
-      width: "150px",
-    },
-    {
-      id: "totalAmount",
-      label: "Total Amount",
-      width: "150px",
-    },
-    {
-      id: "amountDue",
-      label: "Amount Due",
-      width: "150px",
-    },
-    {
-      id: "lateFeeCollected",
-      label: "Late Fee Collected",
-      width: "180px",
-    },
-  ];
+const HEAD_LABEL = [
+  {
+    id: "sn",
+    label: "SN",
+    width: "50px",
+  },
+  {
+    id: "month",
+    label: "Month",
+    width: "150px",
+  },
+  {
+    id: "totalAmount",
+    label: "Total Amount",
+    width: "150px",
+  },
+  {
+    id: "amountDue",
+    label: "Amount Due",
+    width: "150px",
+  },
+  {
+    id: "lateFeeCollected",
+    label: "Late Fee Collected",
+    width: "180px",
+  },
+];
 
-  const DATA = [
-    {
-      sn: 1,
-      month: "January",
-      totalAmount: "$1000",
-      amountDue: "$200",
-      lateFeeCollected: "$50",
-    },
-    {
-      sn: 2,
-      month: "February",
-      totalAmount: "$1200",
-      amountDue: "$300",
-      lateFeeCollected: "$40",
-    },
-    {
-      sn: 3,
-      month: "March",
-      totalAmount: "$900",
-      amountDue: "$100",
-      lateFeeCollected: "$30",
-    },
-  ];
+const PaymentSummaryTable = ({ academicYear }) => {
+  const { userInfo } = useAuth();
 
-  const TABLE_LIST = DATA?.map((item) => ({
-    ...item,
-    _id: uuidv4(),
-  }));
+  const { dataList, isLoading, isError } = useGetApi({
+    apiFunction: getFeeStats,
+    body: {
+      ay_id: Number(academicYear?.ay_id) || userInfo?.ay_id,
+    },
+    dependencies: [academicYear?.ay_id],
+  });
+
+  const feeStats = dataList
+    ? Object.keys(dataList)?.flatMap((key) => {
+        const value = dataList[key];
+        if (Array.isArray(value)) {
+          // Flatten monthly fees array
+          return value.map((item) => ({
+            category: key,
+            ...item,
+          }));
+        } else {
+          // Transform other fees into an object
+          return {
+            category: REMOVE_UNDERSCORE(key),
+            ...value,
+          };
+        }
+      })
+    : [];
 
   return (
-    <Box sx={{ height: "100%" }}>
-      <ListTable
-        tableList={TABLE_LIST}
-        headLabel={HEAD_LABEL}
-        orderByName="sn"
-      />
+    <Box sx={{ width: "100%", mt: 4 }}>
+      {/* Table */}
+
+      {isLoading ? (
+        <Loader />
+      ) : isError ? (
+        <MessageBox />
+      ) : (
+        <TableContainer sx={{ overflowY: "unset", bgcolor: "white" }}>
+          <Table sx={{ minWidth: 800 }}>
+            <TableHead>
+              <TableRow>
+                {HEAD_LABEL?.map((headCell) => (
+                  <TableCell
+                    key={headCell?.id}
+                    align={headCell?.align || "left"}
+                    sx={{
+                      width: headCell?.width,
+                      minWidth: headCell?.minWidth,
+                      whiteSpace: "nowrap",
+                    }}
+                  >
+                    {headCell?.label}
+                  </TableCell>
+                ))}
+              </TableRow>
+            </TableHead>
+
+            <TableBody>
+              {feeStats?.map((row, index) => (
+                <PaymentSummaryTableRow key={index} sn={index + 1} row={row} />
+              ))}
+            </TableBody>
+          </Table>
+        </TableContainer>
+      )}
     </Box>
   );
+};
+
+PaymentSummaryTable.propTypes = {
+  academicYear: PropTypes.object,
 };
 
 export default PaymentSummaryTable;

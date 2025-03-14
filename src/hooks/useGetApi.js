@@ -26,7 +26,11 @@ export const useGetApi = ({
     setIsLoading(false);
 
     if (response?.code === 200) {
-      setDataList(response?.data || []);
+      setDataList(
+        typeof response?.data === "object"
+          ? response?.data || null
+          : response?.data || []
+      );
       setDataCount(response?.total || response?.count || 0);
       setAllResponse(response || {});
     } else if (response?.code === 401) {

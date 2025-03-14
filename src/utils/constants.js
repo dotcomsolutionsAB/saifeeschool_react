@@ -146,6 +146,13 @@ export const CAPITALIZE = (text) => {
     .join(" ");
 };
 
+export const REMOVE_UNDERSCORE = (text) => {
+  return text
+    .split(/[_\s]/)
+    .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+    .join(" ");
+};
+
 export const TYPE_LIST = [
   { label: "Admission Fee", value: "admission" },
   { label: "Monthly Fee", value: "monthly" },

@@ -95,56 +95,57 @@ const Header = () => {
       >
         {/* left side above sidebar */}
 
-        <Box
-          sx={{
-            p: "10px",
-            bgcolor: "primary.light",
-            color: "primary.main",
-            width: layout?.sidebarWidth,
-            height: "100%",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: isSidebarExpanded ? "space-between" : "center",
-            transition: "all 0.5s ease",
-          }}
-        >
-          {/* SAIFEE Logo */}
+        {!layout?.isLessThanMedium && (
           <Box
             sx={{
+              p: "10px",
+              bgcolor: "primary.light",
+              color: "primary.main",
+              width: layout?.sidebarWidth,
               height: "100%",
               display: "flex",
               alignItems: "center",
-              width: isSidebarExpanded ? "auto" : 0,
-              opacity: isSidebarExpanded ? 1 : 0,
-              visibility: isSidebarExpanded ? "visible" : "hidden",
+              justifyContent: isSidebarExpanded ? "space-between" : "center",
               transition: "all 0.5s ease",
-              overflow: "hidden",
             }}
           >
-            {!isImageError ? (
-              <Box
-                component="img"
-                src={Saifee_Logo}
-                alt="SAIFEE Logo"
-                sx={{
-                  width: "70px",
-                  height: "80%",
-                  objectFit: "contain",
-                }}
-                loading="lazy"
-                onError={handleImageError} // Handles image loading errors
-              />
-            ) : (
-              <Typography variant="h4">SAIFEE</Typography> // Fallback if image fails
-            )}
+            {/* SAIFEE Logo */}
+            <Box
+              sx={{
+                height: "100%",
+                display: "flex",
+                alignItems: "center",
+                width: isSidebarExpanded ? "auto" : 0,
+                opacity: isSidebarExpanded ? 1 : 0,
+                visibility: isSidebarExpanded ? "visible" : "hidden",
+                transition: "all 0.5s ease",
+                overflow: "hidden",
+              }}
+            >
+              {!isImageError ? (
+                <Box
+                  component="img"
+                  src={Saifee_Logo}
+                  alt="SAIFEE Logo"
+                  sx={{
+                    width: "70px",
+                    height: "80%",
+                    objectFit: "contain",
+                  }}
+                  loading="lazy"
+                  onError={handleImageError} // Handles image loading errors
+                />
+              ) : (
+                <Typography variant="h4">SAIFEE</Typography> // Fallback if image fails
+              )}
+            </Box>
+
+            {/* Icon Button */}
+            <IconButton onClick={toggleSidebar}>
+              {isSidebarExpanded ? <MenuOpenRounded /> : <MenuRounded />}
+            </IconButton>
           </Box>
-
-          {/* Icon Button */}
-          <IconButton onClick={toggleSidebar}>
-            {isSidebarExpanded ? <MenuOpenRounded /> : <MenuRounded />}
-          </IconButton>
-        </Box>
-
+        )}
         {/* right side */}
         <Box
           sx={{
