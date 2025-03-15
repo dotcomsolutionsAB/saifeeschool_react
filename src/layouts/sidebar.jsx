@@ -80,6 +80,9 @@ const Sidebar = () => {
   };
 
   const handleToggle = (item) => {
+    if (layout?.isLessThanMedium) {
+      setOpenItems((prev) => ({ ...prev, [item?._id]: !prev[item?._id] }));
+    }
     if (!item?.children || !isSidebarExpanded) return;
     setOpenItems((prev) => ({ ...prev, [item?._id]: !prev[item?._id] }));
   };
@@ -146,8 +149,12 @@ const Sidebar = () => {
             sx={{
               display: "flex",
               alignItems: "start",
-              justifyContent: isSidebarExpanded ? "left" : "center",
-              px: isSidebarExpanded ? layout?.px : 0,
+              justifyContent:
+                isSidebarExpanded || layout?.isLessThanMedium
+                  ? "left"
+                  : "center",
+              px:
+                isSidebarExpanded || layout?.isLessThanMedium ? layout?.px : 0,
               width: "100%",
               minHeight: "50px",
               borderBottom: `2px solid ${theme.palette.primary.contrastText}`,
@@ -192,8 +199,9 @@ const Sidebar = () => {
             <Box
               sx={{
                 flex: 1,
-                maxWidth: isSidebarExpanded ? "200px" : 0,
-                opacity: isSidebarExpanded ? 1 : 0,
+                maxWidth:
+                  isSidebarExpanded || layout.isLessThanMedium ? "200px" : 0,
+                opacity: isSidebarExpanded || layout.isLessThanMedium ? 1 : 0,
                 transition: "max-width 0.5s ease, opacity 0.5s ease",
                 overflow: "hidden",
                 whiteSpace: "nowrap",

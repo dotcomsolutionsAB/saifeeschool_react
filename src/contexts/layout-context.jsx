@@ -26,7 +26,7 @@ const LayoutProvider = ({ children }) => {
 
     return {
       headerHeight: "64px",
-      sidebarWidth: isSidebarExpanded ? "280px" : "64px",
+      sidebarWidth: isSidebarExpanded || isLessThanMedium ? "280px" : "64px",
       px: isExtraSmall || isLessThanMedium ? "10px" : "20px",
       isLessThanMedium,
     };
