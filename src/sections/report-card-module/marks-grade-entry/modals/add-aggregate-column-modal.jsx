@@ -46,11 +46,11 @@ const AddAggregateColumnModal = ({ open, onClose, refetch, detail }) => {
 
   const handleSave = async (e) => {
     e.preventDefault();
-    if (formData) return;
     setIsLoading(true);
-
-    const response = await addAggregateColumn(formData);
-
+    const response = await addAggregateColumn({
+      ...formData,
+      subj_ids: formData?.subj_ids?.map((item) => item?.subj_id),
+    });
     setIsLoading(false);
 
     if (response?.code === 200) {
@@ -129,15 +129,6 @@ const AddAggregateColumnModal = ({ open, onClose, refetch, detail }) => {
                     target: { name: "subj_ids", value: newValue },
                   })
                 }
-              />
-            </Grid>
-            <Grid item xs={12}>
-              <TextField
-                label="Add After Which Column"
-                name="addAfterWhichColumn"
-                fullWidth
-                value={formData?.addAfterWhichColumn || ""}
-                onChange={handleChange}
               />
             </Grid>
           </Grid>
