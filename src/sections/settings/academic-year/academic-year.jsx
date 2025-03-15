@@ -122,6 +122,7 @@ const AcademicYear = () => {
               key={index}
               expanded={expanded === index}
               onChange={handleChange(index)}
+              sx={{ mb: 0.5 }}
             >
               <AccordionSummary
                 expandIcon={<ExpandMoreRounded />}

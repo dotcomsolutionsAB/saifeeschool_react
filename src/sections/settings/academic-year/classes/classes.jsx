@@ -82,21 +82,11 @@ const Classes = ({ academicYear }) => {
       {/* header */}
       <Box
         sx={{
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "space-between",
-          gap: 2,
-          my: 2,
+          textAlign: "right",
+          mb: 2,
         }}
       >
-        <TextField
-          value={search || ""}
-          onChange={handleSearch}
-          placeholder="Search by class or name..."
-          size="small"
-          sx={{ flex: 1 }}
-        />
-        <Button variant="contained" size="large" onClick={handleModalOpen}>
+        <Button variant="contained" onClick={handleModalOpen}>
           + Add New
         </Button>
         <AddNewClassModal
@@ -107,6 +97,13 @@ const Classes = ({ academicYear }) => {
           detail={selectedRow}
         />
       </Box>
+      <TextField
+        value={search || ""}
+        onChange={handleSearch}
+        placeholder="Search by class or name..."
+        size="small"
+        fullWidth
+      />
       {isLoading ? (
         <Loader />
       ) : isError ? (

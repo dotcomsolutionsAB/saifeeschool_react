@@ -80,7 +80,6 @@ const WalletModal = ({ open, onClose, detail }) => {
       onClose={!isLoading ? onClose : null}
       PaperProps={{
         sx: {
-          // minWidth: "600px",
           minWidth: { xs: "95%", sm: "600px", md: "800px", lg: "1100px" },
           position: "relative",
         },

@@ -12,36 +12,7 @@ export default function Tabs(theme) {
       styleOverrides: {
         root: {
           fontSize: "12px",
-          // padding: 0,
-          // fontWeight: theme.typography.fontWeightMedium,
-          // borderTopLeftRadius: theme.shape.borderRadius,
-          // borderTopRightRadius: theme.shape.borderRadius,
-          // "&.Mui-selected": {
-          //   color: theme.palette.text.primary,
-          // },
-          // "&:not(:last-of-type)": {
-          //   marginRight: theme.spacing(4),
-          // },
-          // "@media (min-width: 600px)": {
-          //   minWidth: 48,
-          // },
         },
-        // labelIcon: {
-        //   minHeight: 48,
-        //   flexDirection: "row",
-        //   "& > *:first-of-type": {
-        //     marginBottom: 0,
-        //     marginRight: theme.spacing(1),
-        //   },
-        // },
-        // wrapped: {
-        //   flexDirection: "row",
-        //   whiteSpace: "nowrap",
-        // },
-        // textColorInherit: {
-        //   opacity: 1,
-        //   color: theme.palette.text.secondary,
-        // },
       },
     },
     // MuiTabPanel: {

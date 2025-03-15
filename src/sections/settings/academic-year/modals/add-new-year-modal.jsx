@@ -98,7 +98,7 @@ const AddNewYearModal = ({ open, onClose, refetch, detail }) => {
       onClose={!isLoading ? onClose : null}
       PaperProps={{
         sx: {
-          minWidth: "600px",
+          minWidth: { xs: "95vw", sm: "600px" },
           position: "relative",
         },
       }}

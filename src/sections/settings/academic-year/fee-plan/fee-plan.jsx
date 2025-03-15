@@ -23,36 +23,31 @@ const FeePlan = ({ academicYear }) => {
   };
   return (
     <Box>
+      <Box
+        sx={{
+          textAlign: "right",
+          mb: 2,
+        }}
+      >
+        <Button
+          variant="standard"
+          sx={{ bgcolor: "primary.main", color: "primary.contrastText" }}
+          onClick={handleModalOpen}
+        >
+          + Add New
+        </Button>
+      </Box>
       {/* Tabs Section */}
       <Tabs
         value={activeTab}
         onChange={handleTabChange}
-        textColor="primary"
-        indicatorColor="primary"
-        sx={{ position: "relative" }}
+        variant="scrollable"
+        scrollButtons="auto"
       >
         <Tab label="ADMISSION FEES" />
         <Tab label="MONTHLY FEES" />
         <Tab label="ONE-TIME FEES" />
         <Tab label="RECURRING FEES" />
-        <Box
-          sx={{
-            position: "absolute",
-            right: 0,
-            bottom: 5,
-            display: "flex",
-            alignItems: "center",
-            gap: 1,
-          }}
-        >
-          <Button
-            variant="standard"
-            sx={{ bgcolor: "primary.main", color: "primary.contrastText" }}
-            onClick={handleModalOpen}
-          >
-            + Add new
-          </Button>
-        </Box>
       </Tabs>
       <Divider sx={{ mb: 2 }} />
       {/* Tab Content */}
