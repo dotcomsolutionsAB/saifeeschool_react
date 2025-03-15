@@ -1,6 +1,7 @@
 import PropTypes from "prop-types";
 import {
   Box,
+  Card,
   Table,
   TableBody,
   TableCell,
@@ -75,7 +76,7 @@ const PaymentSummaryTable = ({ academicYear }) => {
     : [];
 
   return (
-    <Box sx={{ width: "100%", mt: 4 }}>
+    <Box sx={{ width: "100%", mt: 2 }}>
       {/* Table */}
 
       {isLoading ? (
@@ -83,33 +84,39 @@ const PaymentSummaryTable = ({ academicYear }) => {
       ) : isError ? (
         <MessageBox />
       ) : (
-        <TableContainer sx={{ overflowY: "unset", bgcolor: "white" }}>
-          <Table sx={{ minWidth: 800 }}>
-            <TableHead>
-              <TableRow>
-                {HEAD_LABEL?.map((headCell) => (
-                  <TableCell
-                    key={headCell?.id}
-                    align={headCell?.align || "left"}
-                    sx={{
-                      width: headCell?.width,
-                      minWidth: headCell?.minWidth,
-                      whiteSpace: "nowrap",
-                    }}
-                  >
-                    {headCell?.label}
-                  </TableCell>
-                ))}
-              </TableRow>
-            </TableHead>
+        <Card sx={{ width: "100%", mt: 3 }} elevation={10}>
+          <TableContainer sx={{ overflowY: "unset", bgcolor: "white" }}>
+            <Table sx={{ minWidth: 800 }}>
+              <TableHead>
+                <TableRow>
+                  {HEAD_LABEL?.map((headCell) => (
+                    <TableCell
+                      key={headCell?.id}
+                      align={headCell?.align || "left"}
+                      sx={{
+                        width: headCell?.width,
+                        minWidth: headCell?.minWidth,
+                        whiteSpace: "nowrap",
+                      }}
+                    >
+                      {headCell?.label}
+                    </TableCell>
+                  ))}
+                </TableRow>
+              </TableHead>
 
-            <TableBody>
-              {feeStats?.map((row, index) => (
-                <PaymentSummaryTableRow key={index} sn={index + 1} row={row} />
-              ))}
-            </TableBody>
-          </Table>
-        </TableContainer>
+              <TableBody>
+                {feeStats?.map((row, index) => (
+                  <PaymentSummaryTableRow
+                    key={index}
+                    sn={index + 1}
+                    row={row}
+                  />
+                ))}
+              </TableBody>
+            </Table>
+          </TableContainer>
+        </Card>
       )}
     </Box>
   );

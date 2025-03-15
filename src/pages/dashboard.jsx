@@ -18,11 +18,29 @@ import PaymentSummaryTable from "../sections/dashboard/payment-summary-table";
 import { getAllAcademicYears } from "../services/students-management.service";
 import { useGetApi } from "../hooks/useGetApi";
 import { useState } from "react";
+import useAuth from "../hooks/useAuth";
+import { getStudentStats } from "../services/dashboard.service";
+import Loader from "../components/loader/loader";
+import MessageBox from "../components/error/message-box";
+import StudentPieChart from "../sections/dashboard/student-pie-chart";
 
 const Dashboard = () => {
+  const { userInfo } = useAuth();
   const cardHeight = "200px";
 
   const [academicYear, setAcademicYear] = useState(null);
+
+  const {
+    dataList: studentStats,
+    isLoading,
+    isError,
+  } = useGetApi({
+    apiFunction: getStudentStats,
+    body: {
+      ay_id: Number(academicYear?.ay_id) || userInfo?.ay_id,
+    },
+    dependencies: [academicYear?.ay_id],
+  });
 
   // api to get academicYearList
   const { dataList: academicYearList } = useGetApi({
@@ -56,243 +74,273 @@ const Dashboard = () => {
           gap: 1,
         }}
       >
-        <Grid container spacing={2}>
-          <Grid item xs={12} sm={6} md={4} lg={3}>
-            <Card
-              elevation={10}
-              sx={{
-                height: cardHeight,
-                display: "flex",
-                flexDirection: "column",
-                alignItems: "center",
-                justifyContent: "center",
-                gap: 1,
-                p: 1,
-              }}
-            >
-              <IconButton
+        {isLoading ? (
+          <Loader />
+        ) : isError ? (
+          <MessageBox />
+        ) : (
+          <Grid container spacing={2}>
+            <Grid item xs={12} sm={6} md={4} lg={3}>
+              <Card
+                elevation={10}
                 sx={{
-                  bgcolor: "success.lightHover",
-                  color: "success.main",
-                  width: "80px",
-                  height: "80px",
+                  height: cardHeight,
+                  display: "flex",
+                  flexDirection: "column",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  gap: 1,
+                  p: 1,
                 }}
-                disableRipple
               >
-                <StudentsManagementIcon sx={{ fontSize: "50px" }} />
-              </IconButton>
-
-              <Divider
-                sx={{
-                  width: "90%",
-                  height: "2px",
-                  bgcolor: "error.main",
-                }}
-              />
-              <Typography
-                variant="h6"
-                sx={{ color: "text.disabled", textAlign: "center" }}
-              >
-                Students
-              </Typography>
-              <Typography variant="h4">2157</Typography>
-            </Card>
-          </Grid>
-          <Grid item xs={12} sm={6} md={4} lg={3}>
-            <Card
-              elevation={10}
-              sx={{
-                height: cardHeight,
-                display: "flex",
-                flexDirection: "column",
-                alignItems: "center",
-                justifyContent: "center",
-                gap: 1,
-                p: 1,
-              }}
-            >
-              <IconButton
-                sx={{
-                  bgcolor: "info.lightHover",
-                  color: "info.main",
-                  width: "80px",
-                  height: "80px",
-                }}
-                disableRipple
-              >
-                <TeacherIcon sx={{ fontSize: "50px" }} />
-              </IconButton>
-
-              <Divider
-                sx={{
-                  width: "90%",
-                  height: "2px",
-                  bgcolor: "error.main",
-                }}
-              />
-              <Typography
-                variant="h6"
-                sx={{ color: "text.disabled", textAlign: "center" }}
-              >
-                Teachers
-              </Typography>
-              <Typography variant="h4">2157</Typography>
-            </Card>
-          </Grid>
-          <Grid item xs={12} sm={6} md={4} lg={3}>
-            <Card
-              elevation={10}
-              sx={{
-                height: cardHeight,
-                display: "flex",
-                flexDirection: "column",
-                alignItems: "center",
-                justifyContent: "center",
-                gap: 1,
-                p: 1,
-              }}
-            >
-              <IconButton
-                sx={{
-                  bgcolor: "warning.lightHover",
-                  color: "warning.main",
-                  width: "80px",
-                  height: "80px",
-                }}
-                disableRipple
-              >
-                <MoneyDollarIcon sx={{ fontSize: "50px" }} />
-              </IconButton>
-
-              <Divider
-                sx={{
-                  width: "90%",
-                  height: "2px",
-                  bgcolor: "error.main",
-                }}
-              />
-              <Typography
-                variant="h6"
-                sx={{ color: "text.disabled", textAlign: "center" }}
-              >
-                Total Fees Due
-              </Typography>
-              <Typography variant="h4">2157</Typography>
-            </Card>
-          </Grid>
-          <Grid item xs={12} sm={6} md={6} lg={3}>
-            <Grid container spacing={2}>
-              {/* Late Fees Card */}
-              <Grid item xs={12}>
-                <Card
-                  elevation={10}
+                <IconButton
                   sx={{
-                    height: `calc(${cardHeight} / 2 - 8px)`,
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    px: 2,
+                    bgcolor: "success.lightHover",
+                    color: "success.main",
+                    width: "80px",
+                    height: "80px",
                   }}
+                  disableRipple
                 >
-                  <Box
+                  <StudentsManagementIcon sx={{ fontSize: "50px" }} />
+                </IconButton>
+
+                <Divider
+                  sx={{
+                    width: "90%",
+                    height: "2px",
+                    bgcolor: "error.main",
+                  }}
+                />
+                <Typography
+                  variant="h6"
+                  sx={{ color: "text.disabled", textAlign: "center" }}
+                >
+                  Students
+                </Typography>
+                <Typography variant="h4">
+                  {studentStats?.student_count || "0"}
+                </Typography>
+              </Card>
+            </Grid>
+            <Grid item xs={12} sm={6} md={4} lg={3}>
+              <Card
+                elevation={10}
+                sx={{
+                  height: cardHeight,
+                  display: "flex",
+                  flexDirection: "column",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  gap: 1,
+                  p: 1,
+                }}
+              >
+                <IconButton
+                  sx={{
+                    bgcolor: "info.lightHover",
+                    color: "info.main",
+                    width: "80px",
+                    height: "80px",
+                  }}
+                  disableRipple
+                >
+                  <TeacherIcon sx={{ fontSize: "50px" }} />
+                </IconButton>
+
+                <Divider
+                  sx={{
+                    width: "90%",
+                    height: "2px",
+                    bgcolor: "error.main",
+                  }}
+                />
+                <Typography
+                  variant="h6"
+                  sx={{ color: "text.disabled", textAlign: "center" }}
+                >
+                  Teachers
+                </Typography>
+                <Typography variant="h4">
+                  {studentStats?.teacher_count || "0"}
+                </Typography>
+              </Card>
+            </Grid>
+            <Grid item xs={12} sm={6} md={4} lg={3}>
+              <Card
+                elevation={10}
+                sx={{
+                  height: cardHeight,
+                  display: "flex",
+                  flexDirection: "column",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  gap: 1,
+                  p: 1,
+                }}
+              >
+                <IconButton
+                  sx={{
+                    bgcolor: "warning.lightHover",
+                    color: "warning.main",
+                    width: "80px",
+                    height: "80px",
+                  }}
+                  disableRipple
+                >
+                  <MoneyDollarIcon sx={{ fontSize: "50px" }} />
+                </IconButton>
+
+                <Divider
+                  sx={{
+                    width: "90%",
+                    height: "2px",
+                    bgcolor: "error.main",
+                  }}
+                />
+                <Typography
+                  variant="h6"
+                  sx={{ color: "text.disabled", textAlign: "center" }}
+                >
+                  Total Fees Due
+                </Typography>
+                <Typography variant="h4">
+                  ₹ {studentStats?.total_unpaid_amount || "0"}
+                </Typography>
+              </Card>
+            </Grid>
+            <Grid item xs={12} sm={6} md={6} lg={3}>
+              <Grid container spacing={2}>
+                {/* Late Fees Card */}
+                <Grid item xs={12}>
+                  <Card
+                    elevation={10}
                     sx={{
-                      height: "100%",
+                      height: `calc(${cardHeight} / 2 - 8px)`,
                       display: "flex",
                       alignItems: "center",
-                      gap: 2,
-                      width: { xs: "80%", md: "100%", lg: "90%", xl: "80%" },
+                      justifyContent: "center",
+                      px: 2,
                     }}
                   >
-                    <IconButton
+                    <Box
                       sx={{
-                        bgcolor: "error.lightHover",
-                        color: "error.main",
-                        width: 60,
-                        height: 60,
+                        height: "100%",
+                        display: "flex",
+                        alignItems: "center",
+                        gap: 2,
+                        width: { xs: "80%", md: "100%", lg: "90%", xl: "80%" },
                       }}
-                      disableRipple
-                      aria-label="Late fees warning"
                     >
-                      <PriorityHigh sx={{ fontSize: 40 }} />
-                    </IconButton>
-                    <Divider
-                      orientation="vertical"
-                      sx={{
-                        height: "40%",
-                        width: 2,
-                        bgcolor: "error.main",
-                      }}
-                    />
-                    <Box>
-                      <Typography sx={{ color: "text.disabled", fontSize: 14 }}>
-                        Late Fees
-                      </Typography>
-                      <Typography variant="h6">
-                        {Number(2157).toLocaleString()}
-                      </Typography>
+                      <IconButton
+                        sx={{
+                          bgcolor: "error.lightHover",
+                          color: "error.main",
+                          width: 60,
+                          height: 60,
+                        }}
+                        disableRipple
+                        aria-label="Late fees warning"
+                      >
+                        <PriorityHigh sx={{ fontSize: 40 }} />
+                      </IconButton>
+                      <Divider
+                        orientation="vertical"
+                        sx={{
+                          height: "40%",
+                          width: 2,
+                          bgcolor: "error.main",
+                        }}
+                      />
+                      <Box>
+                        <Typography
+                          sx={{ color: "text.disabled", fontSize: 14 }}
+                        >
+                          Late Fees
+                        </Typography>
+                        <Typography variant="h6">
+                          ₹ {studentStats?.total_late_fees_paid || "0"}
+                        </Typography>
+                      </Box>
                     </Box>
-                  </Box>
-                </Card>
+                  </Card>
+                </Grid>
+
+                {/* Fees Due Card */}
+                <Grid item xs={12}>
+                  <Card
+                    elevation={10}
+                    sx={{
+                      height: `calc(${cardHeight} / 2 - 8px)`,
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      px: 2,
+                    }}
+                  >
+                    <Box
+                      sx={{
+                        height: "100%",
+                        display: "flex",
+                        alignItems: "center",
+                        gap: 2,
+                        width: { xs: "80%", md: "100%", lg: "90%", xl: "80%" },
+                      }}
+                    >
+                      <IconButton
+                        sx={{
+                          bgcolor: "error.lightHover",
+                          color: "error.main",
+                          width: 60,
+                          height: 60,
+                        }}
+                        disableRipple
+                        aria-label="Fees due indicator"
+                      >
+                        <CurrencyRupee sx={{ fontSize: 40 }} />
+                      </IconButton>
+                      <Divider
+                        orientation="vertical"
+                        sx={{
+                          height: "40%",
+                          width: 2,
+                          bgcolor: "error.main",
+                        }}
+                      />
+                      <Box>
+                        <Typography
+                          sx={{ color: "text.disabled", fontSize: 14 }}
+                        >
+                          Fees Due
+                        </Typography>
+                        <Typography
+                          sx={{ color: "text.disabled", fontSize: 10 }}
+                        >
+                          (Until Current Month)
+                        </Typography>
+                        <Typography variant="h6">
+                          ₹ {studentStats?.current_month_unpaid_amount || "0"}
+                        </Typography>
+                      </Box>
+                    </Box>
+                  </Card>
+                </Grid>
               </Grid>
+            </Grid>
 
-              {/* Fees Due Card */}
-              <Grid item xs={12}>
-                <Card
-                  elevation={10}
-                  sx={{
-                    height: `calc(${cardHeight} / 2 - 8px)`,
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    px: 2,
-                  }}
-                >
-                  <Box
-                    sx={{
-                      height: "100%",
-                      display: "flex",
-                      alignItems: "center",
-                      gap: 2,
-                      width: { xs: "80%", md: "100%", lg: "90%", xl: "80%" },
-                    }}
-                  >
-                    <IconButton
-                      sx={{
-                        bgcolor: "error.lightHover",
-                        color: "error.main",
-                        width: 60,
-                        height: 60,
-                      }}
-                      disableRipple
-                      aria-label="Fees due indicator"
-                    >
-                      <CurrencyRupee sx={{ fontSize: 40 }} />
-                    </IconButton>
-                    <Divider
-                      orientation="vertical"
-                      sx={{
-                        height: "40%",
-                        width: 2,
-                        bgcolor: "error.main",
-                      }}
-                    />
-                    <Box>
-                      <Typography sx={{ color: "text.disabled", fontSize: 14 }}>
-                        Fees Due
-                      </Typography>
-                      <Typography sx={{ color: "text.disabled", fontSize: 10 }}>
-                        (Until Current Month)
-                      </Typography>
-                      <Typography variant="h6">
-                        {Number(2157).toLocaleString()}
-                      </Typography>
-                    </Box>
-                  </Box>
-                </Card>
+            {/* Charts */}
+            <Grid item xs={12}>
+              <Grid container spacing={2}>
+                <Grid item xs={12} sm={6}>
+                  <StudentPieChart studentStats={studentStats} />
+                </Grid>
+                <Grid item xs={12} sm={6}>
+                  <StudentPieChart studentStats={studentStats} />
+                </Grid>
               </Grid>
             </Grid>
           </Grid>
-        </Grid>
+        )}
 
         {/* <PaymentSummaryTable /> */}
         <PaymentSummaryTable academicYear={academicYear} />
