@@ -16,7 +16,7 @@ export const createAcademicYear = async (body) =>
   await postRequest(ACADEMIC_YEAR_PATH, body);
 
 export const updateAcademicYear = async (body) =>
-  await putRequest(ACADEMIC_YEAR_PATH, body);
+  await postRequest(ACADEMIC_YEAR_PATH, body);
 
 export const deleteAcademicYear = async (body) =>
   await deleteRequest(`${ACADEMIC_YEAR_PATH}/${body?.id}`);

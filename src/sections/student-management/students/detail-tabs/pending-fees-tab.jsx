@@ -31,7 +31,7 @@ const HEAD_LABEL = [
   { id: "actions", label: "Actions" },
 ];
 
-export default function PendingFees({ detail }) {
+export default function PendingFees({ detail, academicYear }) {
   const [page, setPage] = useState(0);
 
   const [rowsPerPage, setRowsPerPage] = useState(DEFAULT_LIMIT);
@@ -52,8 +52,9 @@ export default function PendingFees({ detail }) {
       st_id: detail?.id,
       offset: page * rowsPerPage,
       limit: rowsPerPage,
+      ay_id: Number(academicYear?.ay_id),
     },
-    dependencies: [page, rowsPerPage],
+    dependencies: [page, rowsPerPage, academicYear],
     debounceDelay: 500,
   });
 
@@ -204,4 +205,5 @@ export default function PendingFees({ detail }) {
 
 PendingFees.propTypes = {
   detail: PropTypes.object,
+  academicYear: PropTypes.object,
 };

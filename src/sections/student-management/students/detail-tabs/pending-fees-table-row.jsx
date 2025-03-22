@@ -13,6 +13,7 @@ import { useState } from "react";
 import { applyConcession } from "../../../../services/students-management.service";
 import { toast } from "react-toastify";
 import useAuth from "../../../../hooks/useAuth";
+import dayjs from "dayjs";
 
 const PendingFeesTableRow = ({
   row,
@@ -88,7 +89,11 @@ const PendingFeesTableRow = ({
         <TableCell>{row?.fpp_amount || "-"}</TableCell>
 
         <TableCell>
-          <Typography noWrap>{row?.fpp_due_date || "-"}</Typography>
+          <Typography noWrap>
+            {row?.fpp_due_date
+              ? dayjs(row?.fpp_due_date).format("YYYY-MM-DD")
+              : "-"}
+          </Typography>
         </TableCell>
 
         {isEditable ? (

@@ -56,6 +56,7 @@ import useStudent from "../../../hooks/useStudent";
 const HEAD_LABEL = [
   { id: "id", label: "ID" },
   { id: "st_first_name", label: "Name" },
+  { id: "class_name", label: "Class" },
   { id: "st_roll_no", label: "Roll No" },
   { id: "st_gender", label: "Gender" },
   { id: "st_dob", label: "Date of Birth" },
@@ -591,6 +592,8 @@ export default function Students() {
                         </Typography>
                       </Stack>
                     </TableCell>
+
+                    <TableCell>{row?.class_name || ""}</TableCell>
 
                     <TableCell>{row?.st_roll_no || ""}</TableCell>
 

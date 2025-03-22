@@ -13,6 +13,7 @@ import useAuth from "../../../../hooks/useAuth";
 import { useState } from "react";
 import { applyConcession } from "../../../../services/students-management.service";
 import { toast } from "react-toastify";
+import dayjs from "dayjs";
 
 const PaidFeesTableRow = ({
   row,
@@ -71,13 +72,13 @@ const PaidFeesTableRow = ({
   return (
     <>
       <TableRow hover tabIndex={-1} role="checkbox" selected={isRowSelected}>
-        <TableCell padding="checkbox">
+        {/* <TableCell padding="checkbox">
           <Checkbox
             disableRipple
             checked={isRowSelected}
             onChange={() => handleClick(row?.id)}
           />
-        </TableCell>
+        </TableCell> */}
 
         <TableCell>
           <Typography variant="subtitle2" noWrap>
@@ -88,7 +89,11 @@ const PaidFeesTableRow = ({
         <TableCell>{row?.fpp_amount || "-"}</TableCell>
 
         <TableCell>
-          <Typography noWrap>{row?.fpp_due_date || "-"}</Typography>
+          <Typography noWrap>
+            {row?.fpp_due_date
+              ? dayjs(row?.fpp_due_date).format("YYYY-MM-DD")
+              : "-"}
+          </Typography>
         </TableCell>
 
         {isEditable ? (

@@ -48,16 +48,17 @@ import {
 import { toast } from "react-toastify";
 import Iconify from "../../../components/iconify/iconify";
 import { getAllFees } from "../../../services/fees-management.service";
+import dayjs from "dayjs";
 // ----------------------------------------------------------------------
 
 const HEAD_LABEL = [
   { id: "SN", label: "SN" },
   { id: "Name", label: "Name" },
   { id: "Fee Name", label: "Fee" },
-  { id: "Base Amount", label: "Fee Amount" },
-  { id: "Due Date", label: "Due Date" },
-  { id: "Late Fee", label: "Late Fee Applicable" },
-  { id: "Total Amount", label: "Total Amount" },
+  { id: "Base Amount", label: "Fee Amount", align: "center" },
+  { id: "Due Date", label: "Due Date", align: "center" },
+  // { id: "Late Fee", label: "Late Fee Applicable" },
+  { id: "Total Amount", label: "Total Amount", align: "center" },
   { id: "Status", label: "Status", align: "center" },
 ];
 
@@ -395,7 +396,15 @@ export default function Fees() {
             onChange={(_, newValue) => handleChange("type", newValue)}
             sx={{ width: "200px" }}
           />
-
+          {type?.value === "one_time" && (
+            <Autocomplete
+              options={[]} // later add list from apis
+              renderInput={(params) => (
+                <TextField {...params} label="One Time Fees For" size="small" />
+              )}
+              sx={{ width: "200px" }}
+            />
+          )}
           <DatePicker
             label="Due From"
             slotProps={{
@@ -523,22 +532,39 @@ export default function Fees() {
                     <TableCell>{row?.SN || ""}</TableCell>
 
                     <TableCell sx={{ cursor: "pointer" }}>
-                      <Typography variant="subtitle2" noWrap>
+                      <Typography variant="subtitle2">
                         {row?.Name || ""}
                       </Typography>
                     </TableCell>
 
                     <TableCell>
-                      <Typography noWrap>{row["Fee Name"] || ""} </Typography>
+                      <Typography>{row["Fee Name"] || ""} </Typography>
                     </TableCell>
 
-                    <TableCell>{row["Base Amount"] || ""}</TableCell>
-
-                    <TableCell>
-                      <Typography noWrap>{row["Due Date"] || ""}</Typography>
+                    <TableCell align="center">
+                      <Box>
+                        <Typography sx={{ textAlign: "center" }}>
+                          {row["Base Amount"] || ""}
+                        </Typography>
+                        <Typography
+                          sx={{ color: "error.main", textAlign: "center" }}
+                        >
+                          {row["Late Fee"] || ""}
+                        </Typography>
+                      </Box>
                     </TableCell>
-                    <TableCell>{row["Late Fee"] || ""}</TableCell>
-                    <TableCell>{row["Total Amount"] || ""}</TableCell>
+
+                    <TableCell align="center">
+                      <Typography noWrap>
+                        {row["Due Date"]
+                          ? dayjs(row["Due Date"]).format("YYYY-MM-DD")
+                          : "-"}
+                      </Typography>
+                    </TableCell>
+                    {/* <TableCell>{row["Late Fee"] || ""}</TableCell> */}
+                    <TableCell align="center">
+                      {row["Total Amount"] || ""}
+                    </TableCell>
                     <TableCell align="center">
                       <Box
                         sx={{

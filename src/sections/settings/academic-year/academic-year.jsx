@@ -59,6 +59,8 @@ const AcademicYear = () => {
 
   const handleModalClose = () => {
     setNewYearModalOpen(false);
+    setAnchorEl(null);
+    setSelectedRow(null);
   };
 
   const handlePopoverOpen = (e, option) => {
@@ -139,18 +141,22 @@ const AcademicYear = () => {
                     width: "100%",
                   }}
                 >
-                  <Typography>{academicYear?.ay_name || ""}</Typography>
-                  <Typography>
-                    {`${academicYear?.ay_start_month || ""} ${
-                      academicYear?.ay_start_year || ""
-                    } to ${academicYear?.ay_end_month || ""} ${
-                      academicYear?.ay_end_year || ""
+                  <Typography sx={{ fontSize: { xs: "11px", sm: "16px" } }}>
+                    {academicYear?.ay_name || ""}
+                  </Typography>
+                  <Typography
+                    sx={{
+                      fontSize: { xs: "11px", sm: "16px" },
+                    }}
+                  >
+                    {`${academicYear?.ay_start_month || ""}  to ${
+                      academicYear?.ay_end_month || ""
                     }`}
                   </Typography>
-                  <Typography>{`${
+                  <Typography sx={{ fontSize: { xs: "11px", sm: "16px" } }}>{`${
                     academicYear?.total_classes || ""
                   } Classes`}</Typography>
-                  <Typography>{`${
+                  <Typography sx={{ fontSize: { xs: "11px", sm: "16px" } }}>{`${
                     academicYear?.total_fee_plans || ""
                   } Fee Plans`}</Typography>
 

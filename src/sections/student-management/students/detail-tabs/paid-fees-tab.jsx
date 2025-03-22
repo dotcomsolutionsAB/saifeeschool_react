@@ -31,7 +31,7 @@ const HEAD_LABEL = [
   { id: "actions", label: "Actions" },
 ];
 
-export default function PaidFees({ detail }) {
+export default function PaidFees({ detail, academicYear }) {
   const [page, setPage] = useState(0);
 
   const [rowsPerPage, setRowsPerPage] = useState(DEFAULT_LIMIT);
@@ -52,8 +52,9 @@ export default function PaidFees({ detail }) {
       st_id: detail?.id,
       offset: page * rowsPerPage,
       limit: rowsPerPage,
+      ay_id: Number(academicYear?.ay_id),
     },
-    dependencies: [page, rowsPerPage],
+    dependencies: [page, rowsPerPage, academicYear],
     debounceDelay: 500,
   });
 
@@ -114,7 +115,7 @@ export default function PaidFees({ detail }) {
             <Table sx={{ minWidth: 800 }}>
               <TableHead>
                 <TableRow>
-                  <TableCell padding="checkbox">
+                  {/* <TableCell padding="checkbox">
                     <Checkbox
                       indeterminate={
                         selectedRows?.filter((id) =>
@@ -138,7 +139,7 @@ export default function PaidFees({ detail }) {
                       }
                       onChange={handleSelectAllClick}
                     />
-                  </TableCell>
+                  </TableCell> */}
                   {HEAD_LABEL?.map((headCell) => (
                     <TableCell
                       key={headCell?.id}
@@ -204,4 +205,5 @@ export default function PaidFees({ detail }) {
 
 PaidFees.propTypes = {
   detail: PropTypes.object,
+  academicYear: PropTypes.object,
 };
