@@ -21,7 +21,11 @@ import {
   AvTimerRounded,
   CloseRounded,
 } from "@mui/icons-material";
-import { MAIN_SIDEBAR_ITEMS } from "../utils/constants";
+import {
+  ADMIN_SIDEBAR_ITEMS,
+  STUDENT_SIDEBAR_ITEMS,
+  TEACHER_SIDEBAR_ITEMS,
+} from "../utils/constants";
 import { usePathname } from "../hooks/usePathname";
 import {
   AccountsIcon,
@@ -31,6 +35,7 @@ import {
 } from "../theme/overrides/CustomIcons";
 import useLayout from "../hooks/uesLayout";
 import Saifee_Logo from "../assets/logos/Saifee_Logo.png";
+import useAuth from "../hooks/useAuth";
 
 const getIcon = (iconName) => {
   switch (iconName) {
@@ -54,6 +59,7 @@ const getIcon = (iconName) => {
 const Sidebar = () => {
   const pathname = usePathname();
   const theme = useTheme();
+  const { userInfo } = useAuth();
   const {
     layout,
     handleDrawerClose,
@@ -65,8 +71,17 @@ const Sidebar = () => {
   const [anchorEl, setAnchorEl] = useState(null);
   const [selectedItem, setSelectedItem] = useState(null);
 
+  const MAIN_SIDEBAR_ITEMS =
+    userInfo?.role === "admin"
+      ? ADMIN_SIDEBAR_ITEMS
+      : userInfo?.role === "student"
+      ? STUDENT_SIDEBAR_ITEMS
+      : userInfo?.role === "teacher"
+      ? TEACHER_SIDEBAR_ITEMS
+      : [];
+
   const handleMenuOpen = (event, item) => {
-    if (!item?.children) return;
+    if (!item?.children || isSidebarExpanded) return;
     setAnchorEl(event.currentTarget);
     setSelectedItem(item);
   };
@@ -82,8 +97,10 @@ const Sidebar = () => {
   const handleToggle = (item) => {
     if (layout?.isLessThanMedium) {
       setOpenItems((prev) => ({ ...prev, [item?._id]: !prev[item?._id] }));
+      return;
     }
     if (!item?.children || !isSidebarExpanded) return;
+
     setOpenItems((prev) => ({ ...prev, [item?._id]: !prev[item?._id] }));
   };
 
@@ -158,7 +175,6 @@ const Sidebar = () => {
               width: "100%",
               minHeight: "50px",
               borderBottom: `2px solid ${theme.palette.primary.contrastText}`,
-              cursor: "pointer",
               textDecoration: "none",
               color: "primary.contrastText",
               bgcolor: isActive ? "primary.mainActive" : "transparent",
@@ -166,7 +182,6 @@ const Sidebar = () => {
                 bgcolor: "primary.mainHover",
               },
             }}
-            onClick={() => handleToggle(item)}
           >
             {/* Icon Container */}
             <Tooltip
@@ -219,7 +234,9 @@ const Sidebar = () => {
                       justifyContent: "space-between",
                       alignItems: "center",
                       width: "100%",
+                      cursor: "pointer",
                     }}
+                    onClick={() => handleToggle(item)}
                   >
                     <Typography
                       sx={{

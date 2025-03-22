@@ -5,7 +5,7 @@ export const DEFAULT_LIMIT = 10;
 
 export const ROWS_PER_PAGE_OPTIONS = [5, 10, 25, 50, 100];
 
-export const MAIN_SIDEBAR_ITEMS = [
+export const ADMIN_SIDEBAR_ITEMS = [
   {
     _id: 1,
     displayName: "Dashboard",
@@ -136,6 +136,46 @@ export const MAIN_SIDEBAR_ITEMS = [
         linkName: "/settings/users",
       },
     ],
+  },
+];
+
+export const STUDENT_SIDEBAR_ITEMS = [
+  {
+    _id: 1,
+    displayName: "Dashboard",
+    linkName: "/",
+    iconName: "dashboard",
+  },
+  {
+    _id: 2,
+    displayName: "Fees",
+    iconName: "fee_management",
+    children: [
+      {
+        _id: 21,
+        displayName: "Pending Fees",
+        linkName: "/fees/pending-fees",
+      },
+      {
+        _id: 22,
+        displayName: "Paid Fees",
+        linkName: "/fees/paid-fees",
+      },
+      {
+        _id: 23,
+        displayName: "Transactions",
+        linkName: "/fees/transactions",
+      },
+    ],
+  },
+];
+
+export const TEACHER_SIDEBAR_ITEMS = [
+  {
+    _id: 1,
+    displayName: "Dashboard",
+    linkName: "/",
+    iconName: "dashboard",
   },
 ];
 

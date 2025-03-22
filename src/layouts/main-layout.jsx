@@ -5,7 +5,7 @@ import Header from "./header";
 import Sidebar from "./sidebar";
 import useLayout from "../hooks/uesLayout";
 import { usePathname } from "../hooks/usePathname";
-import { CAPITALIZE, MAIN_SIDEBAR_ITEMS } from "../utils/constants";
+import { CAPITALIZE, ADMIN_SIDEBAR_ITEMS } from "../utils/constants";
 import { useEffect } from "react";
 
 const MainLayout = () => {
@@ -139,7 +139,7 @@ const MainLayout = () => {
 
               // Function to check if the path corresponds to a leaf node (no children)
               const isLeafNode = (path) =>
-                MAIN_SIDEBAR_ITEMS?.some((item) => {
+                ADMIN_SIDEBAR_ITEMS?.some((item) => {
                   if (item?.linkName === path)
                     return !item.children || item.children.length === 0;
                   if (item.children) {

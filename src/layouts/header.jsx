@@ -22,7 +22,7 @@ import {
 import { useState } from "react";
 import Saifee_Logo from "../assets/logos/Saifee_Logo.png";
 import Input from "@mui/material/Input";
-import { MAIN_SIDEBAR_ITEMS } from "../utils/constants";
+import { ADMIN_SIDEBAR_ITEMS } from "../utils/constants";
 import { usePathname } from "../hooks/usePathname";
 
 const MENU_OPTIONS = [
@@ -73,7 +73,7 @@ const Header = () => {
         top: 0,
         left: 0,
         bgcolor:
-          pathname === MAIN_SIDEBAR_ITEMS[0]?.linkName
+          pathname === ADMIN_SIDEBAR_ITEMS[0]?.linkName
             ? "custom.body_color"
             : "common.white",
         color: "primary.main",
@@ -173,7 +173,7 @@ const Header = () => {
               flex: 1,
             }}
           >
-            {pathname === MAIN_SIDEBAR_ITEMS[0]?.linkName ? (
+            {pathname === ADMIN_SIDEBAR_ITEMS[0]?.linkName ? (
               <Input
                 autoFocus
                 fullWidth
