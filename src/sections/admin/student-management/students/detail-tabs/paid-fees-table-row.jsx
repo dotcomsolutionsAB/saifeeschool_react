@@ -86,12 +86,12 @@ const PaidFeesTableRow = ({
           </Typography>
         </TableCell>
 
-        <TableCell>{row?.fpp_amount || "-"}</TableCell>
+        <TableCell>₹ {row?.fpp_amount || "-"}</TableCell>
 
         <TableCell>
           <Typography noWrap>
             {row?.fpp_due_date
-              ? dayjs(row?.fpp_due_date).format("YYYY-MM-DD")
+              ? dayjs(row?.fpp_due_date).format("DD-MM-YYYY")
               : "-"}
           </Typography>
         </TableCell>
@@ -136,10 +136,10 @@ const PaidFeesTableRow = ({
         ) : (
           <>
             <TableCell sx={{ width: "110px" }}>
-              {row?.f_concession || "-"}
+              ₹ {row?.f_concession || "-"}
             </TableCell>
             <TableCell sx={{ width: "110px" }}>
-              {row?.fpp_late_fee || "-"}
+              ₹ {row?.fpp_late_fee || "-"}
             </TableCell>
           </>
         )}

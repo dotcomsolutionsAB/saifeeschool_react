@@ -12,7 +12,7 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import Iconify from "../../../../components/iconify/iconify";
 import OtherDetailsTab from "./detail-tabs/other-details-tab";
@@ -29,7 +29,7 @@ import useAuth from "../../../../hooks/useAuth";
 import { useGetApi } from "../../../../hooks/useGetApi";
 
 const StudentDetail = () => {
-  const { logout } = useAuth();
+  const { logout, userInfo } = useAuth();
   const location = useLocation();
   const navigate = useNavigate();
   const detail = location?.state;
@@ -86,6 +86,14 @@ const StudentDetail = () => {
   const handleEdit = () => {
     navigate("/students-management/students/edit-student", { state: detail });
   };
+
+  useEffect(() => {
+    const currentAcademicYear = academicYearList?.find(
+      (year) => Number(year?.ay_id) === Number(userInfo?.ay_id)
+    );
+
+    setAcademicYear(currentAcademicYear);
+  }, [academicYearList]);
 
   return (
     <>

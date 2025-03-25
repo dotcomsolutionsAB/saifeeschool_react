@@ -47,7 +47,10 @@ import {
 } from "@mui/icons-material";
 import { toast } from "react-toastify";
 import Iconify from "../../../../components/iconify/iconify";
-import { getAllFees } from "../../../../services/admin/fees-management.service";
+import {
+  getAllFees,
+  getOneTimeFees,
+} from "../../../../services/admin/fees-management.service";
 import dayjs from "dayjs";
 // ----------------------------------------------------------------------
 
@@ -93,6 +96,7 @@ export default function Fees() {
   const [anchorEl, setAnchorEl] = useState(null);
   const [selectedRows, setSelectedRows] = useState([]);
   const [isExportLoading, setIsExportLoading] = useState(false);
+  const [oneTimeFees, setOneTimeFees] = useState(null);
 
   const dataSendToBackend = {
     ay_id: Number(academicYear?.ay_id) || userInfo?.ay_id,
@@ -144,9 +148,17 @@ export default function Fees() {
   });
 
   // api to get academicYearList
-
   const { dataList: academicYearList } = useGetApi({
     apiFunction: getAllAcademicYears,
+  });
+
+  // api to get oneTimeFees
+  const { dataList: oneTimeFeesList } = useGetApi({
+    apiFunction: getOneTimeFees,
+    body: {
+      ay_id: Number(academicYear?.ay_id) || userInfo?.ay_id,
+    },
+    dependencies: [academicYear],
   });
 
   // open bulk action menu
@@ -265,6 +277,9 @@ export default function Fees() {
         break;
       case "academicYear":
         setAcademicYear(value);
+        break;
+      case "oneTimeFees":
+        setOneTimeFees(value);
         break;
       default:
         break;
@@ -406,10 +421,13 @@ export default function Fees() {
           />
           {type?.value === "one_time" && (
             <Autocomplete
-              options={[]} // later add list from apis
+              options={oneTimeFeesList || []} // later add list from apis
+              getOptionLabel={(option) => option?.fp_name || ""}
               renderInput={(params) => (
                 <TextField {...params} label="One Time Fees For" size="small" />
               )}
+              value={oneTimeFees || null}
+              onChange={(_, newValue) => handleChange("oneTimeFees", newValue)}
               sx={{ width: "200px" }}
             />
           )}
@@ -547,6 +565,10 @@ export default function Fees() {
 
                     <TableCell>
                       <Typography>{row["Fee Name"] || ""} </Typography>
+                      <Typography sx={{ mt: 0.5 }}>
+                        {row?.Name || ""}{" "}
+                      </Typography>
+                      <Typography>{row["Roll No"] || ""}</Typography>
                     </TableCell>
 
                     <TableCell align="center">
@@ -554,11 +576,20 @@ export default function Fees() {
                         <Typography sx={{ textAlign: "center" }}>
                           {`₹ ${row["Base Amount"] || ""}`}
                         </Typography>
-                        <Typography
-                          sx={{ color: "error.main", textAlign: "center" }}
-                        >
-                          {`₹ ${row["Late Fee"] || ""}`}
-                        </Typography>
+                        {Number(row["Late Fee"]) > 0 && (
+                          <Typography
+                            sx={{ color: "error.main", textAlign: "center" }}
+                          >
+                            {`₹ ${row["Late Fee"] || ""}`}
+                          </Typography>
+                        )}
+                        {Number(row["Concession"]) > 0 && (
+                          <Typography
+                            sx={{ color: "success.main", textAlign: "center" }}
+                          >
+                            {`₹ ${row["Concession"] || ""}`}
+                          </Typography>
+                        )}
                       </Box>
                     </TableCell>
 
