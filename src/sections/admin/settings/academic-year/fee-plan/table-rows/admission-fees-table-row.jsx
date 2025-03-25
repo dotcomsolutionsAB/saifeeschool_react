@@ -14,6 +14,7 @@ import useAuth from "../../../../../../hooks/useAuth";
 import AddNewFeePlanModal from "../modals/add-new-fee-plan-modal";
 import { TYPE_LIST } from "../../../../../../utils/constants";
 import ConfirmationDialog from "../../../../../../components/confirmation-dialog/confirmation-dialog";
+import dayjs from "dayjs";
 
 const AdmissionFeesTableRow = ({ row, refetch, academicYear }) => {
   const { logout } = useAuth();
@@ -66,9 +67,13 @@ const AdmissionFeesTableRow = ({ row, refetch, academicYear }) => {
           </Typography>
         </TableCell>
 
-        <TableCell>{row?.last_due_date || "-"}</TableCell>
+        <TableCell>
+          {row?.last_due_date
+            ? dayjs(row?.last_due_date).format("DD-MM-YYYY")
+            : "-"}
+        </TableCell>
 
-        <TableCell>{row?.last_fpp_amount || "-"}</TableCell>
+        <TableCell>{`₹ ${row?.last_fpp_amount || "-"}`}</TableCell>
 
         <TableCell>{row?.applied_students || "-"}</TableCell>
 

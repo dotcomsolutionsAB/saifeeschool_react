@@ -8,6 +8,7 @@ import {
   Typography,
   MenuItem,
   Popover,
+  Tooltip,
 } from "@mui/material";
 import useLayout from "../hooks/uesLayout";
 import useAuth from "../hooks/useAuth";
@@ -19,7 +20,7 @@ import {
   SearchRounded,
   VerifiedUserRounded,
 } from "@mui/icons-material";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Saifee_Logo from "../assets/logos/Saifee_Logo.png";
 import Input from "@mui/material/Input";
 import { ADMIN_SIDEBAR_ITEMS } from "../utils/constants";
@@ -45,8 +46,10 @@ const Header = () => {
   const { userInfo, logout } = useAuth();
   const { layout, handleDrawerOpen, isSidebarExpanded, toggleSidebar } =
     useLayout();
+  const textRef = useRef(null);
 
   const [isImageError, setIsImageError] = useState(false);
+  const [isOverflow, setIsOverflow] = useState(false);
   const [open, setOpen] = useState(null);
 
   const handleOpen = (event) => {
@@ -64,6 +67,12 @@ const Header = () => {
   const handleLogout = () => {
     logout();
   };
+
+  useEffect(() => {
+    if (textRef.current) {
+      setIsOverflow(textRef.current.scrollWidth > textRef.current.clientWidth);
+    }
+  }, []);
 
   return (
     <AppBar
@@ -122,7 +131,7 @@ const Header = () => {
                 overflow: "hidden",
               }}
             >
-              {!isImageError ? (
+              {/* {!isImageError ? (
                 <Box
                   component="img"
                   src={Saifee_Logo}
@@ -135,9 +144,23 @@ const Header = () => {
                   loading="lazy"
                   onError={handleImageError} // Handles image loading errors
                 />
-              ) : (
-                <Typography variant="h4">SAIFEE</Typography> // Fallback if image fails
-              )}
+              ) : ( */}
+              <Tooltip
+                title={isOverflow ? userInfo?.name || "" : ""}
+                placement="right"
+              >
+                <Typography
+                  ref={textRef}
+                  sx={{
+                    fontSize: "16px",
+                    fontWeight: "bold",
+                  }}
+                  noWrap
+                >
+                  Welcome {userInfo?.name || ""}
+                </Typography>
+              </Tooltip>
+              {/* )} */}
             </Box>
 
             {/* Icon Button */}
@@ -173,7 +196,7 @@ const Header = () => {
               flex: 1,
             }}
           >
-            {pathname === ADMIN_SIDEBAR_ITEMS[0]?.linkName ? (
+            {/* {pathname === ADMIN_SIDEBAR_ITEMS[0]?.linkName ? (
               <Input
                 autoFocus
                 fullWidth
@@ -187,18 +210,18 @@ const Header = () => {
                   </InputAdornment>
                 }
               />
-            ) : (
-              <Typography
-                noWrap
-                sx={{
-                  textTransform: "uppercase",
-                  fontSize: { xs: "16px", sm: "20px", md: "24px" },
-                  fontWeight: { xs: "600" },
-                }}
-              >
-                SAIFEE GOLDEN JUBILEE PUBLIC SCHOOL
-              </Typography>
-            )}
+            ) : ( */}
+            <Typography
+              noWrap
+              sx={{
+                textTransform: "uppercase",
+                fontSize: { xs: "16px", sm: "20px", md: "24px" },
+                fontWeight: { xs: "600" },
+              }}
+            >
+              SAIFEE GOLDEN JUBILEE PUBLIC SCHOOL
+            </Typography>
+            {/* )} */}
           </Box>
 
           {/* User Profile Avatar */}
@@ -251,7 +274,8 @@ const Header = () => {
               <Typography variant="subtitle2" noWrap>
                 {userInfo?.name}
               </Typography>
-              <Typography
+
+              {/* <Typography
                 variant="body2"
                 sx={{ color: "text.secondary" }}
                 noWrap
@@ -265,7 +289,7 @@ const Header = () => {
               </Typography>
               <Typography sx={{ fontSize: "12px" }}>
                 {userInfo?.ay_id}
-              </Typography>
+              </Typography> */}
             </Box>
 
             <Divider sx={{ borderStyle: "dashed" }} />

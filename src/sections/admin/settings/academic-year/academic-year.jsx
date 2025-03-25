@@ -5,6 +5,7 @@ import {
   AccordionSummary,
   Box,
   Button,
+  Card,
   CircularProgress,
   IconButton,
   MenuItem,
@@ -12,7 +13,7 @@ import {
   Typography,
   useTheme,
 } from "@mui/material";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useGetApi } from "../../../../hooks/useGetApi";
 import {
   getAcademicYear,
@@ -29,7 +30,7 @@ import useAuth from "../../../../hooks/useAuth";
 
 const AcademicYear = () => {
   const theme = useTheme();
-  const { logout } = useAuth();
+  const { logout, userInfo } = useAuth();
 
   const [expanded, setExpanded] = useState(0);
   const [activeTab, setActiveTab] = useState("Classes");
@@ -37,6 +38,7 @@ const AcademicYear = () => {
   const [newYearModalOpen, setNewYearModalOpen] = useState(false);
   const [anchorEl, setAnchorEl] = useState(null);
   const [selectedRow, setSelectedRow] = useState();
+  const [academicYear, setAcademicYear] = useState(null);
 
   const [isMakeCurrentLoading, setIsMakeCurrentLoading] = useState(false);
 
@@ -88,6 +90,15 @@ const AcademicYear = () => {
       toast.error(response?.message || "Some error occurred.");
     }
   };
+
+  useEffect(() => {
+    const currentAcademicYear = academicYearList?.find(
+      (year) => Number(year?.ay_id) === Number(userInfo?.ay_id)
+    );
+
+    setAcademicYear(currentAcademicYear);
+  }, [academicYearList]);
+
   return (
     <Box>
       <Box
@@ -100,6 +111,13 @@ const AcademicYear = () => {
           width: "100%",
         }}
       >
+        {academicYear && (
+          <Card elevation={3} sx={{ px: 1, py: 0.5 }}>
+            <Typography variant="h6">
+              Current Year- {academicYear?.ay_name || ""}
+            </Typography>
+          </Card>
+        )}
         {/* Add Student */}
         <Button variant="contained" onClick={handleModalOpen}>
           Add New Year

@@ -17,7 +17,7 @@ import { CurrencyRupee, PriorityHigh } from "@mui/icons-material";
 import PaymentSummaryTable from "../sections/admin/dashboard/payment-summary-table";
 import { getAllAcademicYears } from "../services/admin/students-management.service";
 import { useGetApi } from "../hooks/useGetApi";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import useAuth from "../hooks/useAuth";
 import { getStudentStats } from "../services/admin/dashboard.service";
 import Loader from "../components/loader/loader";
@@ -47,6 +47,14 @@ const AdminDashboard = () => {
   const { dataList: academicYearList } = useGetApi({
     apiFunction: getAllAcademicYears,
   });
+
+  useEffect(() => {
+    const currentAcademicYear = academicYearList?.find(
+      (year) => Number(year?.ay_id) === Number(userInfo?.ay_id)
+    );
+
+    setAcademicYear(currentAcademicYear);
+  }, [academicYearList]);
 
   return (
     <>
@@ -209,7 +217,7 @@ const AdminDashboard = () => {
                   Total Fees Due
                 </Typography>
                 <Typography variant="h4">
-                  ₹ {studentStats?.total_unpaid_amount || "0"}
+                  ₹ {studentStats?.total_unpaid_fees?.amount || "0"}
                 </Typography>
               </Card>
             </Grid>
@@ -263,7 +271,7 @@ const AdminDashboard = () => {
                           Late Fees
                         </Typography>
                         <Typography variant="h6">
-                          ₹ {studentStats?.total_late_fees_paid || "0"}
+                          ₹ {studentStats?.total_late_fees_paid?.amount || "0"}
                         </Typography>
                       </Box>
                     </Box>

@@ -122,7 +122,7 @@ export default function TransactionFees() {
                     const rowIndex = page * rowsPerPage + index + 1;
                     return (
                       <TransactionFeesTableRow
-                        key={row?.id}
+                        key={row?.txn_id || rowIndex}
                         row={row}
                         rowIndex={rowIndex}
                       />

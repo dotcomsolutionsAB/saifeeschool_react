@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Box from "@mui/material/Box";
 import { NavLink } from "react-router-dom";
 import {
@@ -70,6 +70,8 @@ const Sidebar = () => {
   const [isImageError, setIsImageError] = useState(false);
   const [anchorEl, setAnchorEl] = useState(null);
   const [selectedItem, setSelectedItem] = useState(null);
+  const textRef = useRef(null);
+  const [isOverflow, setIsOverflow] = useState(false);
 
   const MAIN_SIDEBAR_ITEMS =
     userInfo?.role === "admin"
@@ -104,6 +106,12 @@ const Sidebar = () => {
     setOpenItems((prev) => ({ ...prev, [item?._id]: !prev[item?._id] }));
   };
 
+  useEffect(() => {
+    if (textRef.current) {
+      setIsOverflow(textRef.current.scrollWidth > textRef.current.clientWidth);
+    }
+  }, []);
+
   return (
     <Box sx={{ width: "100%", height: "100%" }}>
       {layout?.isLessThanMedium && (
@@ -120,8 +128,15 @@ const Sidebar = () => {
           }}
         >
           {/* SAIFEE Logo */}
-          <Box sx={{ height: "100%", display: "flex", alignItems: "center" }}>
-            {!isImageError ? (
+          <Box
+            sx={{
+              width: "calc(100% - 50px)",
+              height: "100%",
+              display: "flex",
+              alignItems: "center",
+            }}
+          >
+            {/* {!isImageError ? (
               <Box
                 component="img"
                 src={Saifee_Logo}
@@ -134,9 +149,23 @@ const Sidebar = () => {
                 loading="lazy"
                 onError={handleImageError}
               />
-            ) : (
-              <Typography variant="h4">SAIFEE</Typography>
-            )}
+            ) : ( */}
+            <Tooltip
+              title={isOverflow ? userInfo?.name || "" : ""}
+              placement="right"
+            >
+              <Typography
+                ref={textRef}
+                sx={{
+                  fontSize: "16px",
+                  fontWeight: "bold",
+                }}
+                noWrap
+              >
+                Welcome {userInfo?.name || ""}
+              </Typography>
+            </Tooltip>
+            {/* )} */}
           </Box>
           <IconButton
             sx={{
@@ -215,7 +244,9 @@ const Sidebar = () => {
               sx={{
                 flex: 1,
                 maxWidth:
-                  isSidebarExpanded || layout.isLessThanMedium ? "200px" : 0,
+                  isSidebarExpanded || layout.isLessThanMedium
+                    ? layout?.sidebarWidth
+                    : 0,
                 opacity: isSidebarExpanded || layout.isLessThanMedium ? 1 : 0,
                 transition: "max-width 0.5s ease, opacity 0.5s ease",
                 overflow: "hidden",
@@ -241,7 +272,6 @@ const Sidebar = () => {
                     <Typography
                       sx={{
                         fontWeight: isActive ? 600 : 400,
-                        fontSize: "15px",
                       }}
                     >
                       {item?.displayName}
@@ -287,7 +317,7 @@ const Sidebar = () => {
                             slotProps={{
                               primary: {
                                 typography: {
-                                  fontSize: 12,
+                                  fontSize: 14,
                                   whiteSpace: "nowrap",
                                 },
                               },
@@ -299,9 +329,7 @@ const Sidebar = () => {
                   </Collapse>
                 </>
               ) : (
-                <Typography
-                  sx={{ fontWeight: isActive ? 600 : 400, fontSize: "15px" }}
-                >
+                <Typography sx={{ fontWeight: isActive ? 600 : 400 }}>
                   {item?.displayName}
                 </Typography>
               )}

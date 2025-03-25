@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 import Card from "@mui/material/Card";
 import Table from "@mui/material/Table";
@@ -48,6 +48,7 @@ import {
 import { toast } from "react-toastify";
 import Iconify from "../../../../components/iconify/iconify";
 import { getAllTransactions } from "../../../../services/admin/transactions.service";
+import dayjs from "dayjs";
 // ----------------------------------------------------------------------
 
 const HEAD_LABEL = [
@@ -249,6 +250,14 @@ export default function Transactions() {
   // if no search result is found
   const notFound = !transactionsCount && !!search;
 
+  useEffect(() => {
+    const currentAcademicYear = academicYearList?.find(
+      (year) => Number(year?.ay_id) === Number(userInfo?.ay_id)
+    );
+
+    setAcademicYear(currentAcademicYear);
+  }, [academicYearList]);
+
   return (
     <>
       <Box
@@ -444,14 +453,18 @@ export default function Transactions() {
                       </Typography>
                     </TableCell>
 
-                    <TableCell>{row?.txn_date || ""}</TableCell>
+                    <TableCell>
+                      {row?.txn_date
+                        ? dayjs(row?.txn_date).format("DD-MM-YYYY")
+                        : "-"}
+                    </TableCell>
 
                     <TableCell>{row?.txn_from || ""}</TableCell>
 
                     <TableCell>{row?.txn_to || ""}</TableCell>
                     <TableCell>{row?.narration || ""}</TableCell>
                     <TableCell>{row?.mode || ""}</TableCell>
-                    <TableCell>{row?.amount || ""}</TableCell>
+                    <TableCell>{`₹ ${row?.amount || ""}`}</TableCell>
                   </TableRow>
                 ))}
 

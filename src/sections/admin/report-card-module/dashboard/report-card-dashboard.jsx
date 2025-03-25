@@ -11,7 +11,7 @@ import {
   Typography,
   useTheme,
 } from "@mui/material";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useGetApi } from "../../../../hooks/useGetApi";
 import { getAllClassGroup } from "../../../../services/admin/classes.service";
 import Loader from "../../../../components/loader/loader";
@@ -88,6 +88,14 @@ const ReportCardDashboard = () => {
 
   // if no search result is found
   const notFound = !classCount;
+
+  useEffect(() => {
+    const currentAcademicYear = academicYearList?.find(
+      (year) => Number(year?.ay_id) === Number(userInfo?.ay_id)
+    );
+
+    setFormData((preValue) => ({ ...preValue, ay_id: currentAcademicYear }));
+  }, [academicYearList]);
 
   return (
     <Box>

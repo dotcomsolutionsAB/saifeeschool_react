@@ -235,6 +235,17 @@ export default function MarksGradeEntry() {
     }
   }, [reportList?.marks]); // Update when reportList changes
 
+  useEffect(() => {
+    const currentAcademicYear = academicYearList?.find(
+      (year) => Number(year?.ay_id) === Number(userInfo?.ay_id)
+    );
+
+    setFormData((preValue) => ({
+      ...preValue,
+      ay_id: currentAcademicYear || null,
+    }));
+  }, [academicYearList]);
+
   return (
     <>
       {/* Search and Filters */}

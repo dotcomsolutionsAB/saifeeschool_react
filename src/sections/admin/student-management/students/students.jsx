@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 import Card from "@mui/material/Card";
 import Table from "@mui/material/Table";
@@ -54,7 +54,7 @@ import useStudent from "../../../../hooks/useStudent";
 // ----------------------------------------------------------------------
 
 const HEAD_LABEL = [
-  { id: "id", label: "ID" },
+  // { id: "id", label: "ID" },
   { id: "st_first_name", label: "Name" },
   { id: "class_name", label: "Class" },
   { id: "st_roll_no", label: "Roll No" },
@@ -293,6 +293,14 @@ export default function Students() {
   const handleRowClick = (row) => {
     navigate("/students-management/students/student-detail", { state: row });
   };
+
+  useEffect(() => {
+    const currentAcademicYear = academicYearList?.find(
+      (year) => Number(year?.ay_id) === Number(userInfo?.ay_id)
+    );
+
+    setAcademicYear(currentAcademicYear);
+  }, [academicYearList]);
 
   return (
     <>
@@ -572,7 +580,7 @@ export default function Students() {
                         onChange={() => handleClick(row?.id)}
                       />
                     </TableCell>
-                    <TableCell>{row?.id || ""}</TableCell>
+                    {/* <TableCell>{row?.id || ""}</TableCell> */}
 
                     <TableCell
                       sx={{ cursor: "pointer" }}

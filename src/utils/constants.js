@@ -86,11 +86,11 @@ export const ADMIN_SIDEBAR_ITEMS = [
         displayName: "Character Certificate",
         linkName: "/report-card-module/character-certificate",
       },
-      {
-        _id: 46,
-        displayName: "Bulk Character Certificate",
-        linkName: "/report-card-module/bulk-character-certificate",
-      },
+      // {
+      //   _id: 46,
+      //   displayName: "Bulk Character Certificate",
+      //   linkName: "/report-card-module/bulk-character-certificate",
+      // },
     ],
   },
   {

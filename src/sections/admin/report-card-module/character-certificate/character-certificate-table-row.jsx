@@ -17,6 +17,7 @@ import { printTCPdf } from "../../../../services/admin/report-card-module.servic
 import { toast } from "react-toastify";
 import useAuth from "../../../../hooks/useAuth";
 import CreateEditCCModal from "./modals/create-edit-cc-modal";
+import dayjs from "dayjs";
 
 const CharacterCertificateTableRow = ({
   row,
@@ -96,9 +97,15 @@ const CharacterCertificateTableRow = ({
           </Typography>
         </TableCell>
 
-        <TableCell>{row?.leaving_date || "-"}</TableCell>
+        <TableCell>
+          {row?.leaving_date
+            ? dayjs(row?.leaving_date).format("DD-MM-YYYY")
+            : "-"}
+        </TableCell>
 
-        <TableCell>{row?.date_from || "-"}</TableCell>
+        <TableCell>
+          {row?.date_from ? dayjs(row?.date_from).format("DD-MM-YYYY") : "-"}
+        </TableCell>
 
         <TableCell align="center">
           <IconButton sx={{ cursor: "pointer" }} onClick={handleMenuOpen}>

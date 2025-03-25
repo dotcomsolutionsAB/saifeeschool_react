@@ -50,6 +50,7 @@ import {
   getPaymentModes,
   paymentAttempts,
 } from "../../../../services/admin/transactions.service";
+import dayjs from "dayjs";
 // ----------------------------------------------------------------------
 
 const HEAD_LABEL = [
@@ -472,12 +473,16 @@ export default function PaymentAttempts() {
                       </Typography>
                     </TableCell>
 
-                    <TableCell>{row?.Date || ""}</TableCell>
+                    <TableCell>
+                      {row?.Date
+                        ? dayjs(row?.Date).format("DD-MM-YYYY HH:mm")
+                        : "-"}
+                    </TableCell>
 
                     <TableCell>{row?.Unique_Ref_No || ""}</TableCell>
                     <TableCell>{row?.Txn_Id || "-"}</TableCell>
                     <TableCell>{row?.Mode || ""}</TableCell>
-                    <TableCell>{row?.Total_Amount || ""}</TableCell>
+                    <TableCell>{`₹ ${row?.Total_Amount || ""}`}</TableCell>
                     <TableCell>{row?.Status || ""}</TableCell>
                   </TableRow>
                 ))}

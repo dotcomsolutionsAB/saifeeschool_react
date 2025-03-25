@@ -552,12 +552,12 @@ export default function Fees() {
                     <TableCell align="center">
                       <Box>
                         <Typography sx={{ textAlign: "center" }}>
-                          {row["Base Amount"] || ""}
+                          {`₹ ${row["Base Amount"] || ""}`}
                         </Typography>
                         <Typography
                           sx={{ color: "error.main", textAlign: "center" }}
                         >
-                          {row["Late Fee"] || ""}
+                          {`₹ ${row["Late Fee"] || ""}`}
                         </Typography>
                       </Box>
                     </TableCell>
@@ -565,13 +565,13 @@ export default function Fees() {
                     <TableCell align="center">
                       <Typography noWrap>
                         {row["Due Date"]
-                          ? dayjs(row["Due Date"]).format("YYYY-MM-DD")
+                          ? dayjs(row["Due Date"]).format("DD-MM-YYYY")
                           : "-"}
                       </Typography>
                     </TableCell>
                     {/* <TableCell>{row["Late Fee"] || ""}</TableCell> */}
                     <TableCell align="center">
-                      {row["Total Amount"] || ""}
+                      {`₹ ${row["Total Amount"] || ""}`}
                     </TableCell>
                     <TableCell align="center">
                       <Box

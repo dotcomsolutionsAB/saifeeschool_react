@@ -34,6 +34,7 @@ import {
   getRecords,
 } from "../../../../services/admin/transactions.service";
 import { DatePicker } from "@mui/x-date-pickers";
+import dayjs from "dayjs";
 // ----------------------------------------------------------------------
 
 const HEAD_LABEL = [
@@ -311,11 +312,15 @@ export default function DailyStatements() {
                       </Typography>
                     </TableCell>
 
-                    <TableCell>{row?.Date || ""}</TableCell>
+                    <TableCell>
+                      {row?.Date
+                        ? dayjs(row?.Date).format("DD-MM-YYYY HH:mm")
+                        : ""}
+                    </TableCell>
                     <TableCell>{row?.Unique_Ref_No || ""}</TableCell>
-                    <TableCell>{row?.Total_Amount || ""}</TableCell>
+                    <TableCell>{`₹ ${row?.Total_Amount || ""}`}</TableCell>
                     <TableCell>{row?.Mode || ""}</TableCell>
-                    <TableCell>{row?.Status || ""}</TableCell>
+                    <TableCell>{row?.Status?.status || ""}</TableCell>
                   </TableRow>
                 ))}
 

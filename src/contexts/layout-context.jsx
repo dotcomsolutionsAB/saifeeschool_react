@@ -14,6 +14,7 @@ const LayoutProvider = ({ children }) => {
   };
   const handleDrawerClose = () => {
     setDrawerOpen(false);
+    setOpenItems({});
   };
 
   const calculateLayout = (width) => {
@@ -22,11 +23,13 @@ const LayoutProvider = ({ children }) => {
 
     if (isLessThanMedium) {
       handleDrawerClose();
+    } else {
+      setOpenItems({});
     }
 
     return {
       headerHeight: "64px",
-      sidebarWidth: isSidebarExpanded || isLessThanMedium ? "280px" : "64px",
+      sidebarWidth: isSidebarExpanded || isLessThanMedium ? "300px" : "64px",
       px: isExtraSmall || isLessThanMedium ? "10px" : "20px",
       isLessThanMedium,
     };
