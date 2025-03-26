@@ -11,7 +11,7 @@ const api = axios.create({
 // Add an Axios request interceptor to include the Bearer token in headers
 api.interceptors.request.use(
   (config) => {
-    const userInfo = JSON.parse(localStorage.getItem(USER_INFO));
+    const userInfo = JSON.parse(sessionStorage.getItem(USER_INFO));
     console.log(userInfo, "userInfo");
     if (userInfo && userInfo?.token) {
       config.headers.Authorization = `Bearer ${userInfo.token || ""}`;

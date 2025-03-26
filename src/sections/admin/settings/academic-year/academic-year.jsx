@@ -13,7 +13,7 @@ import {
   Typography,
   useTheme,
 } from "@mui/material";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useGetApi } from "../../../../hooks/useGetApi";
 import {
   getAcademicYear,
@@ -38,7 +38,10 @@ const AcademicYear = () => {
   const [newYearModalOpen, setNewYearModalOpen] = useState(false);
   const [anchorEl, setAnchorEl] = useState(null);
   const [selectedRow, setSelectedRow] = useState();
-  const [academicYear, setAcademicYear] = useState(null);
+  const [academicYear, setAcademicYear] = useState({
+    ay_id: userInfo?.ay_id || "",
+    ay_name: userInfo?.ay_name || "",
+  });
 
   const [isMakeCurrentLoading, setIsMakeCurrentLoading] = useState(false);
 
@@ -90,14 +93,6 @@ const AcademicYear = () => {
       toast.error(response?.message || "Some error occurred.");
     }
   };
-
-  useEffect(() => {
-    const currentAcademicYear = academicYearList?.find(
-      (year) => Number(year?.ay_id) === Number(userInfo?.ay_id)
-    );
-
-    setAcademicYear(currentAcademicYear);
-  }, [academicYearList]);
 
   return (
     <Box>

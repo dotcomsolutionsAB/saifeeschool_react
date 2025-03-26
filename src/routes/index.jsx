@@ -33,6 +33,7 @@ import TeacherDashboard from "../pages/teacher-dashboard";
 import PaidFees from "../sections/student/fees/paid-fees";
 import PendingFees from "../sections/student/fees/pending-fees";
 import TransactionFees from "../sections/student/fees/transaction-fees";
+import NewAdmission from "../pages/new-admission";
 
 export default function Router() {
   const { isLoggedIn, logout, userInfo } = useAuth();
@@ -118,7 +119,7 @@ export default function Router() {
         event.newValue === null
       ) {
         logout();
-        toast.error("Local storage changed.");
+        toast.error("Session storage changed.");
       }
     };
 
@@ -146,7 +147,10 @@ export default function Router() {
       path: "/login",
       element: isLoggedIn ? <Navigate to="/" replace /> : <Login />,
     },
-
+    {
+      path: "/new-admission",
+      element: <NewAdmission />,
+    },
     { path: "404", element: <Page404 /> },
     { path: "*", element: <Navigate to="/404" replace /> },
   ]);

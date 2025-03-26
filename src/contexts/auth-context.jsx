@@ -1,6 +1,6 @@
 import { createContext, useState } from "react";
 import PropTypes from "prop-types";
-import useLocalStorage from "../hooks/useLocalStorage";
+import useSessionStorage from "../hooks/useSessionStorage";
 import { loginApi } from "../services/auth.service";
 import { toast } from "react-toastify";
 import { IS_LOGGED_IN, USER_INFO } from "../utils/constants";
@@ -10,11 +10,11 @@ const AuthContext = createContext();
 
 // Create a provider component
 const AuthProvider = ({ children }) => {
-  const [isLoggedIn, setIsLoggedIn, removeLoggedIn] = useLocalStorage(
+  const [isLoggedIn, setIsLoggedIn, removeLoggedIn] = useSessionStorage(
     IS_LOGGED_IN,
     false
   );
-  const [userInfo, setUserInfo, removeUserInfo] = useLocalStorage(
+  const [userInfo, setUserInfo, removeUserInfo] = useSessionStorage(
     USER_INFO,
     null
   );

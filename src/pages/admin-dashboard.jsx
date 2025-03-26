@@ -17,7 +17,7 @@ import { CurrencyRupee, PriorityHigh } from "@mui/icons-material";
 import PaymentSummaryTable from "../sections/admin/dashboard/payment-summary-table";
 import { getAllAcademicYears } from "../services/admin/students-management.service";
 import { useGetApi } from "../hooks/useGetApi";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import useAuth from "../hooks/useAuth";
 import { getStudentStats } from "../services/admin/dashboard.service";
 import Loader from "../components/loader/loader";
@@ -29,7 +29,10 @@ const AdminDashboard = () => {
   const { userInfo } = useAuth();
   const cardHeight = "200px";
 
-  const [academicYear, setAcademicYear] = useState(null);
+  const [academicYear, setAcademicYear] = useState({
+    ay_id: userInfo?.ay_id,
+    ay_name: userInfo?.ay_name,
+  });
 
   const {
     dataList: studentStats,
@@ -47,14 +50,6 @@ const AdminDashboard = () => {
   const { dataList: academicYearList } = useGetApi({
     apiFunction: getAllAcademicYears,
   });
-
-  useEffect(() => {
-    const currentAcademicYear = academicYearList?.find(
-      (year) => Number(year?.ay_id) === Number(userInfo?.ay_id)
-    );
-
-    setAcademicYear(currentAcademicYear);
-  }, [academicYearList]);
 
   return (
     <>

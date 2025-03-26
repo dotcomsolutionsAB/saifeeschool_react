@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
 import Card from "@mui/material/Card";
 import Table from "@mui/material/Table";
@@ -293,14 +293,6 @@ export default function Students() {
   const handleRowClick = (row) => {
     navigate("/students-management/students/student-detail", { state: row });
   };
-
-  useEffect(() => {
-    const currentAcademicYear = academicYearList?.find(
-      (year) => Number(year?.ay_id) === Number(userInfo?.ay_id)
-    );
-
-    setAcademicYear(currentAcademicYear);
-  }, [academicYearList]);
 
   return (
     <>

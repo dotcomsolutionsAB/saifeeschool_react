@@ -21,7 +21,10 @@ const AdminStudentProvider = ({ children }) => {
   const [gender, setGender] = useState(null);
   const [dobFrom, setDobFrom] = useState(null);
   const [dobTo, setDobTo] = useState(null);
-  const [academicYear, setAcademicYear] = useState(null);
+  const [academicYear, setAcademicYear] = useState({
+    ay_id: userInfo?.ay_id,
+    ay_name: userInfo?.ay_name,
+  });
   const [anchorEl, setAnchorEl] = useState(null);
   const [selectedRows, setSelectedRows] = useState([]);
   const [isExportLoading, setIsExportLoading] = useState(false);

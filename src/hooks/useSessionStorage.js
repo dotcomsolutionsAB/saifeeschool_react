@@ -2,10 +2,10 @@ import { useState } from "react";
 
 // ----------------------------------------------------------------------
 
-export default function useLocalStorage(key, defaultValue) {
+export default function useSessionStorage(key, defaultValue) {
   const [storedValue, setStoredValue] = useState(() => {
     try {
-      const item = localStorage.getItem(key);
+      const item = sessionStorage.getItem(key);
 
       if (item) {
         try {
@@ -19,10 +19,10 @@ export default function useLocalStorage(key, defaultValue) {
         typeof defaultValue === "string"
           ? defaultValue
           : JSON.stringify(defaultValue);
-      localStorage.setItem(key, valueToStore);
+      sessionStorage.setItem(key, valueToStore);
       return defaultValue;
     } catch (error) {
-      console.error("Error accessing localStorage:", error);
+      console.error("Error accessing sessionStorage:", error);
 
       // Store the default value in case of error
       const valueToStore =
@@ -30,7 +30,7 @@ export default function useLocalStorage(key, defaultValue) {
           ? defaultValue
           : JSON.stringify(defaultValue);
       try {
-        localStorage.setItem(key, valueToStore);
+        sessionStorage.setItem(key, valueToStore);
       } catch (storageError) {
         console.error("Error storing default value:", storageError);
       }
@@ -51,20 +51,20 @@ export default function useLocalStorage(key, defaultValue) {
 
       const valueToStore =
         typeof newValue === "string" ? newValue : JSON.stringify(newValue);
-      localStorage.setItem(key, valueToStore);
+      sessionStorage.setItem(key, valueToStore);
 
       setStoredValue(newValue);
     } catch (error) {
-      console.error("Error updating localStorage:", error);
+      console.error("Error updating sessionStorage:", error);
     }
   };
 
   const removeValue = () => {
     try {
-      localStorage.removeItem(key);
+      sessionStorage.removeItem(key);
       setStoredValue(defaultValue);
     } catch (error) {
-      console.error("Error removing item from localStorage:", error);
+      console.error("Error removing item from sessionStorage:", error);
     }
   };
 

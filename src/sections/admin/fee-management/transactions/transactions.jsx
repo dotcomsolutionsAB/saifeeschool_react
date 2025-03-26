@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
 import Card from "@mui/material/Card";
 import Table from "@mui/material/Table";
@@ -75,7 +75,10 @@ export default function Transactions() {
   const [selectedOptions, setSelectedOptions] = useState([]); // to select multiple checkboxes in class field
   const [dueFrom, setDueFrom] = useState(null);
   const [dueTill, setDueTill] = useState(null);
-  const [academicYear, setAcademicYear] = useState(null);
+  const [academicYear, setAcademicYear] = useState({
+    ay_id: userInfo?.ay_id,
+    ay_name: userInfo?.ay_name,
+  });
   const [anchorEl, setAnchorEl] = useState(null);
   const [selectedRows, setSelectedRows] = useState([]);
   const [isExportLoading, setIsExportLoading] = useState(false);
@@ -249,14 +252,6 @@ export default function Transactions() {
 
   // if no search result is found
   const notFound = !transactionsCount && !!search;
-
-  useEffect(() => {
-    const currentAcademicYear = academicYearList?.find(
-      (year) => Number(year?.ay_id) === Number(userInfo?.ay_id)
-    );
-
-    setAcademicYear(currentAcademicYear);
-  }, [academicYearList]);
 
   return (
     <>

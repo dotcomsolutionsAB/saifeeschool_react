@@ -12,7 +12,7 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import Iconify from "../../../../components/iconify/iconify";
 import OtherDetailsTab from "./detail-tabs/other-details-tab";
@@ -37,7 +37,10 @@ const StudentDetail = () => {
   const [previewImage, setPreviewImage] = useState(detail?.photo || "");
   const [activeTab, setActiveTab] = useState(0);
   const [walletModalOpen, setWalletModalOpen] = useState(false);
-  const [academicYear, setAcademicYear] = useState(null);
+  const [academicYear, setAcademicYear] = useState({
+    ay_id: userInfo?.ay_id,
+    ay_name: userInfo?.ay_name,
+  });
 
   // api to get academicYearList
   const { dataList: academicYearList } = useGetApi({
@@ -86,14 +89,6 @@ const StudentDetail = () => {
   const handleEdit = () => {
     navigate("/students-management/students/edit-student", { state: detail });
   };
-
-  useEffect(() => {
-    const currentAcademicYear = academicYearList?.find(
-      (year) => Number(year?.ay_id) === Number(userInfo?.ay_id)
-    );
-
-    setAcademicYear(currentAcademicYear);
-  }, [academicYearList]);
 
   return (
     <>

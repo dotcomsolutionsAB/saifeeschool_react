@@ -212,10 +212,12 @@ export default function MarksGradeEntry() {
     if (academicYearList?.length > 0) {
       setFormData((preValue) => ({
         ...preValue,
-        ay_id:
-          academicYearList.find(
-            (option) => Number(option?.ay_id) === Number(state?.ay_id)
-          ) || null,
+        ay_id: academicYearList?.find(
+          (option) => Number(option?.ay_id) === Number(state?.ay_id)
+        ) || {
+          ay_id: userInfo?.ay_id,
+          ay_name: userInfo?.ay_name,
+        },
         cg_id: state?.cg_id
           ? { id: state?.cg_id, cg_name: state?.cg_name }
           : null,
@@ -234,17 +236,6 @@ export default function MarksGradeEntry() {
       setOriginalMarks(initialMarks);
     }
   }, [reportList?.marks]); // Update when reportList changes
-
-  useEffect(() => {
-    const currentAcademicYear = academicYearList?.find(
-      (year) => Number(year?.ay_id) === Number(userInfo?.ay_id)
-    );
-
-    setFormData((preValue) => ({
-      ...preValue,
-      ay_id: currentAcademicYear || null,
-    }));
-  }, [academicYearList]);
 
   return (
     <>

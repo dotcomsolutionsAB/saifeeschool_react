@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
 import Card from "@mui/material/Card";
 import Table from "@mui/material/Table";
@@ -92,7 +92,10 @@ export default function Fees() {
   const [type, setType] = useState(null);
   const [dueFrom, setDueFrom] = useState(null);
   const [dueTill, setDueTill] = useState(null);
-  const [academicYear, setAcademicYear] = useState(null);
+  const [academicYear, setAcademicYear] = useState({
+    ay_id: userInfo?.ay_id,
+    ay_name: userInfo?.ay_name,
+  });
   const [anchorEl, setAnchorEl] = useState(null);
   const [selectedRows, setSelectedRows] = useState([]);
   const [isExportLoading, setIsExportLoading] = useState(false);
@@ -289,15 +292,6 @@ export default function Fees() {
 
   // if no search result is found
   const notFound = !feesCount && !!search;
-
-  useEffect(() => {
-    const currentAcademicYear = academicYearList?.find(
-      (year) => Number(year?.ay_id) === Number(userInfo?.ay_id)
-    );
-
-    setAcademicYear(currentAcademicYear);
-  }, [academicYearList]);
-
   return (
     <>
       <Box

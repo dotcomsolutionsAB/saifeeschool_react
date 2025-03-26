@@ -11,7 +11,7 @@ import {
   Typography,
   useTheme,
 } from "@mui/material";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useGetApi } from "../../../../hooks/useGetApi";
 import { getAllClassGroup } from "../../../../services/admin/classes.service";
 import Loader from "../../../../components/loader/loader";
@@ -35,7 +35,9 @@ const ReportCardDashboard = () => {
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(DEFAULT_LIMIT);
   const [search, setSearch] = useState("");
-  const [formData, setFormData] = useState(null);
+  const [formData, setFormData] = useState({
+    ay_id: { ay_id: userInfo?.ay_id, ay_name: userInfo?.ay_name },
+  });
 
   const handleSearch = (e) => {
     setSearch(e.target.value);
@@ -88,14 +90,6 @@ const ReportCardDashboard = () => {
 
   // if no search result is found
   const notFound = !classCount;
-
-  useEffect(() => {
-    const currentAcademicYear = academicYearList?.find(
-      (year) => Number(year?.ay_id) === Number(userInfo?.ay_id)
-    );
-
-    setFormData((preValue) => ({ ...preValue, ay_id: currentAcademicYear }));
-  }, [academicYearList]);
 
   return (
     <Box>
