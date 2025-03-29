@@ -58,7 +58,7 @@ export const useGetApi = ({
 
   return {
     dataList,
-    dataCount,
+    dataCount: Number(dataCount),
     isLoading,
     isError,
     refetch: fetchData,

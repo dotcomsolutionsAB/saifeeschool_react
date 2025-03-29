@@ -9,6 +9,7 @@ import {
   TextField,
 } from "@mui/material";
 import { DatePicker } from "@mui/x-date-pickers";
+import AttachmentsTab from "./attachments/attachments-tab";
 
 const ChildDetailsTab = ({ props }) => {
   const { formData, handleChange } = props;
@@ -151,6 +152,18 @@ const ChildDetailsTab = ({ props }) => {
             value={formData?.pincode || ""}
             onChange={handleChange}
           />
+        </Grid>
+        <Grid item xs={12} sm={6}>
+          <AttachmentsTab detail={formData} title="Child's Photo" />
+        </Grid>
+        <Grid item xs={12} sm={6}>
+          <AttachmentsTab detail={formData} title="Father's Photo" />
+        </Grid>
+        <Grid item xs={12} sm={6}>
+          <AttachmentsTab detail={formData} title="Mother's Photo" />
+        </Grid>
+        <Grid item xs={12} sm={6}>
+          <AttachmentsTab detail={formData} title="Birth Certificate" />
         </Grid>
       </Grid>
     </Box>

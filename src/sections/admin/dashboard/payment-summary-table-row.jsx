@@ -1,8 +1,14 @@
 import PropTypes from "prop-types";
-import { TableCell, TableRow } from "@mui/material";
+import { Box, TableCell, TableRow } from "@mui/material";
 import { FORMAT_INDIAN_CURRENCY } from "../../../utils/constants";
+import { useNavigate } from "react-router-dom";
 
 const PaymentSummaryTableRow = ({ sn, row }) => {
+  const navigate = useNavigate();
+
+  const handleClick = () => {
+    navigate("/fees-management/fees", { state: row });
+  };
   return (
     <>
       <TableRow hover tabIndex={-1}>
@@ -15,7 +21,18 @@ const PaymentSummaryTableRow = ({ sn, row }) => {
         </TableCell>
 
         <TableCell>
-          ₹ {FORMAT_INDIAN_CURRENCY(row?.total_amount) || "0"}
+          <Box
+            sx={{
+              color: "primary.main",
+              cursor: "pointer",
+              fontWeight: 600,
+              textDecoration: "underline",
+              textUnderlineOffset: "3px",
+            }}
+            onClick={handleClick}
+          >
+            ₹ {FORMAT_INDIAN_CURRENCY(row?.total_amount) || "0"}
+          </Box>
         </TableCell>
 
         <TableCell>₹ {FORMAT_INDIAN_CURRENCY(row?.fee_due) || "0"}</TableCell>

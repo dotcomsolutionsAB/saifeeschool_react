@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 import Card from "@mui/material/Card";
 import Table from "@mui/material/Table";
@@ -53,6 +53,7 @@ import {
   getOneTimeFees,
 } from "../../../../services/admin/fees-management.service";
 import dayjs from "dayjs";
+import { useLocation } from "react-router-dom";
 // ----------------------------------------------------------------------
 
 const HEAD_LABEL = [
@@ -61,7 +62,6 @@ const HEAD_LABEL = [
   { id: "Fee Name", label: "Fee" },
   { id: "Base Amount", label: "Fee Amount", align: "center" },
   { id: "Due Date", label: "Due Date", align: "center" },
-  // { id: "Late Fee", label: "Late Fee Applicable" },
   { id: "Total Amount", label: "Total Amount", align: "center" },
   { id: "Status", label: "Status", align: "center" },
 ];
@@ -79,7 +79,17 @@ const TYPE_LIST = [
 ];
 
 export default function Fees() {
+  const location = useLocation();
+
   const { userInfo, logout } = useAuth();
+
+  const selectedRow = location?.state;
+  const filter =
+    Number(selectedRow?.fee_due) === 0
+      ? selectedRow?.query_key_paid
+      : selectedRow?.query_key_unpaid;
+
+  console.log(selectedRow, "selectedRow");
 
   const [page, setPage] = useState(0);
 
@@ -108,6 +118,7 @@ export default function Fees() {
     status: status?.value || "",
     cg_id: cgId || "",
     type: type?.value || "",
+    fpp_id: oneTimeFees?.fpp_id?.toString() || "",
     date_from: dueFrom || "",
     date_to: dueTill || "",
   };
@@ -135,6 +146,7 @@ export default function Fees() {
       status,
       cgId,
       type,
+      oneTimeFees,
       dueFrom,
       dueTill,
     ],
@@ -293,6 +305,34 @@ export default function Fees() {
 
   // if no search result is found
   const notFound = !feesCount && !!search;
+
+  useEffect(() => {
+    if (filter && filter?.status) {
+      setStatus(
+        filter?.status === "paid"
+          ? STATUS_LIST[0]
+          : filter?.status === "unpaid"
+          ? STATUS_LIST[1]
+          : null
+      );
+      setType(
+        filter?.type === "monthly"
+          ? TYPE_LIST[0]
+          : filter?.type === "admission"
+          ? TYPE_LIST[1]
+          : filter?.type === "one_time"
+          ? TYPE_LIST[2]
+          : filter?.type === "recurring"
+          ? TYPE_LIST[3]
+          : null
+      );
+      // setAcademicYear({
+      //   ay_id: filter?.year,
+      //   ay_name: filter?.ay_name || "",
+      // });
+      setAcademicYear(null);
+    }
+  }, []);
   return (
     <>
       <Box
@@ -609,13 +649,13 @@ export default function Fees() {
                         FORMAT_INDIAN_CURRENCY(row["Total Amount"]) || "0"
                       }`}
                     </TableCell>
-                    <TableCell align="center">
+                    <TableCell>
                       <Box
                         sx={{
                           borderRadius: "15px",
                           px: 1,
                           py: 0.5,
-                          width: "80px",
+                          // width: "80px",
                           textAlign: "center",
                           background:
                             row?.Status === "Paid" ? "#28A745" : "#D60A0B",

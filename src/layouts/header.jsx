@@ -20,8 +20,6 @@ import {
 } from "@mui/icons-material";
 import { useState } from "react";
 import Saifee_Logo from "../assets/logos/Saifee_Logo.png";
-import { ADMIN_SIDEBAR_ITEMS } from "../utils/constants";
-import { usePathname } from "../hooks/usePathname";
 
 const MENU_OPTIONS = [
   {
@@ -39,7 +37,6 @@ const MENU_OPTIONS = [
 ];
 
 const Header = () => {
-  const pathname = usePathname();
   const { userInfo, logout } = useAuth();
   const { layout, handleDrawerOpen, isSidebarExpanded, toggleSidebar } =
     useLayout();
@@ -70,10 +67,7 @@ const Header = () => {
         position: "fixed",
         top: 0,
         left: 0,
-        bgcolor:
-          pathname === ADMIN_SIDEBAR_ITEMS[0]?.linkName
-            ? "custom.body_color"
-            : "common.white",
+        bgcolor: "common.white",
         color: "primary.main",
         zIndex: 10,
         height: layout?.headerHeight,
