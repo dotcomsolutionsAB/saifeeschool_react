@@ -12,7 +12,10 @@ import { deleteFeePlan } from "../../../../../../services/admin/fee-plan.service
 import { toast } from "react-toastify";
 import useAuth from "../../../../../../hooks/useAuth";
 import AddNewFeePlanModal from "../modals/add-new-fee-plan-modal";
-import { TYPE_LIST } from "../../../../../../utils/constants";
+import {
+  FORMAT_INDIAN_CURRENCY,
+  TYPE_LIST,
+} from "../../../../../../utils/constants";
 import ConfirmationDialog from "../../../../../../components/confirmation-dialog/confirmation-dialog";
 import dayjs from "dayjs";
 
@@ -73,7 +76,9 @@ const OneTimeFeesTableRow = ({ row, refetch, academicYear }) => {
             : "-"}
         </TableCell>
 
-        <TableCell>{`₹ ${row?.last_fpp_amount || "-"}`}</TableCell>
+        <TableCell>{`₹ ${
+          FORMAT_INDIAN_CURRENCY(row?.last_fpp_amount) || "0"
+        }`}</TableCell>
 
         <TableCell>{row?.applied_students || "-"}</TableCell>
 

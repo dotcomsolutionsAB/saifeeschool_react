@@ -34,6 +34,7 @@ import { useGetApi } from "../../../../hooks/useGetApi";
 import {
   DEFAULT_LIMIT,
   emptyRows,
+  FORMAT_INDIAN_CURRENCY,
   ROWS_PER_PAGE_OPTIONS,
 } from "../../../../utils/constants";
 import Loader from "../../../../components/loader/loader";
@@ -306,11 +307,13 @@ export default function Fees() {
       >
         {/* Total Paid */}
         <Button variant="outlined">
-          Total Paid:₹ {allResponse?.page_total_paid || "0"}/-
+          Total Paid:₹{" "}
+          {FORMAT_INDIAN_CURRENCY(allResponse?.page_total_paid) || "0"}/-
         </Button>
         {/* Total Due */}
         <Button variant="outlined">
-          Total Due: ₹ {allResponse?.page_total_due || "0"}/-
+          Total Due: ₹{" "}
+          {FORMAT_INDIAN_CURRENCY(allResponse?.page_total_due) || "0"}/-
         </Button>
 
         {/* Bulk Actions */}
@@ -555,33 +558,39 @@ export default function Fees() {
                       <Typography variant="subtitle2">
                         {row?.Name || ""}
                       </Typography>
+                      <Typography sx={{ mt: 0.5 }}>
+                        {row?.["Class Name"] || ""}
+                      </Typography>
+                      <Typography>{row?.["Roll No"] || ""}</Typography>
                     </TableCell>
 
                     <TableCell>
-                      <Typography>{row["Fee Name"] || ""} </Typography>
-                      <Typography sx={{ mt: 0.5 }}>
-                        {row?.Name || ""}{" "}
-                      </Typography>
-                      <Typography>{row["Roll No"] || ""}</Typography>
+                      <Typography>{row?.["Fee Name"] || ""} </Typography>
                     </TableCell>
 
                     <TableCell align="center">
                       <Box>
                         <Typography sx={{ textAlign: "center" }}>
-                          {`₹ ${row["Base Amount"] || ""}`}
+                          {`₹ ${
+                            FORMAT_INDIAN_CURRENCY(row["Base Amount"]) || "0"
+                          }`}
                         </Typography>
                         {Number(row["Late Fee"]) > 0 && (
                           <Typography
                             sx={{ color: "error.main", textAlign: "center" }}
                           >
-                            {`₹ ${row["Late Fee"] || ""}`}
+                            {`₹ ${
+                              FORMAT_INDIAN_CURRENCY(row["Late Fee"]) || "0"
+                            }`}
                           </Typography>
                         )}
                         {Number(row["Concession"]) > 0 && (
                           <Typography
                             sx={{ color: "success.main", textAlign: "center" }}
                           >
-                            {`₹ ${row["Concession"] || ""}`}
+                            {`₹ ${
+                              FORMAT_INDIAN_CURRENCY(row["Concession"]) || "0"
+                            }`}
                           </Typography>
                         )}
                       </Box>
@@ -596,7 +605,9 @@ export default function Fees() {
                     </TableCell>
                     {/* <TableCell>{row["Late Fee"] || ""}</TableCell> */}
                     <TableCell align="center">
-                      {`₹ ${row["Total Amount"] || ""}`}
+                      {`₹ ${
+                        FORMAT_INDIAN_CURRENCY(row["Total Amount"]) || "0"
+                      }`}
                     </TableCell>
                     <TableCell align="center">
                       <Box

@@ -24,6 +24,7 @@ import Loader from "../components/loader/loader";
 import MessageBox from "../components/error/message-box";
 import StudentPieChart from "../sections/admin/dashboard/student-pie-chart";
 import { Helmet } from "react-helmet-async";
+import { FORMAT_INDIAN_CURRENCY } from "../utils/constants";
 
 const AdminDashboard = () => {
   const { userInfo } = useAuth();
@@ -212,7 +213,10 @@ const AdminDashboard = () => {
                   Total Fees Due
                 </Typography>
                 <Typography variant="h4">
-                  ₹ {studentStats?.total_unpaid_fees?.amount || "0"}
+                  ₹{" "}
+                  {FORMAT_INDIAN_CURRENCY(
+                    studentStats?.total_unpaid_fees?.amount
+                  ) || "0"}
                 </Typography>
               </Card>
             </Grid>
@@ -266,7 +270,10 @@ const AdminDashboard = () => {
                           Late Fees
                         </Typography>
                         <Typography variant="h6">
-                          ₹ {studentStats?.total_late_fees_paid?.amount || "0"}
+                          ₹{" "}
+                          {FORMAT_INDIAN_CURRENCY(
+                            studentStats?.total_late_fees_paid?.amount
+                          ) || "0"}
                         </Typography>
                       </Box>
                     </Box>
@@ -326,7 +333,10 @@ const AdminDashboard = () => {
                           (Until Current Month)
                         </Typography>
                         <Typography variant="h6">
-                          ₹ {studentStats?.current_month_unpaid_amount || "0"}
+                          ₹{" "}
+                          {FORMAT_INDIAN_CURRENCY(
+                            studentStats?.current_month_unpaid_amount
+                          ) || "0"}
                         </Typography>
                       </Box>
                     </Box>

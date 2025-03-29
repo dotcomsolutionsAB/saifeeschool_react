@@ -20,6 +20,7 @@ import {
 import {
   DEFAULT_LIMIT,
   emptyRows,
+  FORMAT_INDIAN_CURRENCY,
   ROWS_PER_PAGE_OPTIONS,
 } from "../../../utils/constants";
 import { useGetApi } from "../../../hooks/useGetApi";
@@ -42,8 +43,6 @@ const HEAD_LABEL = [
   { id: "fpp_name", label: "Fee" },
   { id: "fpp_amount", label: "Fee Amount" },
   { id: "fpp_due_date", label: "Due Date" },
-  { id: "f_concession", label: "Concession", width: "110px" },
-  // { id: "fpp_late_fee", label: "Late Fee", width: "110px" },
   { id: "total_amount", label: "Total Amount" },
 ];
 
@@ -167,7 +166,7 @@ export default function PendingFees() {
           <CardContent>
             <Box sx={{ mb: 2, fontSize: "20px" }}>
               Pending Fees - {userInfo?.name || ""} | ₹
-              {allResponse?.total_unpaid || "0"}
+              {FORMAT_INDIAN_CURRENCY(allResponse?.total_unpaid) || "0"}
             </Box>
             <TableContainer sx={{ overflowY: "unset" }}>
               <Table sx={{ minWidth: 800 }}>

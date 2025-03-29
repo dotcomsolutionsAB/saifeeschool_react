@@ -14,6 +14,7 @@ import { useState } from "react";
 import { applyConcession } from "../../../../../services/admin/students-management.service";
 import { toast } from "react-toastify";
 import dayjs from "dayjs";
+import { FORMAT_INDIAN_CURRENCY } from "../../../../../utils/constants";
 
 const PaidFeesTableRow = ({
   row,
@@ -86,7 +87,9 @@ const PaidFeesTableRow = ({
           </Typography>
         </TableCell>
 
-        <TableCell>₹ {row?.fpp_amount || "-"}</TableCell>
+        <TableCell>
+          ₹ {FORMAT_INDIAN_CURRENCY(row?.fpp_amount) || "-"}
+        </TableCell>
 
         <TableCell>
           <Typography noWrap>
@@ -136,15 +139,17 @@ const PaidFeesTableRow = ({
         ) : (
           <>
             <TableCell sx={{ width: "110px" }}>
-              ₹ {row?.f_concession || "-"}
+              ₹ {FORMAT_INDIAN_CURRENCY(row?.f_concession) || "0"}
             </TableCell>
             <TableCell sx={{ width: "110px" }}>
-              ₹ {row?.fpp_late_fee || "-"}
+              ₹ {FORMAT_INDIAN_CURRENCY(row?.fpp_late_fee) || "0"}
             </TableCell>
           </>
         )}
 
-        <TableCell>{row?.total_amount || "-"}</TableCell>
+        <TableCell>
+          {FORMAT_INDIAN_CURRENCY(row?.total_amount) || "0"}
+        </TableCell>
 
         <TableCell align="center">
           <Box sx={{ display: "flex", alignItems: "center" }}>

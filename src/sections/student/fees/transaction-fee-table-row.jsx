@@ -1,7 +1,11 @@
 import PropTypes from "prop-types";
 import { Box, TableCell, TableRow, Typography } from "@mui/material";
 import dayjs from "dayjs";
-import { CAPITALIZE, REMOVE_UNDERSCORE } from "../../../utils/constants";
+import {
+  CAPITALIZE,
+  FORMAT_INDIAN_CURRENCY,
+  REMOVE_UNDERSCORE,
+} from "../../../utils/constants";
 
 const TransactionFeesTableRow = ({ row, rowIndex }) => {
   return (
@@ -11,6 +15,7 @@ const TransactionFeesTableRow = ({ row, rowIndex }) => {
         <TableCell>
           <Box>
             <Typography>{row?.student_name || ""}</Typography>
+            <Typography>{row?.class_name || "-"}</Typography>
             <Typography variant="subtitle2">
               {row?.st_roll_no || "-"}
             </Typography>
@@ -32,7 +37,7 @@ const TransactionFeesTableRow = ({ row, rowIndex }) => {
             <Typography variant="subtitle2">{row?.txn_id || "-"}</Typography>
           </Box>
         </TableCell>
-        <TableCell>₹ {row?.amount || "0"}</TableCell>
+        <TableCell>₹ {FORMAT_INDIAN_CURRENCY(row?.amount) || "0"}</TableCell>
       </TableRow>
     </>
   );

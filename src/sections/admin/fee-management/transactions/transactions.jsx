@@ -35,6 +35,7 @@ import { useGetApi } from "../../../../hooks/useGetApi";
 import {
   DEFAULT_LIMIT,
   emptyRows,
+  FORMAT_INDIAN_CURRENCY,
   ROWS_PER_PAGE_OPTIONS,
 } from "../../../../utils/constants";
 import Loader from "../../../../components/loader/loader";
@@ -459,7 +460,9 @@ export default function Transactions() {
                     <TableCell>{row?.txn_to || ""}</TableCell>
                     <TableCell>{row?.narration || ""}</TableCell>
                     <TableCell>{row?.mode || ""}</TableCell>
-                    <TableCell>{`₹ ${row?.amount || ""}`}</TableCell>
+                    <TableCell>{`₹ ${
+                      FORMAT_INDIAN_CURRENCY(row?.amount) || "0"
+                    }`}</TableCell>
                   </TableRow>
                 ))}
 

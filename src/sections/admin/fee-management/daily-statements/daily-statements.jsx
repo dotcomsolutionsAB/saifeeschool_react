@@ -25,6 +25,7 @@ import { useGetApi } from "../../../../hooks/useGetApi";
 import {
   DEFAULT_LIMIT,
   emptyRows,
+  FORMAT_INDIAN_CURRENCY,
   ROWS_PER_PAGE_OPTIONS,
 } from "../../../../utils/constants";
 import Loader from "../../../../components/loader/loader";
@@ -171,7 +172,8 @@ export default function DailyStatements() {
       >
         {/* Total Due */}
         <Button variant="outlined">
-          Total Amount: ₹ {allResponse?.page_total_amount || "0"}/-
+          Total Amount: ₹{" "}
+          {FORMAT_INDIAN_CURRENCY(allResponse?.page_total_amount) || "0"}/-
         </Button>
       </Box>
 
@@ -318,7 +320,9 @@ export default function DailyStatements() {
                         : ""}
                     </TableCell>
                     <TableCell>{row?.Unique_Ref_No || ""}</TableCell>
-                    <TableCell>{`₹ ${row?.Total_Amount || ""}`}</TableCell>
+                    <TableCell>{`₹ ${
+                      FORMAT_INDIAN_CURRENCY(row?.Total_Amount) || ""
+                    }`}</TableCell>
                     <TableCell>{row?.Mode || ""}</TableCell>
                     <TableCell>{row?.Status?.status || ""}</TableCell>
                   </TableRow>

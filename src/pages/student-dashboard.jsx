@@ -7,6 +7,7 @@ import SaifeeLogo from "../assets/logos/Saifee_Logo.png";
 import { Link } from "react-router-dom";
 import Loader from "../components/loader/loader";
 import MessageBox from "../components/error/message-box";
+import { FORMAT_INDIAN_CURRENCY } from "../utils/constants";
 
 const StudentDashboard = () => {
   const { userInfo } = useAuth();
@@ -64,13 +65,15 @@ const StudentDashboard = () => {
                   variant="contained"
                   sx={{ textTransform: "none", minWidth: "150px" }}
                 >
-                  Deposit: ₹{studentStats?.st_deposit || "0"}/-
+                  Deposit: ₹
+                  {FORMAT_INDIAN_CURRENCY(studentStats?.st_deposit) || "0"}/-
                 </Button>
                 <Button
                   variant="contained"
                   sx={{ textTransform: "none", minWidth: "150px" }}
                 >
-                  Wallet: ₹{studentStats?.st_wallet || "0"}/-
+                  Wallet: ₹
+                  {FORMAT_INDIAN_CURRENCY(studentStats?.st_wallet) || "0"}/-
                 </Button>
               </Box>
               <Box

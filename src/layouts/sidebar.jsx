@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useState } from "react";
 import Box from "@mui/material/Box";
 import { NavLink } from "react-router-dom";
 import {
@@ -70,8 +70,6 @@ const Sidebar = () => {
   const [isImageError, setIsImageError] = useState(false);
   const [anchorEl, setAnchorEl] = useState(null);
   const [selectedItem, setSelectedItem] = useState(null);
-  const textRef = useRef(null);
-  const [isOverflow, setIsOverflow] = useState(false);
 
   const MAIN_SIDEBAR_ITEMS =
     userInfo?.role === "admin"
@@ -106,12 +104,6 @@ const Sidebar = () => {
     setOpenItems((prev) => ({ ...prev, [item?._id]: !prev[item?._id] }));
   };
 
-  useEffect(() => {
-    if (textRef.current) {
-      setIsOverflow(textRef.current.scrollWidth > textRef.current.clientWidth);
-    }
-  }, []);
-
   return (
     <Box sx={{ width: "100%", height: "100%" }}>
       {layout?.isLessThanMedium && (
@@ -136,7 +128,7 @@ const Sidebar = () => {
               alignItems: "center",
             }}
           >
-            {/* {!isImageError ? (
+            {!isImageError ? (
               <Box
                 component="img"
                 src={Saifee_Logo}
@@ -149,23 +141,17 @@ const Sidebar = () => {
                 loading="lazy"
                 onError={handleImageError}
               />
-            ) : ( */}
-            <Tooltip
-              title={isOverflow ? userInfo?.name || "" : ""}
-              placement="right"
-            >
+            ) : (
               <Typography
-                ref={textRef}
                 sx={{
                   fontSize: "16px",
                   fontWeight: "bold",
                 }}
                 noWrap
               >
-                Welcome {userInfo?.name || ""}
+                SAIFEE
               </Typography>
-            </Tooltip>
-            {/* )} */}
+            )}
           </Box>
           <IconButton
             sx={{

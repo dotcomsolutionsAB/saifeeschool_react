@@ -3,7 +3,6 @@ import {
   Box,
   Avatar,
   Divider,
-  InputAdornment,
   IconButton,
   Typography,
   MenuItem,
@@ -17,12 +16,10 @@ import {
   HomeRounded,
   MenuOpenRounded,
   MenuRounded,
-  SearchRounded,
   VerifiedUserRounded,
 } from "@mui/icons-material";
-import { useEffect, useRef, useState } from "react";
+import { useState } from "react";
 import Saifee_Logo from "../assets/logos/Saifee_Logo.png";
-import Input from "@mui/material/Input";
 import { ADMIN_SIDEBAR_ITEMS } from "../utils/constants";
 import { usePathname } from "../hooks/usePathname";
 
@@ -46,10 +43,8 @@ const Header = () => {
   const { userInfo, logout } = useAuth();
   const { layout, handleDrawerOpen, isSidebarExpanded, toggleSidebar } =
     useLayout();
-  const textRef = useRef(null);
 
   const [isImageError, setIsImageError] = useState(false);
-  const [isOverflow, setIsOverflow] = useState(false);
   const [open, setOpen] = useState(null);
 
   const handleOpen = (event) => {
@@ -67,12 +62,6 @@ const Header = () => {
   const handleLogout = () => {
     logout();
   };
-
-  useEffect(() => {
-    if (textRef.current) {
-      setIsOverflow(textRef.current.scrollWidth > textRef.current.clientWidth);
-    }
-  }, []);
 
   return (
     <AppBar
@@ -131,7 +120,7 @@ const Header = () => {
                 overflow: "hidden",
               }}
             >
-              {/* {!isImageError ? (
+              {!isImageError ? (
                 <Box
                   component="img"
                   src={Saifee_Logo}
@@ -144,23 +133,17 @@ const Header = () => {
                   loading="lazy"
                   onError={handleImageError} // Handles image loading errors
                 />
-              ) : ( */}
-              <Tooltip
-                title={isOverflow ? userInfo?.name || "" : ""}
-                placement="right"
-              >
+              ) : (
                 <Typography
-                  ref={textRef}
                   sx={{
                     fontSize: "16px",
                     fontWeight: "bold",
                   }}
                   noWrap
                 >
-                  Welcome {userInfo?.name || ""}
+                  SAIFEE
                 </Typography>
-              </Tooltip>
-              {/* )} */}
+              )}
             </Box>
 
             {/* Icon Button */}
@@ -176,9 +159,12 @@ const Header = () => {
             alignItems: "center",
             justifyContent: "space-between",
             height: "100%",
-            width: "100%",
+            width: layout?.isLessThanMedium
+              ? "100%"
+              : `calc(100% - ${layout?.sidebarWidth})`,
             flex: 1,
             px: 2,
+            overflow: "hidden",
           }}
         >
           {layout?.isLessThanMedium && (
@@ -186,31 +172,19 @@ const Header = () => {
               <MenuRounded />
             </IconButton>
           )}
-          {/* SAIFEE Logo */}
+
+          {/* SAIFEE GOLDEN JUBILEE PUBLIC SCHOOL */}
           <Box
             sx={{
               height: "100%",
-              width: !layout?.isLessThanMedium ? "100%" : "calc(100% - 110px)",
+              width: `calc(100% - ${
+                layout?.isLessThanMedium ? "110px" : "250px"
+              })`,
               display: "flex",
               alignItems: "center",
               flex: 1,
             }}
           >
-            {/* {pathname === ADMIN_SIDEBAR_ITEMS[0]?.linkName ? (
-              <Input
-                autoFocus
-                fullWidth
-                disableUnderline
-                placeholder="Search"
-                startAdornment={
-                  <InputAdornment position="start">
-                    <IconButton>
-                      <SearchRounded sx={{ color: "text.disabled" }} />
-                    </IconButton>
-                  </InputAdornment>
-                }
-              />
-            ) : ( */}
             <Typography
               noWrap
               sx={{
@@ -221,27 +195,40 @@ const Header = () => {
             >
               SAIFEE GOLDEN JUBILEE PUBLIC SCHOOL
             </Typography>
-            {/* )} */}
           </Box>
 
           {/* User Profile Avatar */}
-
           <Box
             sx={{
               display: "flex",
               alignItems: "center",
+              justifyContent: "flex-end",
               height: "100%",
+              width: layout?.isLessThanMedium ? "110px" : "250px",
               cursor: "pointer",
             }}
             onClick={handleOpen}
           >
+            {!layout?.isLessThanMedium && (
+              <Tooltip title={userInfo?.name || ""} placement="bottom">
+                <Typography
+                  sx={{
+                    fontSize: "16px",
+                    fontWeight: "bold",
+                  }}
+                  noWrap
+                >
+                  Welcome {userInfo?.name?.split(" ")?.[0] || ""}
+                </Typography>
+              </Tooltip>
+            )}
             <Divider
               orientation="vertical"
               sx={{
                 width: "3px",
                 height: "35%",
                 bgcolor: "error.main",
-                mr: 1,
+                mx: 1,
               }}
             />
             <Avatar
@@ -270,29 +257,35 @@ const Header = () => {
               },
             }}
           >
-            <Box sx={{ my: 1, px: 2 }}>
-              <Typography variant="subtitle2" noWrap>
-                {userInfo?.name}
-              </Typography>
+            {layout?.isLessThanMedium && (
+              <>
+                <Box sx={{ my: 1, px: 2 }}>
+                  <Tooltip title={userInfo?.name || ""} placement="left">
+                    <Typography variant="subtitle2" noWrap>
+                      Welcome {userInfo?.name?.split(" ")?.[0] || ""}
+                    </Typography>
+                  </Tooltip>
 
-              {/* <Typography
-                variant="body2"
-                sx={{ color: "text.secondary" }}
-                noWrap
-              >
-                {`${userInfo?.role
-                  ?.charAt(0)
-                  .toUpperCase()}${userInfo?.role?.slice(
-                  1,
-                  userInfo?.role?.length
-                )}`}
-              </Typography>
-              <Typography sx={{ fontSize: "12px" }}>
-                {userInfo?.ay_id}
-              </Typography> */}
-            </Box>
+                  {/* <Typography
+                    variant="body2"
+                    sx={{ color: "text.secondary" }}
+                    noWrap
+                  >
+                    {`${userInfo?.role
+                      ?.charAt(0)
+                      .toUpperCase()}${userInfo?.role?.slice(
+                      1,
+                      userInfo?.role?.length
+                    )}`}
+                  </Typography>
+                  <Typography sx={{ fontSize: "12px" }}>
+                    {userInfo?.ay_id}
+                  </Typography> */}
+                </Box>
 
-            <Divider sx={{ borderStyle: "dashed" }} />
+                <Divider sx={{ borderStyle: "dashed" }} />
+              </>
+            )}
 
             {MENU_OPTIONS.map((option) => (
               <MenuItem

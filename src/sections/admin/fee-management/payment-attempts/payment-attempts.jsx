@@ -34,6 +34,7 @@ import { useGetApi } from "../../../../hooks/useGetApi";
 import {
   DEFAULT_LIMIT,
   emptyRows,
+  FORMAT_INDIAN_CURRENCY,
   ROWS_PER_PAGE_OPTIONS,
 } from "../../../../utils/constants";
 import Loader from "../../../../components/loader/loader";
@@ -482,7 +483,9 @@ export default function PaymentAttempts() {
                     <TableCell>{row?.Unique_Ref_No || ""}</TableCell>
                     <TableCell>{row?.Txn_Id || "-"}</TableCell>
                     <TableCell>{row?.Mode || ""}</TableCell>
-                    <TableCell>{`₹ ${row?.Total_Amount || ""}`}</TableCell>
+                    <TableCell>{`₹ ${
+                      FORMAT_INDIAN_CURRENCY(row?.Total_Amount) || "0"
+                    }`}</TableCell>
                     <TableCell>{row?.Status || ""}</TableCell>
                   </TableRow>
                 ))}

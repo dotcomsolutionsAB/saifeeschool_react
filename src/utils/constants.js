@@ -193,6 +193,12 @@ export const REMOVE_UNDERSCORE = (text) => {
     .join(" ");
 };
 
+export const FORMAT_INDIAN_CURRENCY = (amount) => {
+  const num = Number(amount);
+  if (isNaN(num) || num === 0) return "";
+  return new Intl.NumberFormat("en-IN").format(num);
+};
+
 export const TYPE_LIST = [
   { label: "Admission Fee", value: "admission" },
   { label: "Monthly Fee", value: "monthly" },

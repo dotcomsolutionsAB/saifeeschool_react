@@ -2,6 +2,7 @@ import PropTypes from "prop-types";
 import { Box, Checkbox, TableCell, TableRow, Typography } from "@mui/material";
 
 import dayjs from "dayjs";
+import { FORMAT_INDIAN_CURRENCY } from "../../../utils/constants";
 
 const PendingFeesTableRow = ({
   row,
@@ -32,29 +33,33 @@ const PendingFeesTableRow = ({
 
         <TableCell>
           <Box>
-            <Typography>₹ {row?.fpp_amount || ""}</Typography>
-            <Typography sx={{ color: "error.main" }}>
-              ₹ {row?.fpp_late_fee || "0"}
+            <Typography>
+              ₹ {FORMAT_INDIAN_CURRENCY(row?.fpp_amount) || ""}
             </Typography>
+            {Number(row?.fpp_late_fee) > 0 && (
+              <Typography sx={{ color: "error.main" }}>
+                ₹ {FORMAT_INDIAN_CURRENCY(row?.fpp_late_fee) || "0"}
+              </Typography>
+            )}
+            {Number(row?.f_concession) > 0 && (
+              <Typography sx={{ color: "success.main" }}>
+                ₹ {FORMAT_INDIAN_CURRENCY(row?.f_concession) || "0"}
+              </Typography>
+            )}
           </Box>
         </TableCell>
 
         <TableCell>
           <Typography noWrap>
             {row?.fpp_due_date
-              ? dayjs(row?.fpp_due_date).format("YYYY-MM-DD")
+              ? dayjs(row?.fpp_due_date).format("DD-MM-YYYY")
               : "-"}
           </Typography>
         </TableCell>
 
-        <TableCell sx={{ width: "110px" }}>
-          ₹ {row?.f_concession || "0"}
+        <TableCell>
+          ₹ {FORMAT_INDIAN_CURRENCY(row?.total_amount) || "0"}
         </TableCell>
-        {/* <TableCell sx={{ width: "110px" }}>
-          {row?.fpp_late_fee || "-"}
-        </TableCell> */}
-
-        <TableCell>₹ {row?.total_amount || "0"}</TableCell>
       </TableRow>
     </>
   );

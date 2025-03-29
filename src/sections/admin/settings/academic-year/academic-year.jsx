@@ -13,7 +13,7 @@ import {
   Typography,
   useTheme,
 } from "@mui/material";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useGetApi } from "../../../../hooks/useGetApi";
 import {
   getAcademicYear,
@@ -32,16 +32,18 @@ const AcademicYear = () => {
   const theme = useTheme();
   const { logout, userInfo } = useAuth();
 
-  const [expanded, setExpanded] = useState(0);
+  const academicYear = {
+    ay_id: userInfo?.ay_id || "",
+    ay_name: userInfo?.ay_name || "",
+  };
+
+  const [expanded, setExpanded] = useState(null);
+  const [currentAcademicYear, setCurrentAcademicYear] = useState(null);
   const [activeTab, setActiveTab] = useState("Classes");
 
   const [newYearModalOpen, setNewYearModalOpen] = useState(false);
   const [anchorEl, setAnchorEl] = useState(null);
   const [selectedRow, setSelectedRow] = useState();
-  const [academicYear, setAcademicYear] = useState({
-    ay_id: userInfo?.ay_id || "",
-    ay_name: userInfo?.ay_name || "",
-  });
 
   const [isMakeCurrentLoading, setIsMakeCurrentLoading] = useState(false);
 
@@ -94,6 +96,17 @@ const AcademicYear = () => {
     }
   };
 
+  useEffect(() => {
+    if (academicYearList?.length > 0) {
+      academicYearList?.find((ay, index) => {
+        if (Number(ay?.ay_id) === Number(userInfo?.ay_id)) {
+          setExpanded(index);
+          setCurrentAcademicYear(index);
+        }
+      });
+    }
+  }, [academicYearList]);
+
   return (
     <Box>
       <Box
@@ -142,8 +155,14 @@ const AcademicYear = () => {
               <AccordionSummary
                 expandIcon={<ExpandMoreRounded />}
                 sx={{
-                  bgcolor: "primary.main",
-                  color: "primary.contrastText",
+                  bgcolor:
+                    currentAcademicYear === index
+                      ? "primary.lightActive"
+                      : "primary.main",
+                  color:
+                    currentAcademicYear === index
+                      ? "#000"
+                      : "primary.contrastText",
                 }}
               >
                 <Box

@@ -1,5 +1,6 @@
 import PropTypes from "prop-types";
 import { TableCell, TableRow } from "@mui/material";
+import { FORMAT_INDIAN_CURRENCY } from "../../../utils/constants";
 
 const PaymentSummaryTableRow = ({ sn, row }) => {
   return (
@@ -13,10 +14,14 @@ const PaymentSummaryTableRow = ({ sn, row }) => {
             : row?.category || "-"}
         </TableCell>
 
-        <TableCell>₹ {row?.total_amount || "0"}</TableCell>
+        <TableCell>
+          ₹ {FORMAT_INDIAN_CURRENCY(row?.total_amount) || "0"}
+        </TableCell>
 
-        <TableCell>₹ {row?.fee_due || "0"}</TableCell>
-        <TableCell>₹ {row?.late_fee_collected || "0"}</TableCell>
+        <TableCell>₹ {FORMAT_INDIAN_CURRENCY(row?.fee_due) || "0"}</TableCell>
+        <TableCell>
+          ₹ {FORMAT_INDIAN_CURRENCY(row?.late_fee_collected) || "0"}
+        </TableCell>
       </TableRow>
     </>
   );
