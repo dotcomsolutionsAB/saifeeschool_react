@@ -54,8 +54,8 @@ const AdmissionFeesTableRow = ({ row, refetch, academicYear }) => {
       toast.success(response?.message || "Fee plan deleted successfully");
       refetch();
     } else if (response?.code === 401) {
-      logout();
-      toast.error(response?.message || "Unauthorized");
+      logout(response);
+      // toast.error(response?.message || "Unauthorized");
     } else {
       toast.error(response?.message || "Some error occurred.");
     }

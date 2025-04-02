@@ -166,8 +166,8 @@ export default function MarksGradeEntry() {
         [key]: typeof value === Number ? Number(value) : value?.toUpperCase(),
       }));
     } else if (response?.code === 401) {
-      logout();
-      toast.error(response?.message || "Unauthorized");
+      logout(response);
+      // toast.error(response?.message || "Unauthorized");
     } else {
       setEditedMarks((prev) => ({
         ...prev,

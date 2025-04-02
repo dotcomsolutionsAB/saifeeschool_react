@@ -104,8 +104,8 @@ const AttachmentsTab = ({ detail }) => {
       setFiles([]);
       toast.success(response?.message || "Image uploaded successfully");
     } else if (response?.code === 401) {
-      logout();
-      toast.error(response?.message || "Unauthorized");
+      logout(response);
+      // toast.error(response?.message || "Unauthorized");
     } else {
       toast.error(response?.message || "Some error occurred.");
     }

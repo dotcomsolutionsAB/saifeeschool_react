@@ -59,7 +59,7 @@ const AddAggregateColumnModal = ({ open, onClose, refetch, detail }) => {
       onClose();
       refetch();
     } else if (response?.code === 401) {
-      logout();
+      logout(response);
       toast.error(response?.message || "Unauthorized");
     } else {
       toast.error(response?.message || "Some error occurred.");

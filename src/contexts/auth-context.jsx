@@ -1,4 +1,4 @@
-import { createContext, useState } from "react";
+import { createContext, useRef, useState } from "react";
 import PropTypes from "prop-types";
 import useSessionStorage from "../hooks/useSessionStorage";
 import { loginApi } from "../services/auth.service";
@@ -10,6 +10,8 @@ const AuthContext = createContext();
 
 // Create a provider component
 const AuthProvider = ({ children }) => {
+  const count = useRef(0);
+
   const [isLoggedIn, setIsLoggedIn, removeLoggedIn] = useSessionStorage(
     IS_LOGGED_IN,
     false
@@ -29,15 +31,20 @@ const AuthProvider = ({ children }) => {
       setIsLoggedIn(true);
       setUserInfo(response?.data);
       toast.success(response?.message || "Login Success");
+      count.current = 0;
     } else {
       toast.error(response?.message);
     }
   };
 
-  const logout = () => {
+  const logout = (response = null) => {
     removeLoggedIn();
     removeUserInfo();
     setIsLoggedIn(false);
+    if (response && count.current === 0) {
+      toast.error(response?.message || "Unauthorized");
+      count.current = count.current + 1;
+    }
   };
 
   return (

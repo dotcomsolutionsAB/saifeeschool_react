@@ -142,8 +142,8 @@ export default function PendingFees() {
       refetch();
       toast.success(response?.message || "Fees paid successfully");
     } else if (response?.code === 401) {
-      logout();
-      toast.error(response?.message || "Unauthorized");
+      logout(response);
+      // toast.error(response?.message || "Unauthorized");
     } else {
       toast.error(response?.message || "Some error occurred.");
     }

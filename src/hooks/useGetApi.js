@@ -34,8 +34,8 @@ export const useGetApi = ({
       setDataCount(response?.total || response?.count || 0);
       setAllResponse(response || {});
     } else if (response?.code === 401) {
-      logout();
-      toast.error(response?.message || "Unauthorized");
+      logout(response);
+      // toast.error(response?.message || "Unauthorized");
     } else {
       setIsError(true);
       toast.error(response?.message || "Some error occurred.");

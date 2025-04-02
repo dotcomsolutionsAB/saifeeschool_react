@@ -89,8 +89,8 @@ const AcademicYear = () => {
     if (response?.code === 200) {
       toast.success(response?.message || "");
     } else if (response?.code === 401) {
-      logout();
-      toast.error(response?.message || "Unauthorized");
+      logout(response);
+      // toast.error(response?.message || "Unauthorized");
     } else {
       toast.error(response?.message || "Some error occurred.");
     }
