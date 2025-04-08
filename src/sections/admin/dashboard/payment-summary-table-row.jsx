@@ -21,6 +21,10 @@ const PaymentSummaryTableRow = ({ sn, row }) => {
         </TableCell>
 
         <TableCell>
+          ₹ {FORMAT_INDIAN_CURRENCY(row?.total_amount) || "0"}
+        </TableCell>
+
+        <TableCell>
           <Box
             sx={{
               color: "primary.main",
@@ -31,11 +35,9 @@ const PaymentSummaryTableRow = ({ sn, row }) => {
             }}
             onClick={handleClick}
           >
-            ₹ {FORMAT_INDIAN_CURRENCY(row?.total_amount) || "0"}
+            ₹ {FORMAT_INDIAN_CURRENCY(row?.fee_due) || "0"}
           </Box>
         </TableCell>
-
-        <TableCell>₹ {FORMAT_INDIAN_CURRENCY(row?.fee_due) || "0"}</TableCell>
         <TableCell>
           ₹ {FORMAT_INDIAN_CURRENCY(row?.late_fee_collected) || "0"}
         </TableCell>

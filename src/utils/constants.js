@@ -71,11 +71,11 @@ export const ADMIN_SIDEBAR_ITEMS = [
         displayName: "Marks/Grade Entry",
         linkName: "/report-card-module/marks-grade-entry",
       },
-      {
-        _id: 43,
-        displayName: "Attendance",
-        linkName: "/report-card-module/attendance",
-      },
+      // {
+      //   _id: 43,
+      //   displayName: "Attendance",
+      //   linkName: "/report-card-module/attendance",
+      // },
       {
         _id: 44,
         displayName: "Transfer Certificate",

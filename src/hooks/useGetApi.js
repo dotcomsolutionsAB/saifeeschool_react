@@ -8,6 +8,7 @@ export const useGetApi = ({
   body = {},
   dependencies = [],
   debounceDelay = 0,
+  skip = false,
 }) => {
   const { logout } = useAuth();
 
@@ -19,6 +20,7 @@ export const useGetApi = ({
   const [isError, setIsError] = useState(false);
 
   const fetchData = async () => {
+    if (skip) return;
     setIsLoading(true);
     setIsError(false);
     if (!apiFunction) return;
@@ -44,6 +46,8 @@ export const useGetApi = ({
 
   useEffect(() => {
     let timer = null;
+
+    if (skip) return; // Skip if not initialized
 
     if (body?.search) {
       timer = setTimeout(fetchData, debounceDelay);

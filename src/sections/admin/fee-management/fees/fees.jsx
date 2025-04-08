@@ -80,23 +80,13 @@ const TYPE_LIST = [
 
 export default function Fees() {
   const location = useLocation();
-
   const { userInfo, logout } = useAuth();
 
-  const selectedRow = location?.state;
-  const filter =
-    Number(selectedRow?.fee_due) === 0
-      ? selectedRow?.query_key_paid
-      : selectedRow?.query_key_unpaid;
-
-  console.log(selectedRow, "selectedRow");
+  const filter = location?.state?.query_key_unpaid;
 
   const [page, setPage] = useState(0);
-
   const [rowsPerPage, setRowsPerPage] = useState(DEFAULT_LIMIT);
-
   const [search, setSearch] = useState("");
-
   const [status, setStatus] = useState(null);
   const [cgId, setCgId] = useState(null);
   const [selectedOptions, setSelectedOptions] = useState([]); // to select multiple checkboxes in class field
@@ -111,6 +101,7 @@ export default function Fees() {
   const [selectedRows, setSelectedRows] = useState([]);
   const [isExportLoading, setIsExportLoading] = useState(false);
   const [oneTimeFees, setOneTimeFees] = useState(null);
+  const [isFilterInitialized, setIsFilterInitialized] = useState(!filter);
 
   const dataSendToBackend = {
     ay_id: Number(academicYear?.ay_id) || userInfo?.ay_id,
@@ -151,7 +142,10 @@ export default function Fees() {
       dueTill,
     ],
     debounceDelay: 500,
+    skip: !isFilterInitialized,
   });
+
+  console.log(feesList, "feesList");
 
   // api to get classList
 
@@ -326,13 +320,13 @@ export default function Fees() {
           ? TYPE_LIST[3]
           : null
       );
-      // setAcademicYear({
-      //   ay_id: filter?.year,
-      //   ay_name: filter?.ay_name || "",
-      // });
-      setAcademicYear(null);
+      setAcademicYear({
+        ay_id: filter?.year,
+        ay_name: filter?.ay_name || "",
+      });
     }
-  }, []);
+    setIsFilterInitialized(true);
+  }, [filter]);
   return (
     <>
       <Box

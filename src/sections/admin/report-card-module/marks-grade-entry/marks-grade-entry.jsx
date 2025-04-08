@@ -22,6 +22,7 @@ import {
   TableHead,
   TableRow,
   TextField,
+  Tooltip,
 } from "@mui/material";
 import { useGetApi } from "../../../../hooks/useGetApi";
 import Loader from "../../../../components/loader/loader";
@@ -430,7 +431,13 @@ export default function MarksGradeEntry() {
                 overflowY: "auto", // Enable scrolling
               }}
             >
-              <Table sx={{ minWidth: 800 }} stickyHeader>
+              <Table
+                sx={{
+                  minWidth: 800,
+                  tableLayout: "auto",
+                }}
+                stickyHeader
+              >
                 <TableHead>
                   <TableRow>
                     {headLabel?.map((headCell, index) => (
@@ -439,15 +446,25 @@ export default function MarksGradeEntry() {
                         align={headCell?.align || "center"}
                         sx={{
                           width: headCell?.width,
-                          minWidth: headCell?.minWidth,
+                          minWidth:
+                            headCell?.minWidth || (index < 3 ? 60 : 100), // Default minWidth for fixed/scrollable
+                          maxHeight: "200px",
                           whiteSpace: "nowrap",
                           writingMode: index > 2 ? "vertical-lr" : "initial",
                           transform: index > 2 ? "rotate(180deg)" : "none",
                           bgcolor: "primary.light",
                           border: "2px solid #B9B9B9",
+                          zIndex: 2,
+                          ...(index < 3 && {
+                            position: "sticky",
+                            left: index === 0 ? 0 : index === 1 ? 60 : 160, // Adjust based on column widths
+                            zIndex: 3, // Higher zIndex than body cells
+                          }),
                         }}
                       >
-                        {headCell?.label}
+                        <Tooltip title={index > 2 ? headCell?.label : ""} arrow>
+                          <Typography noWrap>{headCell?.label}</Typography>
+                        </Tooltip>
                       </TableCell>
                     ))}
                   </TableRow>
@@ -462,7 +479,19 @@ export default function MarksGradeEntry() {
                             <TableCell
                               key={headCell?.id}
                               align="left"
-                              sx={{ border: "2px solid #B9B9B9" }}
+                              sx={{
+                                border: "2px solid #B9B9B9",
+                                position: "sticky",
+                                left:
+                                  colIndex === 0
+                                    ? 0
+                                    : colIndex === 1
+                                    ? 60
+                                    : 160, // Adjust based on column widths
+                                zIndex: 1,
+                                background: "white", // Prevent overlap transparency
+                                minWidth: colIndex === 0 ? 60 : 100, // Set min-width for fixed columns
+                              }}
                             >
                               {colIndex === 0
                                 ? rowIndex + 1
