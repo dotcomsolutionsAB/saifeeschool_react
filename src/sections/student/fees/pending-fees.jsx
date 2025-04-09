@@ -4,28 +4,19 @@ import { useState } from "react";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
 import TableContainer from "@mui/material/TableContainer";
-import TablePagination from "@mui/material/TablePagination";
 
 import {
   Box,
   Button,
   Card,
   CardContent,
-  CircularProgress,
   TableCell,
   TableHead,
   TableRow,
   Typography,
 } from "@mui/material";
-import {
-  DEFAULT_LIMIT,
-  emptyRows,
-  FORMAT_INDIAN_CURRENCY,
-  ROWS_PER_PAGE_OPTIONS,
-} from "../../../utils/constants";
+import { FORMAT_INDIAN_CURRENCY } from "../../../utils/constants";
 import { useGetApi } from "../../../hooks/useGetApi";
-import TableEmptyRows from "../../../components/table/table-empty-rows";
-import TableNoData from "../../../components/table/table-no-data";
 import MessageBox from "../../../components/error/message-box";
 import Loader from "../../../components/loader/loader";
 import PendingFeesTableRow from "./pending-fees-table-row";
@@ -48,18 +39,15 @@ const HEAD_LABEL = [
 
 export default function PendingFees() {
   const { userInfo, logout } = useAuth();
-  // const [page, setPage] = useState(0);
 
-  // const [rowsPerPage, setRowsPerPage] = useState(DEFAULT_LIMIT);
   const [selectedRows, setSelectedRows] = useState([]);
+  const [selectedRowIds, setSelectedRowIds] = useState([]);
   const [loading, setLoading] = useState(false);
   const [modalOpen, setModalOpen] = useState(false);
 
-  // api to get paid fees list
-
+  // api to get pending fees list
   const {
     dataList: pendingFeesList,
-    // dataCount: pendingFeesCount,
     allResponse,
     isLoading,
     isError,
@@ -71,22 +59,16 @@ export default function PendingFees() {
       offset: 0,
       limit: 100,
     },
-    // dependencies: [page, rowsPerPage],
   });
-  // select all
-  // const handleSelectAllClick = (event) => {
-  //   if (event.target.checked) {
-  //     const newSelecteds = pendingFeesList?.map((n) => n?.id);
-  //     setSelectedRows(newSelecteds);
-  //     return;
-  //   }
-  //   setSelectedRows([]);
-  // };
 
-  const furtherToPay =
-    Number(allResponse?.total_unpaid) ||
-    0 - Number(allResponse?.student_wallet) ||
-    0;
+  const furtherToPay = selectedRows?.reduce((total, row) => {
+    return (
+      total +
+      Number(row?.fpp_amount || 0) +
+      Number(row?.fpp_late_fee || 0) -
+      Number(row?.f_concession || 0)
+    );
+  }, 0);
 
   const handleModalOpen = () => {
     setModalOpen(true);
@@ -96,44 +78,46 @@ export default function PendingFees() {
     setModalOpen(false);
   };
 
-  const handleClick = (rowId) => {
-    const selectedIndex = selectedRows.indexOf(rowId);
-    const rowIndex = pendingFeesList.findIndex((row) => row.id === rowId); // Find the index of the clicked row
+  const handleClick = (selectedRowData) => {
+    const selectedIndex = selectedRowIds.indexOf(selectedRowData?.id);
+    const rowIndex = pendingFeesList.findIndex(
+      (row) => row.id === selectedRowData?.id
+    ); // Find the index of the clicked row
 
     if (selectedIndex === -1) {
       // Row is being selected
-      setSelectedRows((prevSelectedRows) => [...prevSelectedRows, rowId]);
+      setSelectedRows((prevSelectedRows) => [
+        ...prevSelectedRows,
+        selectedRowData,
+      ]);
+      setSelectedRowIds((prevSelectedRowIds) => [
+        ...prevSelectedRowIds,
+        selectedRowData?.id,
+      ]);
     } else {
       // Row is being unselected
       // Keep only the rows before the unselected row
-      const newSelectedRows = selectedRows.filter((id) => {
+      const newSelectedRows = selectedRows.filter((option) => {
+        const idIndex = pendingFeesList.findIndex(
+          (row) => row.id === option.id
+        );
+        return idIndex < rowIndex;
+      });
+      const newSelectedRowIds = selectedRowIds.filter((id) => {
         const idIndex = pendingFeesList.findIndex((row) => row.id === id);
         return idIndex < rowIndex;
       });
+
       setSelectedRows(newSelectedRows);
+      setSelectedRowIds(newSelectedRowIds);
     }
   };
-
-  // change to next or prev page
-
-  // const handleChangePage = (_, newPage) => {
-  //   if (!isLoading) setPage(newPage);
-  // };
-
-  // // change rows per page
-  // const handleChangeRowsPerPage = (event) => {
-  //   setPage(0);
-  //   setRowsPerPage(parseInt(event.target.value, 10));
-  // };
-
-  // // if no search result is found
-  // const notFound = !pendingFeesCount;
 
   const handlePayFees = async () => {
     setLoading(true);
     const response = await payFees({
       st_id: userInfo?.st_id,
-      fpp_ids: selectedRows.join(","),
+      fpp_ids: selectedRows?.map((row) => row?.fpp_id)?.join(","),
     });
     setLoading(false);
 
@@ -143,11 +127,9 @@ export default function PendingFees() {
       toast.success(response?.message || "Fees paid successfully");
     } else if (response?.code === 401) {
       logout(response);
-      // toast.error(response?.message || "Unauthorized");
     } else {
       toast.error(response?.message || "Some error occurred.");
     }
-    console.log(selectedRows.join(","), "selectedRows");
   };
 
   return (
@@ -172,31 +154,7 @@ export default function PendingFees() {
               <Table sx={{ minWidth: 800 }}>
                 <TableHead>
                   <TableRow>
-                    <TableCell padding="checkbox">
-                      {/* <Checkbox
-                        indeterminate={
-                          selectedRows?.filter((id) =>
-                            pendingFeesList?.some(
-                              (student) => student?.id === id
-                            )
-                          )?.length > 0 &&
-                          selectedRows?.filter((id) =>
-                            pendingFeesList?.some(
-                              (student) => student?.id === id
-                            )
-                          )?.length < pendingFeesList?.length
-                        }
-                        checked={
-                          pendingFeesList?.length > 0 &&
-                          selectedRows?.filter((id) =>
-                            pendingFeesList?.some(
-                              (student) => student?.id === id
-                            )
-                          )?.length === pendingFeesList?.length
-                        }
-                        onChange={handleSelectAllClick}
-                      /> */}
-                    </TableCell>
+                    <TableCell padding="checkbox"></TableCell>
                     {HEAD_LABEL?.map((headCell) => (
                       <TableCell
                         key={headCell?.id}
@@ -215,7 +173,8 @@ export default function PendingFees() {
 
                 <TableBody>
                   {pendingFeesList?.map((row, index) => {
-                    const isRowSelected = selectedRows?.indexOf(row?.id) !== -1;
+                    const isRowSelected =
+                      selectedRowIds?.indexOf(row?.id) !== -1;
                     return (
                       <PendingFeesTableRow
                         key={row?.id}
@@ -223,34 +182,17 @@ export default function PendingFees() {
                         isRowSelected={isRowSelected}
                         handleClick={handleClick}
                         index={index} // Pass the row index
-                        selectedRows={selectedRows} // Pass the selected rows array
+                        selectedRowIds={selectedRowIds} // Pass the selected rows array
                         rows={pendingFeesList} // Pass the full list of rows
                         refetch={refetch}
                       />
                     );
                   })}
-
-                  {/* <TableEmptyRows
-                    height={77}
-                    emptyRows={emptyRows(page, rowsPerPage, pendingFeesCount)}
-                  />
-
-                  {notFound && <TableNoData />} */}
                 </TableBody>
               </Table>
             </TableContainer>
-            {/* Pagination */}
-            {/* <TablePagination
-              page={page}
-              component="div"
-              count={pendingFeesCount}
-              rowsPerPage={rowsPerPage}
-              onPageChange={handleChangePage}
-              rowsPerPageOptions={ROWS_PER_PAGE_OPTIONS}
-              onRowsPerPageChange={handleChangeRowsPerPage}
-            /> */}
 
-            {selectedRows?.length > 0 && (
+            {selectedRowIds?.length > 0 && (
               <Box
                 sx={{
                   display: "flex",

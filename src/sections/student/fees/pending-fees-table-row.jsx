@@ -9,10 +9,10 @@ const PendingFeesTableRow = ({
   isRowSelected,
   handleClick,
   index,
-  selectedRows,
+  selectedRowIds,
   rows,
 }) => {
-  const isDisabled = index > 0 && !selectedRows.includes(rows[index - 1]?.id);
+  const isDisabled = index > 0 && !selectedRowIds.includes(rows[index - 1]?.id);
   return (
     <>
       <TableRow hover tabIndex={-1} role="checkbox" selected={isRowSelected}>
@@ -20,7 +20,7 @@ const PendingFeesTableRow = ({
           <Checkbox
             disableRipple
             checked={isRowSelected}
-            onChange={() => handleClick(row?.id)}
+            onChange={() => handleClick(row)}
             disabled={isDisabled} // Disable based on previous row's selection
           />
         </TableCell>
@@ -70,7 +70,7 @@ PendingFeesTableRow.propTypes = {
   isRowSelected: PropTypes.bool,
   handleClick: PropTypes.func,
   index: PropTypes.number.isRequired, // Index of the current row
-  selectedRows: PropTypes.array.isRequired, // Array of selected row IDs
+  selectedRowIds: PropTypes.array.isRequired, // Array of selected row IDs
   rows: PropTypes.array.isRequired, // Full list of rows to check previous row
 };
 
