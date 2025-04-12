@@ -22,6 +22,7 @@ const NAV_OPTIONS = [
   { _id: "1", label: "Home", link: "/" },
   { _id: "2", label: "About Us", link: "/about-us" },
   { _id: "3", label: "Contact Us", link: "/contact-us" },
+  { _id: "4", label: "New Admission", link: "/new-admission" },
 ];
 
 const loginCardWidth = "clamp(400px, 40vw, 100%)";

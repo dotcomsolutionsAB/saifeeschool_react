@@ -123,7 +123,11 @@ export default function PendingFees() {
 
     if (response?.code === 200) {
       handleModalClose();
-      refetch();
+      if (response?.url) {
+        window.open(response?.url, "_self", "noopener noreferrer");
+      } else {
+        refetch();
+      }
       toast.success(response?.message || "Fees paid successfully");
     } else if (response?.code === 401) {
       logout(response);
