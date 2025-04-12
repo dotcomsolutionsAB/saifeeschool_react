@@ -11,27 +11,37 @@ import {
 
 const FatherDetailsTab = ({ props }) => {
   const { formData, handleChange } = props;
+
+  // Determine prefix based on father_occupation
+  const prefix =
+    formData?.father_occupation?.toLowerCase() === "business"
+      ? "father_business_"
+      : formData?.father_occupation?.toLowerCase() === "employed"
+      ? "father_work_"
+      : "father_business_"; // Default to business if occupation is undefined or other
   return (
     <Box>
       <Grid container spacing={4}>
-        {/*First Name */}
+        {/*Father's Name */}
         <Grid item xs={12} sm={6} md={4} lg={3}>
           <TextField
-            name="f_first_name"
-            label="First Name"
+            name="father_name"
+            label="Father's Name"
             fullWidth
-            value={formData?.f_first_name || ""}
+            required
+            value={formData?.father_name || ""}
             onChange={handleChange}
           />
         </Grid>
 
-        {/* Last Name */}
+        {/* Father's Surname Name */}
         <Grid item xs={12} sm={6} md={4} lg={3}>
           <TextField
-            name="f_last_name"
-            label="Last Name"
+            name="father_surname"
+            label="Father's Surname"
             fullWidth
-            value={formData?.f_last_name || ""}
+            required
+            value={formData?.father_surname || ""}
             onChange={handleChange}
           />
         </Grid>
@@ -39,11 +49,12 @@ const FatherDetailsTab = ({ props }) => {
         {/* Mobile */}
         <Grid item xs={12} sm={6} md={4} lg={3}>
           <TextField
-            name="f_contact"
+            name="father_mobile"
             label="Mobile"
             type="tel"
             fullWidth
-            value={formData?.f_contact || ""}
+            required
+            value={formData?.father_mobile || ""}
             onChange={handleChange}
           />
         </Grid>
@@ -51,50 +62,56 @@ const FatherDetailsTab = ({ props }) => {
         {/* Email */}
         <Grid item xs={12} sm={6} md={4} lg={3}>
           <TextField
-            name="f_email"
+            name="father_email"
             label="Email"
             type="email"
             fullWidth
-            value={formData?.f_email || ""}
+            required
+            value={formData?.father_email || ""}
             onChange={handleChange}
           />
         </Grid>
 
         {/*Father's Occupation */}
-        <Grid item xs={12} sm={6} md={4}>
+        <Grid item xs={12} md={6}>
           <FormLabel component="legend">Occupation</FormLabel>
           <RadioGroup
             row
-            name="f_occupation"
-            value={formData?.f_occupation}
+            name="father_occupation"
+            value={formData?.father_occupation}
             onChange={handleChange}
           >
             <FormControlLabel
-              value="self_employed"
+              value="business"
               control={<Radio />}
-              label="Self Employed"
+              label="Business"
             />
             <FormControlLabel
               value="employed"
               control={<Radio />}
               label="Employed"
             />
-            <FormControlLabel value="none" control={<Radio />} label="None" />
+            <FormControlLabel
+              value="no-occupation"
+              control={<Radio />}
+              label="None"
+            />
           </RadioGroup>
         </Grid>
       </Grid>
 
-      {formData?.f_occupation !== "none" && (
+      {formData?.father_occupation !== "no-occupation" && (
         <Grid container spacing={3} sx={{ mt: 1 }}>
-          {formData?.f_occupation === "self_employed" && (
+          {formData?.father_occupation === "business" && (
             <>
               {/* Business Name */}
               <Grid item xs={12} sm={6} md={4} lg={3}>
                 <TextField
-                  name="f_business_name"
+                  name="father_business_name"
                   label="Business Name"
                   fullWidth
-                  value={formData?.f_business_name || ""}
+                  required
+                  value={formData?.father_business_name || ""}
                   onChange={handleChange}
                 />
               </Grid>
@@ -102,59 +119,64 @@ const FatherDetailsTab = ({ props }) => {
               {/* Business Nature */}
               <Grid item xs={12} sm={6} md={4} lg={3}>
                 <TextField
-                  name="f_business_nature"
+                  name="father_business_nature"
                   label="Business Nature"
                   fullWidth
-                  value={formData?.f_business_nature || ""}
+                  required
+                  value={formData?.father_business_nature || ""}
                   onChange={handleChange}
                 />
               </Grid>
             </>
           )}
 
-          {formData?.f_occupation === "employed" && (
+          {formData?.father_occupation === "employed" && (
             <>
               {/* Employer */}
               <Grid item xs={12} sm={6} md={4} lg={3}>
                 <TextField
-                  name="f_employer_name"
+                  name="father_employer_name"
                   label="Employer"
                   fullWidth
-                  value={formData?.f_employer_name || ""}
+                  required
+                  value={formData?.father_employer_name || ""}
                   onChange={handleChange}
                 />
               </Grid>
               {/* Designation */}
               <Grid item xs={12} sm={6} md={4} lg={3}>
                 <TextField
-                  name="f_designation"
+                  name="father_designation"
                   label="Designation"
                   fullWidth
-                  value={formData?.f_designation || ""}
+                  required
+                  value={formData?.father_designation || ""}
                   onChange={handleChange}
                 />
-              </Grid>{" "}
+              </Grid>
             </>
           )}
 
-          {/* Address 1 */}
+          {/* Monthly Income*/}
           <Grid item xs={12} sm={6} md={4} lg={3}>
             <TextField
-              name="f_work_address1"
-              label="Address 1"
+              name="father_monthly_income"
+              label="Monthly Income"
               fullWidth
-              value={formData?.f_work_address1 || ""}
+              required
+              value={formData?.father_monthly_income || ""}
               onChange={handleChange}
             />
           </Grid>
 
-          {/* Address 2 */}
+          {/* Address */}
           <Grid item xs={12} sm={6} md={4} lg={3}>
             <TextField
-              name="f_work_address2"
-              label="Address 2"
+              name={`${prefix}address`}
+              label="Address"
               fullWidth
-              value={formData?.f_work_address2 || ""}
+              required
+              value={formData?.[`${prefix}address`] || ""}
               onChange={handleChange}
             />
           </Grid>
@@ -162,10 +184,11 @@ const FatherDetailsTab = ({ props }) => {
           {/* City */}
           <Grid item xs={12} sm={6} md={4} lg={3}>
             <TextField
-              name="f_work_city"
+              name={`${prefix}city`}
               label="City"
               fullWidth
-              value={formData?.f_work_city || ""}
+              required
+              value={formData?.[`${prefix}city`] || ""}
               onChange={handleChange}
             />
           </Grid>
@@ -173,10 +196,11 @@ const FatherDetailsTab = ({ props }) => {
           {/* State */}
           <Grid item xs={12} sm={6} md={4} lg={3}>
             <TextField
-              name="f_work_state"
+              name={`${prefix}state`}
               label="State"
               fullWidth
-              value={formData?.f_work_state || ""}
+              required
+              value={formData?.[`${prefix}state`] || ""}
               onChange={handleChange}
             />
           </Grid>
@@ -184,10 +208,11 @@ const FatherDetailsTab = ({ props }) => {
           {/* Country */}
           <Grid item xs={12} sm={6} md={4} lg={3}>
             <TextField
-              name="f_work_country"
+              name={`${prefix}country`}
               label="Country"
               fullWidth
-              value={formData?.f_work_country || ""}
+              required
+              value={formData?.[`${prefix}country`] || ""}
               onChange={handleChange}
             />
           </Grid>
@@ -195,10 +220,11 @@ const FatherDetailsTab = ({ props }) => {
           {/* Pincode */}
           <Grid item xs={12} sm={6} md={4} lg={3}>
             <TextField
-              name="f_work_pincode"
+              name={`${prefix}pincode`}
               label="Pincode"
               fullWidth
-              value={formData?.f_work_pincode || ""}
+              required
+              value={formData?.[`${prefix}pincode`] || ""}
               onChange={handleChange}
             />
           </Grid>

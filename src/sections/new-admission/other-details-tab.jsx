@@ -8,28 +8,28 @@ const OtherDetailsTab = ({ props }) => {
       <Grid container spacing={2}>
         <Grid item xs={12}>
           <TextField
-            name="question1"
+            name="attracted"
             label="What attracted you to our school?"
             fullWidth
-            value={formData?.question1 || ""}
+            value={formData?.attracted || ""}
             onChange={handleChange}
           />
         </Grid>
         <Grid item xs={12}>
           <TextField
-            name="question2"
+            name="strengths"
             label="Strengths and Weaknesses of your child?"
             fullWidth
-            value={formData?.question2 || ""}
+            value={formData?.strengths || ""}
             onChange={handleChange}
           />
         </Grid>
         <Grid item xs={12}>
           <TextField
-            name="question3"
+            name="remarks"
             label="Any Remarks?"
             fullWidth
-            value={formData?.question3 || ""}
+            value={formData?.remarks || ""}
             onChange={handleChange}
           />
         </Grid>

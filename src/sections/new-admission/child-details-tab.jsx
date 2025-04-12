@@ -1,5 +1,6 @@
 import PropTypes from "prop-types";
 import {
+  Autocomplete,
   Box,
   FormControlLabel,
   FormLabel,
@@ -12,18 +13,19 @@ import { DatePicker } from "@mui/x-date-pickers";
 import AttachmentsTab from "./attachments/attachments-tab";
 
 const ChildDetailsTab = ({ props }) => {
-  const { formData, handleChange } = props;
+  const { formData, setAttachments, handleChange, classList } = props;
+
   return (
     <Box>
       <Grid container spacing={4}>
         {/* First Name */}
         <Grid item xs={12} sm={6} md={4} lg={3}>
           <TextField
-            name="st_first_name"
+            name="first_name"
             label="First Name"
             required
             fullWidth
-            value={formData?.st_first_name || ""}
+            value={formData?.first_name || ""}
             onChange={handleChange}
           />
         </Grid>
@@ -31,38 +33,40 @@ const ChildDetailsTab = ({ props }) => {
         {/* Last Name */}
         <Grid item xs={12} sm={6} md={4} lg={3}>
           <TextField
-            name="st_last_name"
+            name="last_name"
             label="Last Name"
             required
             fullWidth
-            value={formData?.st_last_name || ""}
+            value={formData?.last_name || ""}
             onChange={handleChange}
           />
         </Grid>
 
         {/* Gender */}
         <Grid item xs={12} sm={6} md={4} lg={3}>
-          <FormLabel component="legend">Gender</FormLabel>
+          <FormLabel component="legend" required>
+            Gender
+          </FormLabel>
           <RadioGroup
             row
-            name="st_gender"
-            value={formData?.st_gender || ""}
+            name="gender"
+            value={formData?.gender || ""}
             onChange={handleChange}
           >
-            <FormControlLabel value="M" control={<Radio />} label="Male" />
-            <FormControlLabel value="F" control={<Radio />} label="Female" />
+            <FormControlLabel value="m" control={<Radio />} label="Male" />
+            <FormControlLabel value="f" control={<Radio />} label="Female" />
           </RadioGroup>
         </Grid>
 
         {/* Date of Birth */}
         <Grid item xs={12} sm={6} md={4} lg={3}>
           <DatePicker
-            name="st_dob"
+            name="dob"
             label="Date of Birth"
-            value={formData?.st_dob || null}
+            value={formData?.dob || null}
             onChange={(newValue) =>
               handleChange({
-                target: { name: "st_dob", value: newValue },
+                target: { name: "dob", value: newValue },
               })
             }
             slotProps={{
@@ -75,26 +79,43 @@ const ChildDetailsTab = ({ props }) => {
           />
         </Grid>
 
+        {/* Class */}
+        <Grid item xs={12} sm={6} md={4} lg={3}>
+          <Autocomplete
+            options={classList || []}
+            getOptionLabel={(option) => option?.cg_name || ""}
+            renderInput={(params) => (
+              <TextField {...params} label="Class" required fullWidth />
+            )}
+            name="class"
+            value={formData?.class || null}
+            onChange={(_, newValue) =>
+              handleChange({ target: { name: "class", value: newValue } })
+            }
+          />
+        </Grid>
+
         {/* Roll No */}
         <Grid item xs={12} sm={6} md={4} lg={3}>
           <TextField
             label="Aadhaar No"
             placeholder="Leave empty if does not exist"
-            name="st_aadhaar_no"
-            value={formData?.st_aadhaar_no || ""}
+            name="aadhaar"
+            value={formData?.aadhaar || ""}
             onChange={handleChange}
-            required
             fullWidth
+            required
           />
         </Grid>
 
         {/* Residential Address 1 */}
         <Grid item xs={12} sm={6} md={4} lg={3}>
           <TextField
-            name="residential_address1"
+            name="address_1"
             label="Residential Address 1"
             fullWidth
-            value={formData?.residential_address1 || ""}
+            required
+            value={formData?.address_1 || ""}
             onChange={handleChange}
           />
         </Grid>
@@ -102,10 +123,10 @@ const ChildDetailsTab = ({ props }) => {
         {/* Residential Address 2 */}
         <Grid item xs={12} sm={6} md={4} lg={3}>
           <TextField
-            name="residential_address2"
+            name="address_2"
             label="Residential Address 2"
             fullWidth
-            value={formData?.residential_address2 || ""}
+            value={formData?.address_2 || ""}
             onChange={handleChange}
           />
         </Grid>
@@ -116,6 +137,7 @@ const ChildDetailsTab = ({ props }) => {
             name="city"
             label="City"
             fullWidth
+            required
             value={formData?.city || ""}
             onChange={handleChange}
           />
@@ -127,6 +149,7 @@ const ChildDetailsTab = ({ props }) => {
             name="state"
             label="State"
             fullWidth
+            required
             value={formData?.state || ""}
             onChange={handleChange}
           />
@@ -138,6 +161,7 @@ const ChildDetailsTab = ({ props }) => {
             name="country"
             label="Country"
             fullWidth
+            required
             value={formData?.country || ""}
             onChange={handleChange}
           />
@@ -149,21 +173,64 @@ const ChildDetailsTab = ({ props }) => {
             name="pincode"
             label="Pincode"
             fullWidth
+            required
             value={formData?.pincode || ""}
             onChange={handleChange}
           />
         </Grid>
-        <Grid item xs={12} sm={6}>
-          <AttachmentsTab detail={formData} title="Child's Photo" />
+
+        {/* Last School */}
+        <Grid item xs={12} sm={6} md={4} lg={3}>
+          <TextField
+            name="last_school"
+            label="Last School"
+            fullWidth
+            required
+            value={formData?.last_school || ""}
+            onChange={handleChange}
+          />
         </Grid>
-        <Grid item xs={12} sm={6}>
-          <AttachmentsTab detail={formData} title="Father's Photo" />
+
+        {/* Last School Address*/}
+        <Grid item xs={12} sm={6} md={4} lg={3}>
+          <TextField
+            name="last_school_address"
+            label="Last School Address"
+            fullWidth
+            required
+            value={formData?.last_school_address || ""}
+            onChange={handleChange}
+          />
         </Grid>
-        <Grid item xs={12} sm={6}>
-          <AttachmentsTab detail={formData} title="Mother's Photo" />
-        </Grid>
-        <Grid item xs={12} sm={6}>
-          <AttachmentsTab detail={formData} title="Birth Certificate" />
+
+        {/* Attachments */}
+        <Grid item xs={12}>
+          <Grid container spacing={4}>
+            <Grid item xs={12} sm={6}>
+              <AttachmentsTab
+                setAttachments={setAttachments}
+                title="Child's Photo"
+              />
+            </Grid>
+            <Grid item xs={12} sm={6}>
+              <AttachmentsTab
+                setAttachments={setAttachments}
+                title="Father's Photo"
+              />
+            </Grid>
+            <Grid item xs={12} sm={6}>
+              <AttachmentsTab
+                setAttachments={setAttachments}
+                title="Mother's Photo"
+              />
+            </Grid>
+            <Grid item xs={12} sm={6}>
+              <AttachmentsTab
+                setAttachments={setAttachments}
+                title="Birth Certificate"
+              />
+            </Grid>
+          </Grid>
         </Grid>
       </Grid>
     </Box>
@@ -173,7 +240,9 @@ const ChildDetailsTab = ({ props }) => {
 ChildDetailsTab.propTypes = {
   props: PropTypes.object,
   formData: PropTypes.object,
+  setAttachments: PropTypes.func,
   handleChange: PropTypes.func,
+  classList: PropTypes.any,
 };
 
 export default ChildDetailsTab;

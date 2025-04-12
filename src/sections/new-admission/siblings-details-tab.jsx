@@ -1,30 +1,41 @@
 import PropTypes from "prop-types";
-import { Box, Button, Grid, IconButton, TextField } from "@mui/material";
+import {
+  Autocomplete,
+  Box,
+  Button,
+  Grid,
+  IconButton,
+  TextField,
+} from "@mui/material";
 import { Add, Close } from "@mui/icons-material";
 
 const SiblingsDetailsTab = ({ props }) => {
-  const { formData, setFormData } = props;
+  const { formData, setFormData, classList } = props;
 
   // Ensure siblingsData is an array in formData
   const siblingsData = formData?.siblings || [{}];
 
   const handleChange = (index, event) => {
     const { name, value } = event.target;
+    console.log({ [name]: value }, "newValue");
     const updatedSiblings = [...siblingsData];
-    updatedSiblings[index] = { ...updatedSiblings[index], [name]: value };
-    setFormData({ ...formData, siblings: updatedSiblings });
+    updatedSiblings[index] = {
+      ...updatedSiblings[index],
+      [name]: value,
+    };
+    setFormData((preValue) => ({ ...preValue, siblings: updatedSiblings }));
   };
 
   const addSibling = () => {
-    setFormData({
-      ...formData,
-      siblings: [...siblingsData, { name: "", class_section: "", roll_no: "" }],
-    });
+    setFormData((preValue) => ({
+      ...preValue,
+      siblings: [...siblingsData, { name: "", cg_id: null, roll_no: "" }],
+    }));
   };
 
   const removeSibling = (index) => {
     const updatedSiblings = siblingsData.filter((_, i) => i !== index);
-    setFormData({ ...formData, siblings: updatedSiblings });
+    setFormData((preValue) => ({ ...preValue, siblings: updatedSiblings }));
   };
   return (
     <Box sx={{ mb: 4 }}>
@@ -41,13 +52,26 @@ const SiblingsDetailsTab = ({ props }) => {
             />
           </Grid>
           {/* Class & Section */}
-          <Grid item xs={12} sm={6} md={4}>
-            <TextField
-              name="class_section"
-              label="Class & Section"
-              fullWidth
-              value={sibling?.class_section || ""}
-              onChange={(e) => handleChange(index, e)}
+          <Grid item xs={12} sm={6} md={4} lg={3}>
+            <Autocomplete
+              options={classList || []}
+              getOptionLabel={(option) => option?.cg_name || ""}
+              renderInput={(params) => (
+                <TextField
+                  {...params}
+                  label="Class & Section"
+                  required
+                  fullWidth
+                />
+              )}
+              name="cg_id"
+              value={sibling?.cg_id || null}
+              onChange={(_, newValue) => {
+                handleChange(index, {
+                  target: { name: "cg_id", value: newValue },
+                });
+                console.log(newValue, "newValue");
+              }}
             />
           </Grid>
           {/* Roll No */}
@@ -75,7 +99,7 @@ const SiblingsDetailsTab = ({ props }) => {
 
       {/* Add More Button */}
       <Button variant="contained" startIcon={<Add />} onClick={addSibling}>
-        Add More
+        Add
       </Button>
     </Box>
   );
@@ -85,6 +109,7 @@ SiblingsDetailsTab.propTypes = {
   props: PropTypes.object,
   formData: PropTypes.object,
   setFormData: PropTypes.func,
+  classList: PropTypes.any,
 };
 
 export default SiblingsDetailsTab;

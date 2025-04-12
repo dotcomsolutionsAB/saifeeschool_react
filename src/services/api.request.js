@@ -66,7 +66,6 @@ export const postRequest = async (path, body, isFormData = false) => {
   try {
     const headers = isFormData ? { "Content-Type": "multipart/form-data" } : {};
     const result = await api.post(path, body, { headers });
-    console.log(result, "response result");
     return result?.data;
   } catch (error) {
     return GET_ERROR(error);

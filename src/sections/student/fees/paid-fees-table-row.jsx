@@ -18,11 +18,12 @@ const PaidFeesTableRow = ({ row }) => {
             <Typography>
               ₹ {FORMAT_INDIAN_CURRENCY(row?.fpp_amount) || ""}
             </Typography>
-            {Number(row?.fpp_late_fee) > 0 && (
-              <Typography sx={{ color: "error.main" }}>
-                ₹ {FORMAT_INDIAN_CURRENCY(row?.fpp_late_fee) || "0"}
-              </Typography>
-            )}
+            {Number(row?.fpp_late_fee) > 0 &&
+              row?.f_late_fee_applicable === "1" && (
+                <Typography sx={{ color: "error.main" }}>
+                  ₹ {FORMAT_INDIAN_CURRENCY(row?.fpp_late_fee) || "0"}
+                </Typography>
+              )}
             {Number(row?.f_concession) > 0 && (
               <Typography sx={{ color: "success.main" }}>
                 ₹ {FORMAT_INDIAN_CURRENCY(row?.f_concession) || "0"}

@@ -65,7 +65,7 @@ export default function PendingFees() {
     return (
       total +
       Number(row?.fpp_amount || 0) +
-      Number(row?.fpp_late_fee || 0) -
+      Number(row?.f_late_fee_applicable === "1" ? row?.fpp_late_fee : 0) -
       Number(row?.f_concession || 0)
     );
   }, 0);
@@ -204,7 +204,7 @@ export default function PendingFees() {
                 }}
               >
                 <Box sx={{ width: "300px" }}>
-                  <Box
+                  {/* <Box
                     sx={{
                       display: "flex",
                       alignItems: "center",
@@ -216,7 +216,7 @@ export default function PendingFees() {
                     <Typography sx={{ color: "primary.main" }}>
                       ₹ {allResponse?.total_unpaid || "0"}/-
                     </Typography>
-                  </Box>
+                  </Box> */}
                   <Box
                     sx={{
                       display: "flex",

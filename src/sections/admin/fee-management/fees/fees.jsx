@@ -324,6 +324,8 @@ export default function Fees() {
         ay_id: filter?.year,
         ay_name: filter?.ay_name || "",
       });
+      setDueFrom(filter?.date_from ? dayjs(filter?.date_from) : null);
+      setDueTill(filter?.date_to ? dayjs(filter?.date_to) : null);
     }
     setIsFilterInitialized(true);
   }, [filter]);

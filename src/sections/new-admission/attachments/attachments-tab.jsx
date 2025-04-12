@@ -17,10 +17,26 @@ import Iconify from "../../../components/iconify/iconify";
  * @param {string} props.title - Title for the upload section.
  * @returns {JSX.Element} The rendered component.
  */
-const AttachmentsTab = ({ detail, title }) => {
+const AttachmentsTab = ({ title, setAttachments }) => {
   // const { logout } = useAuth();
   const theme = useTheme();
   const [file, setFile] = useState(null);
+
+  // Map title to corresponding key in attachments state
+  const getAttachmentKey = (title) => {
+    switch (title) {
+      case "Child's Photo":
+        return "child_photo";
+      case "Father's Photo":
+        return "father_photo";
+      case "Mother's Photo":
+        return "mother_photo";
+      case "Birth Certificate":
+        return "birth_certificate";
+      default:
+        return null;
+    }
+  };
 
   /**
    * Returns the appropriate icon for a given file based on its type.
@@ -65,7 +81,18 @@ const AttachmentsTab = ({ detail, title }) => {
       return;
     }
 
+    // Update local state
     setFile(selectedFile);
+
+    // Update parent attachments state with the correct key
+    const key = getAttachmentKey(title);
+    if (key) {
+      setAttachments((prev) => ({
+        ...prev,
+        [key]: selectedFile,
+      }));
+    }
+
     event.target.value = ""; // Reset input
   };
 
@@ -87,8 +114,8 @@ const AttachmentsTab = ({ detail, title }) => {
           mb: 2,
         }}
       >
-        <Typography>Upload {title || ""}</Typography>
-        {file && <Button variant="contained">Upload</Button>}
+        <Typography>{`${!file ? "Upload " : ""}${title}`}</Typography>
+        {/* {file && <Button variant="contained">Upload</Button>} */}
       </Box>
 
       {/* File upload area */}
@@ -200,7 +227,7 @@ const AttachmentsTab = ({ detail, title }) => {
 };
 
 AttachmentsTab.propTypes = {
-  detail: PropTypes.object,
+  setAttachments: PropTypes.func,
   title: PropTypes.string.isRequired,
 };
 

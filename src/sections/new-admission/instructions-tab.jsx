@@ -8,16 +8,11 @@ import {
   ListItemText,
   Typography,
 } from "@mui/material";
-import { useState } from "react";
 import { Link } from "react-router-dom";
 
 const InstructionsTab = ({ props }) => {
-  const { formData, handleChange } = props;
-  const [termsAccepted, setTermsAccepted] = useState(false);
+  const { termsAccepted, handleCheckboxChange } = props;
 
-  const handleCheckboxChange = (event) => {
-    setTermsAccepted(event.target.checked);
-  };
   return (
     <Box>
       {/* Note Section */}
@@ -128,8 +123,8 @@ const InstructionsTab = ({ props }) => {
 
 InstructionsTab.propTypes = {
   props: PropTypes.object,
-  formData: PropTypes.object,
-  handleChange: PropTypes.func,
+  termsAccepted: PropTypes.object,
+  handleCheckboxChange: PropTypes.func,
 };
 
 export default InstructionsTab;
