@@ -34,6 +34,7 @@ import PaidFees from "../sections/student/fees/paid-fees";
 import PendingFees from "../sections/student/fees/pending-fees";
 import TransactionFees from "../sections/student/fees/transaction-fees";
 import NewAdmission from "../pages/new-admission";
+import NewAdmissions from "../sections/admin/student-management/new-admissions/new-admissions";
 
 export default function Router() {
   const { isLoggedIn, logout, userInfo } = useAuth();
@@ -61,6 +62,7 @@ export default function Router() {
             },
           ],
         },
+        { path: "new-admissions", element: <NewAdmissions /> },
       ],
     },
     {

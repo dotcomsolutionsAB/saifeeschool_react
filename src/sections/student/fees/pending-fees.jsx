@@ -124,9 +124,12 @@ export default function PendingFees() {
     if (response?.code === 200) {
       handleModalClose();
       if (response?.url) {
-        window.open(response?.url, "_self", "noopener noreferrer");
-      } else {
-        refetch();
+        const decodedUrl = decodeURIComponent(response.url);
+        if (decodedUrl.startsWith("http")) {
+          window.location.href = decodedUrl;
+        } else {
+          toast.error("Invalid redirect URL");
+        }
       }
       toast.success(response?.message || "Fees paid successfully");
     } else if (response?.code === 401) {

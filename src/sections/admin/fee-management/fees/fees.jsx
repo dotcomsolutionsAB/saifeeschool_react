@@ -110,8 +110,8 @@ export default function Fees() {
     cg_id: cgId || "",
     type: type?.value || "",
     fpp_id: oneTimeFees?.fpp_id?.toString() || "",
-    date_from: dueFrom || "",
-    date_to: dueTill || "",
+    date_from: dueFrom ? dayjs(dueFrom).format("YYYY-MM-DD") : null,
+    date_to: dueTill ? dayjs(dueTill).format("YYYY-MM-DD") : null,
   };
 
   // api to get students list
@@ -144,8 +144,6 @@ export default function Fees() {
     debounceDelay: 500,
     skip: !isFilterInitialized,
   });
-
-  console.log(feesList, "feesList");
 
   // api to get classList
 
