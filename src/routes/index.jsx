@@ -35,6 +35,7 @@ import PendingFees from "../sections/student/fees/pending-fees";
 import TransactionFees from "../sections/student/fees/transaction-fees";
 import NewAdmission from "../pages/new-admission";
 import NewAdmissions from "../sections/admin/student-management/new-admissions/new-admissions";
+import PaymentStatus from "../sections/student/fees/payment-status";
 
 export default function Router() {
   const { isLoggedIn, logout, userInfo } = useAuth();
@@ -105,7 +106,13 @@ export default function Router() {
       path: "fees",
       children: [
         { index: true, element: <Navigate to="pending-fees" /> },
-        { path: "pending-fees", element: <PendingFees /> },
+        {
+          path: "pending-fees",
+          children: [
+            { index: true, element: <PendingFees /> },
+            { path: "payment-status", element: <PaymentStatus /> },
+          ],
+        },
         { path: "paid-fees", element: <PaidFees /> },
         { path: "transactions", element: <TransactionFees /> },
       ],

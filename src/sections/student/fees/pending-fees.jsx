@@ -66,7 +66,8 @@ export default function PendingFees() {
       total +
       Number(row?.fpp_amount || 0) +
       Number(row?.f_late_fee_applicable === "1" ? row?.fpp_late_fee : 0) -
-      Number(row?.f_concession || 0)
+      Number(row?.f_concession || 0) -
+      Number(allResponse?.student_wallet || 0)
     );
   }, 0);
 
