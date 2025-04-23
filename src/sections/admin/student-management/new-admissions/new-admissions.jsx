@@ -39,6 +39,7 @@ import Loader from "../../../../components/loader/loader";
 import MessageBox from "../../../../components/error/message-box";
 import { MoreVert } from "@mui/icons-material";
 import dayjs from "dayjs";
+import { useNavigate } from "react-router-dom";
 // ----------------------------------------------------------------------
 
 const HEAD_LABEL = [
@@ -65,6 +66,7 @@ const ADDED_TO_SCHOOL_LIST = [
 
 export default function NewAdmissions() {
   const { userInfo } = useAuth();
+  const navigate = useNavigate();
   const theme = useTheme();
 
   const [page, setPage] = useState(0);
@@ -88,7 +90,7 @@ export default function NewAdmissions() {
     added_to_school: filter?.added_to_school?.value || "",
   };
 
-  // api to get students list
+  // api to get new admissions list
 
   const {
     dataList: newAdmissionsList,
@@ -147,6 +149,12 @@ export default function NewAdmissions() {
   const handleSearch = (event) => {
     setPage(0);
     setSearch(event.target.value);
+  };
+
+  const handleClick = (row) => {
+    navigate("/students-management/new-admissions/new-admission-detail", {
+      state: { row: row, allData: newAdmissionsList },
+    });
   };
 
   // for filtering
@@ -290,7 +298,18 @@ export default function NewAdmissions() {
                       key={page * rowsPerPage + index}
                     >
                       <TableCell>{row?.sn || ""}</TableCell>
-                      <TableCell>{row?.application_no || ""}</TableCell>
+                      <TableCell>
+                        <Typography
+                          sx={{
+                            cursor: "pointer",
+                            color: "primary.main",
+                            fontWeight: 500,
+                          }}
+                          onClick={() => handleClick(row)}
+                        >
+                          {row?.application_no || ""}
+                        </Typography>
+                      </TableCell>
 
                       <TableCell>
                         <Box

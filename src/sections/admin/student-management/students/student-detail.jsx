@@ -12,7 +12,7 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import Iconify from "../../../../components/iconify/iconify";
 import OtherDetailsTab from "./detail-tabs/other-details-tab";
@@ -32,7 +32,7 @@ const StudentDetail = () => {
   const { logout, userInfo } = useAuth();
   const location = useLocation();
   const navigate = useNavigate();
-  const detail = location?.state;
+  const detail = location?.state || null;
 
   const [previewImage, setPreviewImage] = useState(detail?.photo || "");
   const [activeTab, setActiveTab] = useState(0);
@@ -89,6 +89,12 @@ const StudentDetail = () => {
   const handleEdit = () => {
     navigate("/students-management/students/edit-student", { state: detail });
   };
+
+  useEffect(() => {
+    if (!detail) {
+      navigate(-1);
+    }
+  }, [detail]);
 
   return (
     <>

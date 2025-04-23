@@ -57,3 +57,6 @@ export const getAllAcademicYears = async () =>
 
 export const getNewAdmissions = async (body) =>
   await postRequest(`${NEW_ADMISSION_PATH}/view`, body);
+
+export const getNewAdmissionById = async (body) =>
+  await postRequest(`${NEW_ADMISSION_PATH}/view/${body?.id}`, {});

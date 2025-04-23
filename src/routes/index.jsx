@@ -36,6 +36,7 @@ import TransactionFees from "../sections/student/fees/transaction-fees";
 import NewAdmission from "../pages/new-admission";
 import NewAdmissions from "../sections/admin/student-management/new-admissions/new-admissions";
 import PaymentStatus from "../sections/student/fees/payment-status";
+import NewAdmissionsDetail from "../sections/admin/student-management/new-admissions/new-admissions-detail";
 
 export default function Router() {
   const { isLoggedIn, logout, userInfo } = useAuth();
@@ -63,7 +64,13 @@ export default function Router() {
             },
           ],
         },
-        { path: "new-admissions", element: <NewAdmissions /> },
+        {
+          path: "new-admissions",
+          children: [
+            { index: true, element: <NewAdmissions /> },
+            { path: "new-admission-detail", element: <NewAdmissionsDetail /> },
+          ],
+        },
       ],
     },
     {
