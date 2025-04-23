@@ -20,6 +20,7 @@ import {
   ExpandLessRounded,
   AvTimerRounded,
   CloseRounded,
+  ProductionQuantityLimits,
 } from "@mui/icons-material";
 import {
   ADMIN_SIDEBAR_ITEMS,
@@ -41,6 +42,8 @@ const getIcon = (iconName) => {
   switch (iconName) {
     case "dashboard":
       return <AvTimerRounded />;
+    case "procurement":
+      return <ProductionQuantityLimits />;
     case "student_management":
       return <StudentsManagementIcon />;
     case "fee_management":

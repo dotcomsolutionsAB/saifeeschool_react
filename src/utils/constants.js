@@ -13,6 +13,23 @@ export const ADMIN_SIDEBAR_ITEMS = [
     iconName: "dashboard",
   },
   {
+    _id: 7,
+    displayName: "Procurement",
+    iconName: "procurement",
+    children: [
+      {
+        _id: 71,
+        displayName: "Dashboard",
+        linkName: "/procurement/dashboard",
+      },
+      {
+        _id: 72,
+        displayName: "Products",
+        linkName: "/procurement/products",
+      },
+    ],
+  },
+  {
     _id: 2,
     displayName: "Students Management",
     iconName: "student_management",

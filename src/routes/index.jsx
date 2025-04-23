@@ -37,12 +37,22 @@ import NewAdmission from "../pages/new-admission";
 import NewAdmissions from "../sections/admin/student-management/new-admissions/new-admissions";
 import PaymentStatus from "../sections/student/fees/payment-status";
 import NewAdmissionsDetail from "../sections/admin/student-management/new-admissions/new-admissions-detail";
+import Products from "../sections/admin/procurement/products/products";
+import ProcurementDashboard from "../sections/admin/procurement/dashboard/procurement-dashboard";
 
 export default function Router() {
   const { isLoggedIn, logout, userInfo } = useAuth();
 
   const ADMIN_ROUTES = [
     { index: true, element: <AdminDashboard /> },
+    {
+      path: "procurement",
+      children: [
+        { index: true, element: <Navigate to="dashboard" /> },
+        { path: "dashboard", element: <ProcurementDashboard /> },
+        { path: "products", element: <Products /> },
+      ],
+    },
     {
       path: "students-management",
       children: [
