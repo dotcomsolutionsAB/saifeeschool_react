@@ -4,6 +4,7 @@ import {
   Card,
   CardContent,
   Divider,
+  IconButton,
   List,
   ListItem,
   ListItemIcon,
@@ -26,9 +27,11 @@ import {
 import { useGetApi } from "../../../../hooks/useGetApi";
 import Loader from "../../../../components/loader/loader";
 import MessageBox from "../../../../components/error/message-box";
+import { Print, PrintOutlined } from "@mui/icons-material";
+import Iconify from "../../../../components/iconify/iconify";
 
 const NewAdmissionsDetail = () => {
-  const { logout } = useAuth();
+  const { userInfo, logout } = useAuth();
   const { layout } = useLayout();
   const navigate = useNavigate();
   const location = useLocation();
@@ -67,6 +70,8 @@ const NewAdmissionsDetail = () => {
     },
     dependencies: [selectedId],
   });
+
+  console.log(detail, "detailStudent");
 
   // Handle image upload
   const handleImageUpload = async (e) => {
@@ -429,14 +434,172 @@ const NewAdmissionsDetail = () => {
             </Box>
 
             {/* Action Section */}
-            <Box sx={{ bgcolor: "primary.main", height: "50px", my: 4 }}></Box>
+            <Box
+              sx={{
+                bgcolor: "primary.main",
+                height: "80px",
+                my: 4,
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                gap: 2,
+                color: "white",
+              }}
+            >
+              <Box
+                sx={{
+                  display: "flex",
+                  flexDirection: "column",
+                  alignItems: "center",
+                  justifyContent: "center",
+                }}
+              >
+                <IconButton
+                  sx={{
+                    display: "flex",
+                    flexDirection: "column",
+                  }}
+                >
+                  <PrintOutlined sx={{ fontSize: "30px" }} />
+                </IconButton>
+                <Typography sx={{ fontSize: "12px" }}>Print</Typography>
+              </Box>
+              <Divider
+                flexItem
+                orientation="vertical"
+                sx={{ bgcolor: "white", width: "2px" }}
+              />
+              <Box
+                sx={{
+                  display: "flex",
+                  flexDirection: "column",
+                  alignItems: "center",
+                  justifyContent: "center",
+                }}
+              >
+                <IconButton
+                  sx={{
+                    display: "flex",
+                    flexDirection: "column",
+                  }}
+                >
+                  <Iconify icon="solar:calendar-date-line-duotone" width={30} />
+                </IconButton>
+                <Typography sx={{ fontSize: "12px" }}>
+                  Set Interview Date
+                </Typography>
+              </Box>
+              <Divider
+                flexItem
+                orientation="vertical"
+                sx={{ bgcolor: "white", width: "2px" }}
+              />
+              <Box
+                sx={{
+                  display: "flex",
+                  flexDirection: "column",
+                  alignItems: "center",
+                  justifyContent: "center",
+                }}
+              >
+                <IconButton
+                  sx={{
+                    display: "flex",
+                    flexDirection: "column",
+                  }}
+                >
+                  <Iconify icon="basil:add-solid" width={30} />
+                </IconButton>
+                <Typography sx={{ fontSize: "12px" }}>Add to School</Typography>
+              </Box>
+              <Divider
+                flexItem
+                orientation="vertical"
+                sx={{ bgcolor: "white", width: "2px" }}
+              />
+              <Box
+                sx={{
+                  display: "flex",
+                  flexDirection: "column",
+                  alignItems: "center",
+                  justifyContent: "center",
+                }}
+              >
+                <IconButton
+                  sx={{
+                    display: "flex",
+                    flexDirection: "column",
+                  }}
+                >
+                  <Iconify icon="iconoir:bookmark-solid" width={30} />
+                </IconButton>
+                <Typography sx={{ fontSize: "12px" }}>
+                  Mark As Not Printed
+                </Typography>
+              </Box>
+              <Divider
+                flexItem
+                orientation="vertical"
+                sx={{ bgcolor: "white", width: "2px" }}
+              />
+              <Box
+                sx={{
+                  display: "flex",
+                  flexDirection: "column",
+                  alignItems: "center",
+                  justifyContent: "center",
+                }}
+              >
+                <IconButton
+                  sx={{
+                    display: "flex",
+                    flexDirection: "column",
+                  }}
+                >
+                  <Iconify icon="tdesign:task-checked" width={30} />
+                </IconButton>
+                <Typography sx={{ fontSize: "12px" }}>
+                  Interview Completed
+                </Typography>
+              </Box>
+              <Divider
+                flexItem
+                orientation="vertical"
+                sx={{ bgcolor: "white", width: "2px" }}
+              />
+              <Box
+                sx={{
+                  display: "flex",
+                  flexDirection: "column",
+                  alignItems: "center",
+                  justifyContent: "center",
+                }}
+              >
+                <IconButton
+                  sx={{
+                    display: "flex",
+                    flexDirection: "column",
+                  }}
+                >
+                  <Iconify icon="tdesign:task-error" width={30} />
+                </IconButton>
+                <Typography sx={{ fontSize: "12px" }}>
+                  Interview Rejected
+                </Typography>
+              </Box>
+              <Divider
+                flexItem
+                orientation="vertical"
+                sx={{ bgcolor: "white", width: "2px" }}
+              />
+            </Box>
 
             {/* Student Details */}
             <Typography
               variant="h3"
               sx={{ textAlign: "center", color: "primary.main" }}
             >
-              Admission Form for UKG 2025-26
+              {`Admission Form for ${detail?.class} ${userInfo?.ay_name}`}
             </Typography>
 
             <Box
