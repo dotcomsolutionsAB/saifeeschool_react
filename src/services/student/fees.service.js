@@ -1,4 +1,4 @@
-import { postRequest } from "../api.request";
+import { getRequest, postRequest } from "../api.request";
 
 const FEES_PATH = "/student";
 
@@ -15,3 +15,6 @@ export const getTransactions = async (body) =>
 // pay fees
 // export const payFees = async (body) => await postRequest(`pay-fees`, body);
 export const payFees = async (body) => await postRequest(`test-fees`, body);
+
+export const getTransactionStatus = async (body) =>
+  await getRequest(`fee/confirmation/${body?.txn_id}`);
