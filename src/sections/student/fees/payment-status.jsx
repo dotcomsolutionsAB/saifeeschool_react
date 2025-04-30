@@ -28,7 +28,7 @@ const PaymentStatus = () => {
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
-          height: `calc(100vh - ${layout?.headerHeight} - 110px)`,
+          minHeight: `calc(100vh - ${layout?.headerHeight} - 110px)`,
         }}
       >
         {status === "success" ? (
