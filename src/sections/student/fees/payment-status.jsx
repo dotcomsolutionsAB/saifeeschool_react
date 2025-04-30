@@ -32,7 +32,7 @@ const PaymentStatus = () => {
         }}
       >
         {status === "success" ? (
-          <PaymentSuccessPage />
+          <PaymentSuccessPage transactionData={transactionData} />
         ) : status === "pending" ? (
           <PaymentPendingPage transactionData={transactionData} />
         ) : (
