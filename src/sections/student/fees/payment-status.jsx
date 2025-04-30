@@ -15,7 +15,11 @@ const PaymentStatus = () => {
   const txn_id = queryParams.get("txn_id");
 
   // Only call the API if txn_id exists
-  const { allResponse: transactionData } = useGetApi({
+  const {
+    allResponse: transactionData,
+    isLoading,
+    isError,
+  } = useGetApi({
     apiFunction: getTransactionStatus,
     body: txn_id ? { txn_id } : null,
     skip: !txn_id, // Add `skip` to prevent running when txn_id is missing
@@ -32,7 +36,11 @@ const PaymentStatus = () => {
         }}
       >
         {status === "success" ? (
-          <PaymentSuccessPage transactionData={transactionData} />
+          <PaymentSuccessPage
+            transactionData={transactionData}
+            isLoading={isLoading}
+            isError={isError}
+          />
         ) : status === "pending" ? (
           <PaymentPendingPage transactionData={transactionData} />
         ) : (
