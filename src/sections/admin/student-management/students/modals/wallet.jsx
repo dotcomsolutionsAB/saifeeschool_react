@@ -48,8 +48,10 @@ const WalletModal = ({ open, onClose, detail }) => {
   const [formData, setFormData] = useState(null);
 
   const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData((preValue) => ({ ...preValue, [name]: value }));
+    const { name, value, type } = e.target;
+    const parsedValue =
+      type === "date" ? dayjs(value).format("YYYY-MM-DD") : value;
+    setFormData((preValue) => ({ ...preValue, [name]: parsedValue }));
   };
 
   const handleSave = async (e) => {
@@ -158,7 +160,9 @@ const WalletModal = ({ open, onClose, detail }) => {
                 name="date"
                 value={formData?.date ? dayjs(formData?.date) : null}
                 onChange={(newValue) =>
-                  handleChange({ target: { name: "date", value: newValue } })
+                  handleChange({
+                    target: { name: "date", type: "date", value: newValue },
+                  })
                 }
                 required
                 fullWidth
@@ -204,7 +208,11 @@ const WalletModal = ({ open, onClose, detail }) => {
                       }
                       onChange={(newValue) =>
                         handleChange({
-                          target: { name: "draft_date", value: newValue },
+                          target: {
+                            name: "draft_date",
+                            type: "date",
+                            value: newValue,
+                          },
                         })
                       }
                       required
@@ -247,7 +255,11 @@ const WalletModal = ({ open, onClose, detail }) => {
                       }
                       onChange={(newValue) =>
                         handleChange({
-                          target: { name: "transaction_date", value: newValue },
+                          target: {
+                            name: "transaction_date",
+                            type: "date",
+                            value: newValue,
+                          },
                         })
                       }
                       required

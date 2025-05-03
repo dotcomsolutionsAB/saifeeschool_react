@@ -83,11 +83,11 @@ export const ADMIN_SIDEBAR_ITEMS = [
         displayName: "Dashboard",
         linkName: "/report-card-module/dashboard",
       },
-      {
-        _id: 42,
-        displayName: "Marks/Grade Entry",
-        linkName: "/report-card-module/marks-grade-entry",
-      },
+      // {
+      //   _id: 42,
+      //   displayName: "Marks/Grade Entry",
+      //   linkName: "/report-card-module/marks-grade-entry",
+      // },
       // {
       //   _id: 43,
       //   displayName: "Attendance",
