@@ -101,7 +101,7 @@ const MainLayout = () => {
             p: 2,
           }}
         >
-          <Box
+          {/* <Box
             sx={{
               display: "flex",
               alignItems: "center",
@@ -125,7 +125,7 @@ const MainLayout = () => {
             >
               {CAPITALIZE(pathSegments[pathSegments?.length - 1] || "Home")}
             </Typography>
-          </Box>
+          </Box> */}
 
           <Breadcrumbs aria-label="breadcrumb" separator=">" sx={{ mb: 1 }}>
             {pathname !== "/" && (

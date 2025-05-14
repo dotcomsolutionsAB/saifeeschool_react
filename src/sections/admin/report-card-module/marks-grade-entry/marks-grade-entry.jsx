@@ -458,6 +458,7 @@ export default function MarksGradeEntry() {
                           transform: index > 2 ? "rotate(180deg)" : "none",
                           bgcolor: "primary.light",
                           border: "2px solid #B9B9B9",
+                          color: headCell?.type === "A" ? "#2E7D32" : "inherit",
                           zIndex: 2,
                           ...(index < 3 && {
                             position: "sticky",
@@ -532,6 +533,7 @@ export default function MarksGradeEntry() {
                                 type={
                                   headCell?.type === "M" ? "number" : "text"
                                 }
+                                disabled={headCell?.type === "A"}
                                 value={markValue || ""}
                                 onChange={(e) =>
                                   handleMarksChange(
@@ -554,6 +556,11 @@ export default function MarksGradeEntry() {
                                   textAlign: "center",
                                   "& .MuiInputBase-input": {
                                     textAlign: "center",
+                                  },
+                                  "& .MuiInputBase-input.Mui-disabled": {
+                                    color: "#2E7D32",
+                                    opacity: 1, // override MUI's default 0.38 opacity
+                                    WebkitTextFillColor: "#2E7D32", // fix for WebKit browsers like Chrome/Safari
                                   },
                                 }}
                               />

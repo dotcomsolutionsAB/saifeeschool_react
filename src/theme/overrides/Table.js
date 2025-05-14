@@ -25,7 +25,9 @@ export default function Table(theme) {
           borderBottom: "1px solid #DDDEEE",
         },
         head: {
+          background: theme.palette.primary.light,
           color: theme.palette.primary.main,
+          fontWeight: theme.typography.fontWeightBold,
           "&:first-of-type": {
             paddingLeft: theme.spacing(2),
           },
@@ -34,7 +36,9 @@ export default function Table(theme) {
           },
         },
         stickyHeader: {
+          background: theme.palette.primary.light,
           color: theme.palette.primary.main,
+          fontWeight: theme.typography.fontWeightBold,
           "&:first-of-type": {
             paddingLeft: theme.spacing(2),
           },
@@ -43,6 +47,7 @@ export default function Table(theme) {
           },
         },
         body: {
+          fontWeight: 600,
           "&:first-of-type": {
             paddingLeft: theme.spacing(2),
           },

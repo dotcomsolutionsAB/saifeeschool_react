@@ -20,6 +20,7 @@ import {
 } from "@mui/icons-material";
 import { useState } from "react";
 import Saifee_Logo from "../assets/logos/Saifee_Logo.png";
+import { useNavigate } from "react-router-dom";
 
 const MENU_OPTIONS = [
   {
@@ -38,6 +39,7 @@ const MENU_OPTIONS = [
 
 const Header = () => {
   const { userInfo, logout } = useAuth();
+  const navigate = useNavigate();
   const { layout, handleDrawerOpen, isSidebarExpanded, toggleSidebar } =
     useLayout();
 
@@ -50,6 +52,13 @@ const Header = () => {
 
   const handleClose = () => {
     setOpen(null);
+  };
+
+  const handleMenuClick = (option) => {
+    handleClose();
+    if (option.label === "Home") {
+      navigate("/");
+    }
   };
 
   const handleImageError = () => {
@@ -284,7 +293,7 @@ const Header = () => {
             {MENU_OPTIONS.map((option) => (
               <MenuItem
                 key={option.label}
-                onClick={handleClose}
+                onClick={() => handleMenuClick(option)}
                 sx={{ display: "flex", alignItems: "center", gap: 1 }}
               >
                 <IconButton
