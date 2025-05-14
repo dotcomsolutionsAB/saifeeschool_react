@@ -52,6 +52,7 @@ import {
   paymentAttempts,
 } from "../../../../services/admin/transactions.service";
 import dayjs from "dayjs";
+import { Helmet } from "react-helmet-async";
 // ----------------------------------------------------------------------
 
 const HEAD_LABEL = [
@@ -271,6 +272,9 @@ export default function PaymentAttempts() {
 
   return (
     <>
+      <Helmet>
+        <title>Payment Attempts | SAIFEE</title>
+      </Helmet>
       <Box
         sx={{
           display: "flex",

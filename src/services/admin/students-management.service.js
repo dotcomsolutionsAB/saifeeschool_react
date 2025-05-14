@@ -13,6 +13,9 @@ const NEW_ADMISSION_PATH = "/new_admission";
 export const getAllStudents = async (body) =>
   await postRequest(`${STUDENTS_PATH}/view`, body);
 
+export const getStudentById = async (body) =>
+  await postRequest(`${STUDENTS_PATH}/view/${body?.id}`, {});
+
 export const exportStudents = async (body) =>
   await postRequest(`${STUDENTS_PATH}/export`, body); // to download the report
 
@@ -55,8 +58,30 @@ export const getClasses = async (body) =>
 export const getAllAcademicYears = async () =>
   await getRequest(`${ACADEMIC_PATH}/view`);
 
+// new admission apis
+
 export const getNewAdmissions = async (body) =>
   await postRequest(`${NEW_ADMISSION_PATH}/view`, body);
 
 export const getNewAdmissionById = async (body) =>
   await postRequest(`${NEW_ADMISSION_PATH}/view/${body?.id}`, {});
+
+export const setPrinted = async (body) =>
+  await postRequest(`${NEW_ADMISSION_PATH}/set_printed/${body?.id}`, {
+    printed: body?.printed,
+  });
+
+export const setInterviewStatus = async (body) =>
+  await postRequest(`${NEW_ADMISSION_PATH}/set_interview_status/${body?.id}`, {
+    interview_status: body?.interview_status,
+  });
+
+export const setInterviewDateApi = async (body) =>
+  await postRequest(`${NEW_ADMISSION_PATH}/set_interview_date/${body?.id}`, {
+    interview_date: body?.interview_date,
+  });
+
+export const setAddedToSchool = async (body) =>
+  await postRequest(`${NEW_ADMISSION_PATH}/set_add_to_school/${body?.id}`, {
+    added_to_school: body?.added_to_school,
+  });

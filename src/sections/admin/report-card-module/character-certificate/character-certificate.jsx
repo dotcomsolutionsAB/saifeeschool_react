@@ -38,6 +38,7 @@ import Loader from "../../../../components/loader/loader";
 import CreateEditCCModal from "./modals/create-edit-cc-modal";
 import CharacterCertificateTableRow from "./character-certificate-table-row";
 import CreateBulkCCModal from "./modals/create-bulk-cc-modal";
+import { Helmet } from "react-helmet-async";
 // ----------------------------------------------------------------------
 
 const HEAD_LABEL = [
@@ -208,6 +209,9 @@ export default function CharacterCertificate() {
 
   return (
     <>
+      <Helmet>
+        <title>Character Certificate | SAIFEE</title>
+      </Helmet>
       <Box
         sx={{
           display: "flex",

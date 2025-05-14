@@ -18,7 +18,13 @@ import {
   updateItem,
 } from "../../../../../services/admin/procurement.service";
 
-const AddNewProductModal = ({ open, onClose, refetch, detail }) => {
+const AddNewProductModal = ({
+  open,
+  onClose,
+  refetch,
+  detail,
+  productList,
+}) => {
   const { logout } = useAuth();
 
   const initialState = {
@@ -67,6 +73,7 @@ const AddNewProductModal = ({ open, onClose, refetch, detail }) => {
     if (detail?.id) {
       setFormData({
         ...initialState,
+        id: detail?.id,
         category: detail?.category || "",
         sub_category: detail?.sub_category || "",
         name: detail?.name || "",
@@ -76,6 +83,8 @@ const AddNewProductModal = ({ open, onClose, refetch, detail }) => {
         discount: detail?.discount || "",
         tax: detail?.tax || "",
         hsn: detail?.hsn || "",
+        log_date: detail?.log_date || "",
+        log_user: detail?.log_user || "",
       });
     } else {
       setFormData(initialState);
@@ -122,8 +131,8 @@ const AddNewProductModal = ({ open, onClose, refetch, detail }) => {
           <Grid container spacing={2}>
             <Grid item xs={12} sm={6}>
               <Autocomplete
-                options={[]}
-                getOptionLabel={(option) => option?.name || ""}
+                options={productList || []}
+                getOptionLabel={(option) => option || ""}
                 renderInput={(params) => (
                   <TextField
                     {...params}
@@ -140,22 +149,13 @@ const AddNewProductModal = ({ open, onClose, refetch, detail }) => {
               />
             </Grid>
             <Grid item xs={12} sm={6}>
-              <Autocomplete
-                options={[]}
-                getOptionLabel={(option) => option?.name || ""}
-                renderInput={(params) => (
-                  <TextField
-                    {...params}
-                    label="Sub Category"
-                    name="sub_category"
-                  />
-                )}
-                value={formData?.sub_category || null}
-                onChange={(_, newValue) =>
-                  handleChange({
-                    target: { name: "sub_category", value: newValue },
-                  })
-                }
+              <TextField
+                label="Sub Category"
+                name="sub_category"
+                fullWidth
+                required
+                value={formData?.sub_category || ""}
+                onChange={handleChange}
               />
             </Grid>
             <Grid item xs={12} sm={6}>
@@ -263,6 +263,7 @@ AddNewProductModal.propTypes = {
   onClose: PropTypes.func,
   refetch: PropTypes.func,
   detail: PropTypes.object,
+  productList: PropTypes.array,
 };
 
 export default AddNewProductModal;

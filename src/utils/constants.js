@@ -27,6 +27,11 @@ export const ADMIN_SIDEBAR_ITEMS = [
         displayName: "Products",
         linkName: "/procurement/products",
       },
+      {
+        _id: 73,
+        displayName: "Supplier",
+        linkName: "/procurement/supplier",
+      },
     ],
   },
   {
@@ -224,7 +229,7 @@ export const TYPE_LIST = [
 ];
 
 export function emptyRows(page, rowsPerPage, arrayLength) {
-  console.log(arrayLength, "arrayLength");
+  if (rowsPerPage > 25) return 0;
   return page ? Math.max(0, (1 + page) * rowsPerPage - arrayLength) : 0;
 }
 

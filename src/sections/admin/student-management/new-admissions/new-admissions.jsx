@@ -40,6 +40,7 @@ import MessageBox from "../../../../components/error/message-box";
 import { MoreVert } from "@mui/icons-material";
 import dayjs from "dayjs";
 import { useNavigate } from "react-router-dom";
+import { Helmet } from "react-helmet-async";
 // ----------------------------------------------------------------------
 
 const HEAD_LABEL = [
@@ -169,6 +170,9 @@ export default function NewAdmissions() {
 
   return (
     <>
+      <Helmet>
+        <title>New Admissions | SAIFEE</title>
+      </Helmet>
       <Card sx={{ p: 2, width: "100%" }}>
         <Typography>New Admissions</Typography>
 

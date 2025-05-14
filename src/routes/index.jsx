@@ -39,6 +39,9 @@ import PaymentStatus from "../sections/student/fees/payment-status";
 import NewAdmissionsDetail from "../sections/admin/student-management/new-admissions/new-admissions-detail";
 import Products from "../sections/admin/procurement/products/products";
 import ProcurementDashboard from "../sections/admin/procurement/dashboard/procurement-dashboard";
+import DebitVoucher from "../sections/admin/accounts/debit-voucher/debit-voucher";
+import CreditVoucher from "../sections/admin/accounts/credit-voucher/credit-voucher";
+import Banks from "../sections/admin/accounts/banks/banks";
 
 export default function Router() {
   const { isLoggedIn, logout, userInfo } = useAuth();
@@ -107,6 +110,15 @@ export default function Router() {
           path: "character-certificate",
           element: <CharacterCertificate />,
         },
+      ],
+    },
+    {
+      path: "accounts",
+      children: [
+        { index: true, element: <Navigate to="debit-voucher" /> },
+        { path: "debit-voucher", element: <DebitVoucher /> },
+        { path: "credit-voucher", element: <CreditVoucher /> },
+        { path: "banks", element: <Banks /> },
       ],
     },
     {

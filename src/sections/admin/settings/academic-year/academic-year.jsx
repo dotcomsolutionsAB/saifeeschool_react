@@ -27,6 +27,7 @@ import MessageBox from "../../../../components/error/message-box";
 import Iconify from "../../../../components/iconify/iconify";
 import { toast } from "react-toastify";
 import useAuth from "../../../../hooks/useAuth";
+import { Helmet } from "react-helmet-async";
 
 const AcademicYear = () => {
   const theme = useTheme();
@@ -109,6 +110,9 @@ const AcademicYear = () => {
 
   return (
     <Box>
+      <Helmet>
+        <title>Academic Year | SAIFEE</title>
+      </Helmet>
       <Box
         sx={{
           display: "flex",

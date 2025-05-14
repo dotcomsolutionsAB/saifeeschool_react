@@ -29,6 +29,7 @@ import { getAllAcademicYears } from "../../../../services/admin/students-managem
 import { useNavigate } from "react-router-dom";
 import { ExpandLessRounded, ExpandMoreRounded } from "@mui/icons-material";
 import { toast } from "react-toastify";
+import { Helmet } from "react-helmet-async";
 
 const STATUS_LIST = ["Pending", "Locked", "Verified"];
 
@@ -38,7 +39,7 @@ const ReportCardDashboard = () => {
   const navigate = useNavigate();
 
   const [page, setPage] = useState(0);
-  const [rowsPerPage, setRowsPerPage] = useState(DEFAULT_LIMIT);
+  const [rowsPerPage, setRowsPerPage] = useState(12);
   const [search, setSearch] = useState("");
   const [formData, setFormData] = useState({
     ay_id: { ay_id: userInfo?.ay_id, ay_name: userInfo?.ay_name },
@@ -146,6 +147,9 @@ const ReportCardDashboard = () => {
 
   return (
     <Box>
+      <Helmet>
+        <title>Report Card | SAIFEE</title>
+      </Helmet>
       {/* header */}
       <Box
         sx={{
@@ -359,7 +363,7 @@ const ReportCardDashboard = () => {
                 count={classCount}
                 rowsPerPage={rowsPerPage}
                 onPageChange={handleChangePage}
-                rowsPerPageOptions={ROWS_PER_PAGE_OPTIONS}
+                rowsPerPageOptions={[4, 12, 24, 48, 100]}
                 onRowsPerPageChange={handleChangeRowsPerPage}
               />
             </Box>

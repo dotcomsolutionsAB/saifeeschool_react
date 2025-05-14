@@ -16,7 +16,7 @@ export const useGetApi = ({
   const [dataCount, setDataCount] = useState(0);
   const [allResponse, setAllResponse] = useState(null);
 
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
   const [isError, setIsError] = useState(false);
 
   const fetchData = async () => {

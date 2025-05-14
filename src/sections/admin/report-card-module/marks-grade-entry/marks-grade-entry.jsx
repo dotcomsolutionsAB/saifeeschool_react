@@ -36,6 +36,7 @@ import { toast } from "react-toastify";
 import { useLocation } from "react-router-dom";
 import Iconify from "../../../../components/iconify/iconify";
 import AddAggregateColumnModal from "./modals/add-aggregate-column-modal";
+import { Helmet } from "react-helmet-async";
 // ----------------------------------------------------------------------
 
 const HEAD_LABEL = [
@@ -240,6 +241,9 @@ export default function MarksGradeEntry() {
 
   return (
     <>
+      <Helmet>
+        <title>Marks | SAIFEE</title>
+      </Helmet>
       {/* Search and Filters */}
       <Box
         sx={{

@@ -1,14 +1,23 @@
 import {
   Avatar,
   Box,
+  Button,
   Card,
   CardContent,
+  CircularProgress,
   Divider,
   IconButton,
   List,
   ListItem,
   ListItemIcon,
   ListItemText,
+  Popover,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
   TextField,
   Typography,
   useTheme,
@@ -23,12 +32,26 @@ import useLayout from "../../../../hooks/uesLayout";
 import {
   getNewAdmissionById,
   getNewAdmissions,
+  setAddedToSchool,
+  setInterviewDateApi,
+  setInterviewStatus,
+  setPrinted,
 } from "../../../../services/admin/students-management.service";
 import { useGetApi } from "../../../../hooks/useGetApi";
 import Loader from "../../../../components/loader/loader";
 import MessageBox from "../../../../components/error/message-box";
-import { Print, PrintOutlined } from "@mui/icons-material";
+import { PrintOutlined } from "@mui/icons-material";
 import Iconify from "../../../../components/iconify/iconify";
+import { DatePicker } from "@mui/x-date-pickers";
+import { Helmet } from "react-helmet-async";
+
+const HEAD_LABEL = [
+  { id: "sn", label: "SN" },
+  { id: "name", label: "Name" },
+  { id: "class", label: "Class" },
+  { id: "section", label: "Section" },
+  { id: "roll_no", label: "Roll No" },
+];
 
 const NewAdmissionsDetail = () => {
   const { userInfo, logout } = useAuth();
@@ -42,6 +65,12 @@ const NewAdmissionsDetail = () => {
   const [previewImage, setPreviewImage] = useState(
     location?.state?.row?.child_photo_url || ""
   );
+  const [printLoading, setPrintLoading] = useState(false);
+  const [interviewStatusLoading, setInterviewStatusLoading] = useState(false);
+  const [addToSchoolLoading, setAddToSchoolLoading] = useState(false);
+  const [interviewDateLoading, setInterviewDateLoading] = useState(false);
+  const [interviewDate, setInterviewDate] = useState(null);
+  const [anchorEl, setAnchorEl] = useState(null);
 
   // api to get new admissions list
   const {
@@ -63,6 +92,7 @@ const NewAdmissionsDetail = () => {
     dataList: detail,
     isLoading: isLoadingDetail,
     isError: isErrorDetail,
+    refetch,
   } = useGetApi({
     apiFunction: getNewAdmissionById,
     body: {
@@ -70,8 +100,6 @@ const NewAdmissionsDetail = () => {
     },
     dependencies: [selectedId],
   });
-
-  console.log(detail, "detailStudent");
 
   // Handle image upload
   const handleImageUpload = async (e) => {
@@ -110,6 +138,95 @@ const NewAdmissionsDetail = () => {
     setPreviewImage(row?.child_photo_url || "");
   };
 
+  const handlePrint = async (printed) => {
+    setPrintLoading(true);
+    const response = await setPrinted({ id: selectedId, printed });
+    setPrintLoading(false);
+
+    if (response?.code === 200) {
+      refetch();
+      toast.success(response?.message || "Print status updated successfully");
+    } else if (response?.code === 401) {
+      logout(response);
+    } else {
+      toast.error(response?.message || "Some error occurred.");
+    }
+  };
+
+  const handleInterviewStatus = async (interview_status) => {
+    setInterviewStatusLoading(true);
+    const response = await setInterviewStatus({
+      id: selectedId,
+      interview_status,
+    });
+    setInterviewStatusLoading(false);
+
+    if (response?.code === 200) {
+      refetch();
+      toast.success(
+        response?.message || "Interview status updated successfully"
+      );
+    } else if (response?.code === 401) {
+      logout(response);
+    } else {
+      toast.error(response?.message || "Some error occurred.");
+    }
+  };
+  const handleAddedToSchool = async (added_to_school) => {
+    setAddToSchoolLoading(true);
+    const response = await setAddedToSchool({
+      id: selectedId,
+      added_to_school,
+    });
+    setAddToSchoolLoading(false);
+
+    if (response?.code === 200) {
+      refetch();
+      toast.success(response?.message || "Studdent added to school.");
+    } else if (response?.code === 401) {
+      logout(response);
+    } else {
+      toast.error(response?.message || "Some error occurred.");
+    }
+  };
+
+  const handleSetInterviewDate = async () => {
+    if (!interviewDate) {
+      toast.error("Interview Date is required");
+      return;
+    }
+    setInterviewDateLoading(true);
+    const response = await setInterviewDateApi({
+      id: selectedId,
+      interview_date: interviewDate
+        ? dayjs(interviewDate).format("YYYY-MM-DD")
+        : null,
+    });
+    setInterviewDateLoading(false);
+
+    if (response?.code === 200) {
+      refetch();
+      setInterviewDate(null);
+      setAnchorEl(null);
+      toast.success(response?.message || "Studdent added to school.");
+    } else if (response?.code === 401) {
+      logout(response);
+    } else {
+      toast.error(response?.message || "Some error occurred.");
+    }
+  };
+
+  const handleAnchorElOpen = (e) => {
+    setAnchorEl(e.currentTarget);
+  };
+
+  const handleAnchorElClose = () => {
+    if (interviewDateLoading) {
+      return;
+    }
+    setAnchorEl(null);
+  };
+
   useEffect(() => {
     if (!location?.state?.row?.id) {
       navigate(-1);
@@ -124,6 +241,9 @@ const NewAdmissionsDetail = () => {
         width: "100%",
       }}
     >
+      <Helmet>
+        <title>New Admissions Detail | SAIFEE</title>
+      </Helmet>
       {/* Left Side */}
       <Card
         elevation={10}
@@ -459,8 +579,14 @@ const NewAdmissionsDetail = () => {
                     display: "flex",
                     flexDirection: "column",
                   }}
+                  disabled={printLoading}
+                  onClick={() => handlePrint("1")}
                 >
-                  <PrintOutlined sx={{ fontSize: "30px" }} />
+                  {printLoading ? (
+                    <CircularProgress size={30} color="white" />
+                  ) : (
+                    <PrintOutlined sx={{ fontSize: "30px" }} />
+                  )}
                 </IconButton>
                 <Typography sx={{ fontSize: "12px" }}>Print</Typography>
               </Box>
@@ -482,12 +608,53 @@ const NewAdmissionsDetail = () => {
                     display: "flex",
                     flexDirection: "column",
                   }}
+                  onClick={handleAnchorElOpen}
                 >
                   <Iconify icon="solar:calendar-date-line-duotone" width={30} />
                 </IconButton>
                 <Typography sx={{ fontSize: "12px" }}>
                   Set Interview Date
                 </Typography>
+
+                {/* popover for set interview date */}
+                <Popover
+                  open={!!anchorEl}
+                  anchorEl={anchorEl}
+                  onClose={handleAnchorElClose}
+                  anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
+                  transformOrigin={{ vertical: "top", horizontal: "center" }}
+                >
+                  <Box
+                    sx={{ display: "flex", alignItems: "center", gap: 2, p: 2 }}
+                  >
+                    <DatePicker
+                      label="Interview Date"
+                      renderInput={(params) => <TextField {...params} />}
+                      value={interviewDate || null}
+                      onChange={(newValue) => setInterviewDate(newValue)}
+                      disablePast
+                      slotProps={{
+                        textField: {
+                          size: "small",
+                          required: true,
+                        },
+                      }}
+                      sx={{ width: "180px" }}
+                    />
+
+                    <Button
+                      variant="contained"
+                      onClick={handleSetInterviewDate}
+                      disabled={interviewDateLoading}
+                    >
+                      {interviewDateLoading ? (
+                        <CircularProgress size={20} />
+                      ) : (
+                        `Save`
+                      )}
+                    </Button>
+                  </Box>
+                </Popover>
               </Box>
               <Divider
                 flexItem
@@ -507,8 +674,14 @@ const NewAdmissionsDetail = () => {
                     display: "flex",
                     flexDirection: "column",
                   }}
+                  disabled={addToSchoolLoading}
+                  onClick={() => handleAddedToSchool("1")}
                 >
-                  <Iconify icon="basil:add-solid" width={30} />
+                  {addToSchoolLoading ? (
+                    <CircularProgress size={30} color="white" />
+                  ) : (
+                    <Iconify icon="basil:add-solid" width={30} />
+                  )}
                 </IconButton>
                 <Typography sx={{ fontSize: "12px" }}>Add to School</Typography>
               </Box>
@@ -530,8 +703,14 @@ const NewAdmissionsDetail = () => {
                     display: "flex",
                     flexDirection: "column",
                   }}
+                  disabled={printLoading}
+                  onClick={() => handlePrint("0")}
                 >
-                  <Iconify icon="iconoir:bookmark-solid" width={30} />
+                  {printLoading ? (
+                    <CircularProgress size={30} color="white" />
+                  ) : (
+                    <Iconify icon="iconoir:bookmark-solid" width={30} />
+                  )}
                 </IconButton>
                 <Typography sx={{ fontSize: "12px" }}>
                   Mark As Not Printed
@@ -555,8 +734,14 @@ const NewAdmissionsDetail = () => {
                     display: "flex",
                     flexDirection: "column",
                   }}
+                  disabled={interviewStatusLoading}
+                  onClick={() => handleInterviewStatus("1")}
                 >
-                  <Iconify icon="tdesign:task-checked" width={30} />
+                  {interviewStatusLoading ? (
+                    <CircularProgress size={30} color="white" />
+                  ) : (
+                    <Iconify icon="tdesign:task-checked" width={30} />
+                  )}
                 </IconButton>
                 <Typography sx={{ fontSize: "12px" }}>
                   Interview Completed
@@ -580,8 +765,14 @@ const NewAdmissionsDetail = () => {
                     display: "flex",
                     flexDirection: "column",
                   }}
+                  disabled={interviewStatusLoading}
+                  onClick={() => handleInterviewStatus("0")}
                 >
-                  <Iconify icon="tdesign:task-error" width={30} />
+                  {interviewStatusLoading ? (
+                    <CircularProgress size={30} color="white" />
+                  ) : (
+                    <Iconify icon="tdesign:task-error" width={30} />
+                  )}
                 </IconButton>
                 <Typography sx={{ fontSize: "12px" }}>
                   Interview Rejected
@@ -891,13 +1082,58 @@ const NewAdmissionsDetail = () => {
               </Card>
             </Box>
 
+            {/* siblings details */}
+            {detail?.siblings?.length > 0 && (
+              <Box sx={{ my: 4, px: 4 }}>
+                <Typography
+                  variant="h4"
+                  sx={{ textAlign: "center", color: "primary.main", mb: 2 }}
+                >
+                  {`Sibling's Details`}
+                </Typography>
+                <TableContainer sx={{ overflowY: "unset" }}>
+                  <Table sx={{ minWidth: 300 }}>
+                    <TableHead>
+                      <TableRow>
+                        {HEAD_LABEL?.map((headCell) => (
+                          <TableCell
+                            key={headCell?.id}
+                            align={headCell?.align || "left"}
+                            sx={{
+                              width: headCell?.width,
+                              minWidth: headCell?.minWidth,
+                              whiteSpace: "nowrap",
+                            }}
+                          >
+                            {headCell?.label}
+                          </TableCell>
+                        ))}
+                      </TableRow>
+                    </TableHead>
+
+                    <TableBody>
+                      {detail?.siblings?.map((row, index) => (
+                        <TableRow key={index}>
+                          <TableCell>{index + 1}</TableCell>
+                          <TableCell>{row?.name || "-"}</TableCell>
+                          <TableCell>{row?.class || "-"}</TableCell>
+                          <TableCell>{row?.section || "-"}</TableCell>
+                          <TableCell>{row?.roll_no || "-"}</TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                </TableContainer>
+              </Box>
+            )}
+
             {/* Other Information */}
             <Box sx={{ px: 4 }}>
               <Typography
                 variant="h4"
                 sx={{ textAlign: "center", color: "primary.main", mt: 2 }}
               >
-                Other Information:
+                Other Information
               </Typography>
               <List>
                 <ListItem sx={{ alignItems: "start" }}>

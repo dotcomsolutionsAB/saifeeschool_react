@@ -50,6 +50,7 @@ import Iconify from "../../../../components/iconify/iconify";
 import UpgradeStudentModal from "./modals/upgrade-student-modal";
 import ApplyFeePlanModal from "./modals/apply-fee-plan-modal";
 import useStudent from "../../../../hooks/useStudent";
+import { Helmet } from "react-helmet-async";
 
 // ----------------------------------------------------------------------
 
@@ -296,6 +297,9 @@ export default function Students() {
 
   return (
     <>
+      <Helmet>
+        <title>Students | SAIFEE</title>
+      </Helmet>
       <Box
         sx={{
           display: "flex",

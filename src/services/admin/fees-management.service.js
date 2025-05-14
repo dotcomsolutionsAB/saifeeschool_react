@@ -9,3 +9,6 @@ export const getAllFees = async (body) =>
 
 export const getOneTimeFees = async (body) =>
   await postRequest(`${FEES_PATH}/one_time`, body);
+
+export const exportTransactions = async (body) =>
+  await postRequest(`/transactions/export`, body); // to download the report

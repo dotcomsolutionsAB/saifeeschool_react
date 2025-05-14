@@ -16,3 +16,6 @@ export const updateItem = async (body) =>
 
 export const deleteItem = async (body) =>
   await deleteRequest(`${ITEM_PATH}/${body?.id}`);
+
+export const getProducts = async () =>
+  await getRequest(`${ITEM_PATH}/category`);

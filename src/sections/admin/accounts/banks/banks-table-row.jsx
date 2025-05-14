@@ -5,40 +5,25 @@ import Iconify from "../../../../components/iconify/iconify";
 import { useState } from "react";
 import { toast } from "react-toastify";
 import useAuth from "../../../../hooks/useAuth";
-import AddNewProductModal from "./modals/add-new-product-modal";
-import { deleteItem } from "../../../../services/admin/procurement.service";
+import dayjs from "dayjs";
+import { FORMAT_INDIAN_CURRENCY } from "../../../../utils/constants";
+import { deleteBankTransaction } from "../../../../services/admin/accounts.service";
 import ConfirmationDialog from "../../../../components/confirmation-dialog/confirmation-dialog";
 
-const ProductsTableRow = ({
-  row,
-  refetch,
-  index,
-  page,
-  rowsPerPage,
-  productList,
-}) => {
+const BanksTableRow = ({ row, index, refetch, setFormData }) => {
   const { logout } = useAuth();
   const [anchorEl, setAnchorEl] = useState(null);
-  const [editModalOpen, setEditModalOpen] = useState(false);
   const [isDeleteLoading, setIsDeleteLoading] = useState(false);
   const [confirmationModalOpen, setConfirmationModalOpen] = useState(false);
 
   // open action menu open
+
   const handleMenuOpen = (event) => {
     setAnchorEl(event.currentTarget);
   };
 
   const handleMenuClose = () => {
     setAnchorEl(null);
-  };
-
-  const handleEditModalOpen = () => {
-    setEditModalOpen(true);
-  };
-
-  const handleEditModalClose = () => {
-    setEditModalOpen(false);
-    handleMenuClose();
   };
 
   const handleConfirmationModalOpen = () => {
@@ -50,9 +35,14 @@ const ProductsTableRow = ({
     handleMenuClose();
   };
 
+  const handleEdit = () => {
+    setFormData({ ...row, sn: index + 1 });
+    handleMenuClose();
+  };
+
   const handleDelete = async () => {
     setIsDeleteLoading(true);
-    const response = await deleteItem(row);
+    const response = await deleteBankTransaction(row);
     setIsDeleteLoading(false);
 
     if (response?.code === 200) {
@@ -68,20 +58,21 @@ const ProductsTableRow = ({
 
   return (
     <>
-      <TableRow hover tabIndex={-1} key={row?.id} role="checkbox">
-        <TableCell>{page * rowsPerPage + index + 1 || ""}</TableCell>
+      <TableRow hover tabIndex={-1}>
+        <TableCell>{index + 1 || "-"}</TableCell>
 
-        <TableCell>{row?.name || "-"}</TableCell>
+        <TableCell>{row?.type || "-"}</TableCell>
 
-        <TableCell>{row?.category || "-"}</TableCell>
+        <TableCell>
+          {row?.date ? dayjs(row?.date).format("DD-MM-YYYY") : "-"}
+        </TableCell>
 
-        <TableCell>{row?.sub_category || "-"}</TableCell>
-        <TableCell>{row?.unit || "-"}</TableCell>
-        <TableCell>{row?.price || "-"}</TableCell>
-        <TableCell>{row?.discount || "-"}</TableCell>
-        <TableCell>{row?.hsn || "-"}</TableCell>
+        <TableCell>₹ {FORMAT_INDIAN_CURRENCY(row?.amount) || ""}</TableCell>
+        <TableCell>{row?.comments || "-"}</TableCell>
+        <TableCell>{row?.user || "-"}</TableCell>
+
         <TableCell align="center">
-          <IconButton onClick={handleMenuOpen}>
+          <IconButton sx={{ cursor: "pointer" }} onClick={handleMenuOpen}>
             <MoreVert />
           </IconButton>
         </TableCell>
@@ -102,7 +93,7 @@ const ProductsTableRow = ({
         }}
         sx={{ color: "primary.main" }}
       >
-        <MenuItem onClick={handleEditModalOpen} sx={{ color: "primary.main" }}>
+        <MenuItem onClick={handleEdit} sx={{ color: "primary.main" }}>
           <Iconify icon="basil:edit-outline" sx={{ mr: 1 }} />
           Edit
         </MenuItem>
@@ -115,34 +106,23 @@ const ProductsTableRow = ({
         </MenuItem>
       </Menu>
 
-      {/* Delete Product*/}
+      {/* Delete Confirmation*/}
       <ConfirmationDialog
         open={confirmationModalOpen}
         onCancel={handleConfirmationModalClose}
         onConfirm={handleDelete}
         isLoading={isDeleteLoading}
-        title="Are you sure you want to delete this item?"
-      />
-
-      {/* Edit Product*/}
-      <AddNewProductModal
-        open={editModalOpen}
-        onClose={handleEditModalClose}
-        refetch={refetch}
-        detail={row}
-        productList={productList || []}
+        title="Are you sure you want to delete this transaction?"
       />
     </>
   );
 };
 
-ProductsTableRow.propTypes = {
+BanksTableRow.propTypes = {
   row: PropTypes.object,
   refetch: PropTypes.func,
+  setFormData: PropTypes.func,
   index: PropTypes.number,
-  page: PropTypes.number,
-  rowsPerPage: PropTypes.number,
-  productList: PropTypes.array,
 };
 
-export default ProductsTableRow;
+export default BanksTableRow;

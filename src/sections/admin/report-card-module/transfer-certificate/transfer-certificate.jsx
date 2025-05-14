@@ -37,6 +37,7 @@ import MessageBox from "../../../../components/error/message-box";
 import Loader from "../../../../components/loader/loader";
 import CreateEditTCModal from "./modals/create-edit-tc-modal";
 import TransferCertificateTableRow from "./transfer-certificate-table-row";
+import { Helmet } from "react-helmet-async";
 // ----------------------------------------------------------------------
 
 const HEAD_LABEL = [
@@ -196,6 +197,9 @@ export default function TransferCertificate() {
 
   return (
     <>
+      <Helmet>
+        <title>Transfer Certificate | SAIFEE</title>
+      </Helmet>
       <Box
         sx={{
           display: "flex",

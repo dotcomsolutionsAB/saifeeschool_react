@@ -26,9 +26,13 @@ import {
 } from "../../../../utils/constants";
 import Loader from "../../../../components/loader/loader";
 import MessageBox from "../../../../components/error/message-box";
-import { getAllItem } from "../../../../services/admin/procurement.service";
+import {
+  getAllItem,
+  getProducts,
+} from "../../../../services/admin/procurement.service";
 import AddNewProductModal from "./modals/add-new-product-modal";
 import ProductsTableRow from "./products-table-row";
+import { Helmet } from "react-helmet-async";
 
 // ----------------------------------------------------------------------
 
@@ -51,7 +55,6 @@ export default function Products() {
 
   // api to get products list
   const {
-    dataList: productsList,
     dataCount: productsCount,
     allResponse,
     isLoading,
@@ -64,6 +67,11 @@ export default function Products() {
       limit: rowsPerPage,
     },
     dependencies: [page, rowsPerPage],
+  });
+
+  // api to get productList for modal
+  const { allResponse: productList } = useGetApi({
+    apiFunction: getProducts,
   });
 
   const handleModalOpen = () => {
@@ -90,6 +98,9 @@ export default function Products() {
 
   return (
     <>
+      <Helmet>
+        <title>Products | SAIFEE</title>
+      </Helmet>
       <Card sx={{ p: 2, width: "100%" }}>
         <Box
           sx={{
@@ -112,6 +123,9 @@ export default function Products() {
             open={modalOpen}
             onClose={handleModalClose}
             refetch={refetch}
+            productList={
+              productList?.categories?.filter((option) => !!option) || []
+            }
           />
         </Box>
 
@@ -152,6 +166,10 @@ export default function Products() {
                     page={page}
                     rowsPerPage={rowsPerPage}
                     row={row}
+                    productList={
+                      productList?.categories?.filter((option) => !!option) ||
+                      []
+                    }
                   />
                 ))}
 

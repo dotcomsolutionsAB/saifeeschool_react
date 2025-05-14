@@ -54,6 +54,7 @@ import {
 } from "../../../../services/admin/fees-management.service";
 import dayjs from "dayjs";
 import { useLocation } from "react-router-dom";
+import { Helmet } from "react-helmet-async";
 // ----------------------------------------------------------------------
 
 const HEAD_LABEL = [
@@ -329,6 +330,9 @@ export default function Fees() {
   }, [filter]);
   return (
     <>
+      <Helmet>
+        <title>Fees | SAIFEE</title>
+      </Helmet>
       <Box
         sx={{
           display: "flex",

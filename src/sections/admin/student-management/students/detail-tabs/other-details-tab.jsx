@@ -48,7 +48,7 @@ const OtherDetailsTab = ({ detail }) => {
             <Typography sx={{ width: "130px", fontWeight: 600 }}>
               Gender :{" "}
             </Typography>
-            <Typography>{detail?.st_gender || "N/A"}</Typography>
+            <Typography>{detail?.gender || "N/A"}</Typography>
           </Box>
           <Box
             sx={{
@@ -61,7 +61,7 @@ const OtherDetailsTab = ({ detail }) => {
             <Typography sx={{ width: "130px", fontWeight: 600 }}>
               D.O.B :{" "}
             </Typography>
-            <Typography>{detail?.st_dob || "N/A"}</Typography>
+            <Typography>{detail?.dob || "N/A"}</Typography>
           </Box>
           <Box
             sx={{
@@ -74,7 +74,7 @@ const OtherDetailsTab = ({ detail }) => {
             <Typography sx={{ width: "130px", fontWeight: 600 }}>
               Email :{" "}
             </Typography>
-            <Typography>{detail?.st_gmail_address || "N/A"}</Typography>
+            <Typography>{detail?.email || "N/A"}</Typography>
           </Box>
           <Box
             sx={{
@@ -87,7 +87,7 @@ const OtherDetailsTab = ({ detail }) => {
             <Typography sx={{ width: "130px", fontWeight: 600 }}>
               City :{" "}
             </Typography>
-            <Typography>{detail?.st_city || "N/A"}</Typography>
+            <Typography>{detail?.city || "N/A"}</Typography>
           </Box>
           <Box
             sx={{
@@ -100,7 +100,7 @@ const OtherDetailsTab = ({ detail }) => {
             <Typography sx={{ width: "130px", fontWeight: 600 }}>
               State :{" "}
             </Typography>
-            <Typography>{detail?.st_state || "N/A"}</Typography>
+            <Typography>{detail?.state || "N/A"}</Typography>
           </Box>
           <Box
             sx={{
@@ -113,7 +113,7 @@ const OtherDetailsTab = ({ detail }) => {
             <Typography sx={{ width: "130px", fontWeight: 600 }}>
               Country :{" "}
             </Typography>
-            <Typography>{detail?.st_country || "N/A"}</Typography>
+            <Typography>{detail?.country || "N/A"}</Typography>
           </Box>
           <Box
             sx={{
@@ -126,7 +126,7 @@ const OtherDetailsTab = ({ detail }) => {
             <Typography sx={{ width: "130px", fontWeight: 600 }}>
               Pincode :{" "}
             </Typography>
-            <Typography>{detail?.st_pincode || "N/A"}</Typography>
+            <Typography>{detail?.pincode || "N/A"}</Typography>
           </Box>
           <Box
             sx={{
@@ -139,7 +139,7 @@ const OtherDetailsTab = ({ detail }) => {
             <Typography sx={{ width: "130px", fontWeight: 600 }}>
               Blood Group :{" "}
             </Typography>
-            <Typography>{detail?.st_blood_group || "N/A"}</Typography>
+            <Typography>{detail?.blood_group || "N/A"}</Typography>
           </Box>
           <Box
             sx={{
@@ -152,7 +152,7 @@ const OtherDetailsTab = ({ detail }) => {
             <Typography sx={{ width: "130px", fontWeight: 600 }}>
               Aadhaar No :{" "}
             </Typography>
-            <Typography>{detail?.aadhaar_id || "N/A"}</Typography>
+            <Typography>{detail?.aadhaar_no || "N/A"}</Typography>
           </Box>
           <Box
             sx={{
@@ -165,7 +165,7 @@ const OtherDetailsTab = ({ detail }) => {
             <Typography sx={{ width: "130px", fontWeight: 600 }}>
               ITS :{" "}
             </Typography>
-            <Typography>{detail?.st_its_id || "N/A"}</Typography>
+            <Typography>{detail?.its_id || "N/A"}</Typography>
           </Box>
         </CardContent>
       </Card>
@@ -190,10 +190,10 @@ const OtherDetailsTab = ({ detail }) => {
         >
           <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
             <Avatar
-              alt={detail?.st_fathers_name || "N/A"}
-              src={detail?.st_fathers_photo}
+              alt={detail?.father_name || "N/A"}
+              src={detail?.father_photo}
             />
-            <Typography>{detail?.st_fathers_name || "N/A"}</Typography>
+            <Typography>{detail?.father_name || "N/A"}</Typography>
           </Box>
           <Box
             sx={{
@@ -206,7 +206,7 @@ const OtherDetailsTab = ({ detail }) => {
             <Typography sx={{ width: "130px", fontWeight: 600 }}>
               Mobile :{" "}
             </Typography>
-            <Typography>{detail?.st_fathers_mobile || "N/A"}</Typography>
+            <Typography>{detail?.father_contact || "N/A"}</Typography>
           </Box>
           <Box
             sx={{
@@ -219,7 +219,7 @@ const OtherDetailsTab = ({ detail }) => {
             <Typography sx={{ width: "130px", fontWeight: 600 }}>
               Email :{" "}
             </Typography>
-            <Typography>{detail?.st_fathers_mobile || "N/A"}</Typography>
+            <Typography>{detail?.father_email || "N/A"}</Typography>
           </Box>
           <Box
             sx={{
@@ -232,14 +232,14 @@ const OtherDetailsTab = ({ detail }) => {
             <Typography sx={{ width: "130px", fontWeight: 600 }}>
               Occupation :{" "}
             </Typography>
-            <Typography>{detail?.st_fathers_occupation || "N/A"}</Typography>
+            <Typography>{detail?.father_occupation || "N/A"}</Typography>
           </Box>
           <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
             <Avatar
-              alt={detail?.st_mothers_name || "N/A"}
-              src={detail?.st_mothers_photo}
+              alt={detail?.mother_name || "N/A"}
+              src={detail?.mother_photo}
             />
-            <Typography>{detail?.st_mothers_name || "N/A"}</Typography>
+            <Typography>{detail?.mother_name || "N/A"}</Typography>
           </Box>
           <Box
             sx={{
@@ -252,7 +252,7 @@ const OtherDetailsTab = ({ detail }) => {
             <Typography sx={{ width: "130px", fontWeight: 600 }}>
               Mobile :{" "}
             </Typography>
-            <Typography>{detail?.st_mothers_mobile || "N/A"}</Typography>
+            <Typography>{detail?.mother_contact || "N/A"}</Typography>
           </Box>
           <Box
             sx={{
@@ -265,7 +265,7 @@ const OtherDetailsTab = ({ detail }) => {
             <Typography sx={{ width: "130px", fontWeight: 600 }}>
               Email :{" "}
             </Typography>
-            <Typography>{detail?.st_mothers_mobile || "N/A"}</Typography>
+            <Typography>{detail?.mother_email || "N/A"}</Typography>
           </Box>
           <Box
             sx={{
@@ -278,11 +278,11 @@ const OtherDetailsTab = ({ detail }) => {
             <Typography sx={{ width: "130px", fontWeight: 600 }}>
               Occupation :{" "}
             </Typography>
-            <Typography>{detail?.st_mothers_occupation || "N/A"}</Typography>
+            <Typography>{detail?.mother_occupation || "N/A"}</Typography>
           </Box>
           <Divider />
           <Typography sx={{ fontWeight: 600 }}>Address : </Typography>
-          <Typography>{detail?.st_address || "N/A"}</Typography>
+          <Typography>{detail?.residential_address || "N/A"}</Typography>
         </CardContent>
       </Card>
     </Box>

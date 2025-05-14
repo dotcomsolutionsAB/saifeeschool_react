@@ -1,5 +1,50 @@
 import { SvgIcon } from "@mui/material";
+import PropTypes from "prop-types";
 
+export function TotalDebitedIcon(props) {
+  return (
+    <SvgIcon
+      {...props}
+      viewBox="0 0 37 27"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <path
+        d="M33.0357 1.60718H3.96427C2.50466 1.60718 1.32141 2.79043 1.32141 4.25004V22.75C1.32141 24.2096 2.50466 25.3929 3.96427 25.3929H33.0357C34.4953 25.3929 35.6786 24.2096 35.6786 22.75V4.25004C35.6786 2.79043 34.4953 1.60718 33.0357 1.60718Z"
+        stroke={props?.strokecolor || "#740122"}
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+      <path
+        d="M18.4999 17.4643C20.6893 17.4643 22.4642 15.6895 22.4642 13.5001C22.4642 11.3106 20.6893 9.53577 18.4999 9.53577C16.3105 9.53577 14.5356 11.3106 14.5356 13.5001C14.5356 15.6895 16.3105 17.4643 18.4999 17.4643Z"
+        stroke={props?.strokecolor || "#740122"}
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+      <path
+        d="M7.92859 8.21436H9.25002"
+        stroke={props?.strokecolor || "#740122"}
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+      <path
+        d="M27.75 18.7858H29.0714"
+        stroke={props?.strokecolor || "#740122"}
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+    </SvgIcon>
+  );
+}
+
+TotalDebitedIcon.propTypes = {
+  props: PropTypes.object,
+  strokecolor: PropTypes.string,
+};
 export function TeacherIcon(props) {
   return (
     <SvgIcon {...props} viewBox="0 0 45 65">

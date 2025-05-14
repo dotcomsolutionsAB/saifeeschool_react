@@ -34,6 +34,7 @@ import {
 import useAuth from "../../../../hooks/useAuth";
 import { toast } from "react-toastify";
 import { useLocation, useNavigate } from "react-router-dom";
+import dayjs from "dayjs";
 
 const CreateEditStudent = ({ isEdit = false }) => {
   const { userInfo, logout } = useAuth();
@@ -43,18 +44,18 @@ const CreateEditStudent = ({ isEdit = false }) => {
   const detail = location?.state;
 
   const initialState = {
-    st_first_name: detail?.st_first_name || "",
-    st_last_name: detail?.st_last_name || "",
-    st_gender: detail?.st_gender || "M",
-    st_dob: null,
-    st_roll_no: detail?.st_roll_no || "",
-    st_external: detail?.st_external || "0",
-    st_mobile: detail?.st_mobile || "",
-    st_bohra: detail?.st_bohra ?? 0,
-    st_its_id: detail?.st_its_id || "",
-    st_gmail_address: detail?.st_gmail_address || "",
-    st_house: detail?.st_house || "",
-    st_blood_group: detail?.st_blood_group || "",
+    st_first_name: detail?.name?.split(" ")?.[0] || "",
+    st_last_name: detail?.name?.split(" ")?.slice(1).join(" ") || "",
+    st_gender: detail?.gender === "Female" ? "F" : "M",
+    st_dob: detail?.dob ? dayjs(detail?.dob) : null,
+    st_roll_no: detail?.roll_no || "",
+    st_external: detail?.external || "0",
+    st_mobile: detail?.mobile || "",
+    st_bohra: detail?.bohra ?? 0,
+    st_its_id: detail?.its_id || "",
+    st_gmail_address: detail?.email || "",
+    st_house: detail?.house || "",
+    st_blood_group: detail?.blood_group || "",
     aadhaar_no: detail?.aadhaar_no || "",
     st_year_of_admission: null,
     academicYear: null,
@@ -152,7 +153,6 @@ const CreateEditStudent = ({ isEdit = false }) => {
       navigate(-1);
     } else if (response?.code === 401) {
       logout(response);
-      // toast.error(response?.message || "Unauthorized");
     } else {
       toast.error(response?.message || "Some error occurred.");
     }
@@ -182,7 +182,13 @@ const CreateEditStudent = ({ isEdit = false }) => {
           form="student-form"
           disabled={isLoading}
         >
-          {isLoading ? <CircularProgress size={24} /> : `Save`}
+          {isLoading ? (
+            <CircularProgress size={24} />
+          ) : isEdit ? (
+            `Update`
+          ) : (
+            `Save`
+          )}
         </Button>
       </Box>
       <Divider sx={{ mt: 1, mb: 2, bgcolor: "primary.main" }} />

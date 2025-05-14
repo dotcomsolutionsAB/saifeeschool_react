@@ -50,6 +50,9 @@ import { toast } from "react-toastify";
 import Iconify from "../../../../components/iconify/iconify";
 import { getAllTransactions } from "../../../../services/admin/transactions.service";
 import dayjs from "dayjs";
+import { exportTransactions } from "../../../../services/admin/fees-management.service";
+import { DatePicker } from "@mui/x-date-pickers";
+import { Helmet } from "react-helmet-async";
 // ----------------------------------------------------------------------
 
 const HEAD_LABEL = [
@@ -74,8 +77,8 @@ export default function Transactions() {
 
   const [cgId, setCgId] = useState(null);
   const [selectedOptions, setSelectedOptions] = useState([]); // to select multiple checkboxes in class field
-  const [dueFrom, setDueFrom] = useState(null);
-  const [dueTill, setDueTill] = useState(null);
+  const [dateFrom, setDateFrom] = useState(null);
+  const [dateTo, setDateTo] = useState(null);
   const [academicYear, setAcademicYear] = useState({
     ay_id: userInfo?.ay_id,
     ay_name: userInfo?.ay_name,
@@ -88,8 +91,8 @@ export default function Transactions() {
     ay_id: academicYear?.id || userInfo?.ay_id,
     search: search || "",
     cg_id: cgId || "",
-    due_from: dueFrom || "",
-    due_till: dueTill || "",
+    date_from: dateFrom || "",
+    date_to: dateTo || "",
   };
 
   // api to get students list
@@ -112,8 +115,8 @@ export default function Transactions() {
       rowsPerPage,
       search,
       cgId,
-      dueFrom,
-      dueTill,
+      dateFrom,
+      dateTo,
     ],
     debounceDelay: 500,
   });
@@ -145,12 +148,15 @@ export default function Transactions() {
   };
 
   // function to export students data as pdf
-  const handleExport = async (mode) => {
+  const handleExport = async () => {
     handleMenuClose();
     setIsExportLoading(true);
-    const response = await exportStudents({
-      ...dataSendToBackend,
-      mode: mode,
+    const response = await exportTransactions({
+      cg_id: dataSendToBackend?.cg_id,
+      date_from: dataSendToBackend?.date_from,
+      date_to: dataSendToBackend?.date_to,
+      search: dataSendToBackend?.search,
+      mode: "",
     });
     setIsExportLoading(false);
 
@@ -236,11 +242,11 @@ export default function Transactions() {
       case "cgId":
         setCgId(value);
         break;
-      case "dueFrom":
-        setDueFrom(value);
+      case "date_from":
+        setDateFrom(value);
         break;
-      case "dueTill":
-        setDueTill(value);
+      case "date_to":
+        setDateTo(value);
         break;
       case "academicYear":
         setAcademicYear(value);
@@ -256,6 +262,9 @@ export default function Transactions() {
 
   return (
     <>
+      <Helmet>
+        <title>Transactions | SAIFEE</title>
+      </Helmet>
       <Box
         sx={{
           display: "flex",
@@ -332,6 +341,31 @@ export default function Transactions() {
             value={academicYear || null}
             onChange={(_, newValue) => handleChange("academicYear", newValue)}
             sx={{ width: "200px" }}
+          />
+
+          <DatePicker
+            label="Date From"
+            slotProps={{
+              textField: {
+                size: "small",
+                sx: { width: "200px" },
+              },
+            }}
+            disableFuture
+            value={dateFrom || null}
+            onChange={(newDate) => handleChange("date_from", newDate)}
+          />
+          <DatePicker
+            label="Date To"
+            slotProps={{
+              textField: {
+                size: "small",
+                sx: { width: "200px" },
+              },
+            }}
+            disableFuture
+            value={dateTo || null}
+            onChange={(newDate) => handleChange("date_to", newDate)}
           />
 
           <Autocomplete

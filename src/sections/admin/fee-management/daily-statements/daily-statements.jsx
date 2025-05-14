@@ -36,6 +36,7 @@ import {
 } from "../../../../services/admin/transactions.service";
 import { DatePicker } from "@mui/x-date-pickers";
 import dayjs from "dayjs";
+import { Helmet } from "react-helmet-async";
 // ----------------------------------------------------------------------
 
 const HEAD_LABEL = [
@@ -160,6 +161,9 @@ export default function DailyStatements() {
 
   return (
     <>
+      <Helmet>
+        <title>Daily Statements | SAIFEE</title>
+      </Helmet>
       <Box
         sx={{
           display: "flex",
