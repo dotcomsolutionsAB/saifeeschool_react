@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 
 import Card from "@mui/material/Card";
 import Table from "@mui/material/Table";
@@ -55,6 +55,7 @@ const HEAD_LABEL = [
 
 export default function Banks() {
   const { logout } = useAuth();
+  const topRef = useRef(null);
 
   const initialState = {
     date: dayjs().format("YYYY-MM-DD"),
@@ -158,6 +159,10 @@ export default function Banks() {
     }
   };
 
+  const handleScrollToTop = () => {
+    topRef.current?.scrollIntoView({ behavior: "smooth" });
+  };
+
   // change to next or prev page
 
   const handleChangePage = (_, newPage) => {
@@ -185,7 +190,7 @@ export default function Banks() {
         <title>Bank Transactions | SAIFEE</title>
       </Helmet>
 
-      <Card sx={{ mt: 1 }}>
+      <Card sx={{ mt: 1 }} ref={topRef}>
         <CardContent>
           <Box
             sx={{
@@ -378,6 +383,7 @@ export default function Banks() {
                         index={index}
                         refetch={refetch}
                         setFormData={setFormData}
+                        handleScrollToTop={handleScrollToTop}
                       />
                     );
                   })}

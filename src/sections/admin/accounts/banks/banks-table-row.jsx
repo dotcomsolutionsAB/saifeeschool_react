@@ -10,7 +10,13 @@ import { FORMAT_INDIAN_CURRENCY } from "../../../../utils/constants";
 import { deleteBankTransaction } from "../../../../services/admin/accounts.service";
 import ConfirmationDialog from "../../../../components/confirmation-dialog/confirmation-dialog";
 
-const BanksTableRow = ({ row, index, refetch, setFormData }) => {
+const BanksTableRow = ({
+  row,
+  index,
+  refetch,
+  setFormData,
+  handleScrollToTop,
+}) => {
   const { logout } = useAuth();
   const [anchorEl, setAnchorEl] = useState(null);
   const [isDeleteLoading, setIsDeleteLoading] = useState(false);
@@ -38,6 +44,9 @@ const BanksTableRow = ({ row, index, refetch, setFormData }) => {
   const handleEdit = () => {
     setFormData({ ...row, sn: index + 1 });
     handleMenuClose();
+    setTimeout(() => {
+      handleScrollToTop();
+    }, 200); // Delay to allow Menu to fully close before scrolling
   };
 
   const handleDelete = async () => {
@@ -122,6 +131,7 @@ BanksTableRow.propTypes = {
   row: PropTypes.object,
   refetch: PropTypes.func,
   setFormData: PropTypes.func,
+  handleScrollToTop: PropTypes.func,
   index: PropTypes.number,
 };
 
