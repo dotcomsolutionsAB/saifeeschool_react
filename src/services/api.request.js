@@ -1,7 +1,8 @@
 import axios from "axios";
 import { GET_ERROR, USER_INFO } from "../utils/constants";
 
-const BASE_URL = "https://saifeeschool.dotcombusiness.in/api";
+// const BASE_URL = "https://saifeeschool.dotcombusiness.in/api";
+const BASE_URL = "https://api.saifeeschool.in/api";
 
 // Create an Axios instance
 const api = axios.create({
