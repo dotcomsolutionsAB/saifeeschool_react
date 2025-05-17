@@ -164,25 +164,33 @@ export default function DailyStatements() {
       <Helmet>
         <title>Daily Statements | SAIFEE</title>
       </Helmet>
-      <Box
-        sx={{
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "end",
-          gap: 1,
-          mb: 1,
-          width: "100%",
-        }}
-      >
-        {/* Total Due */}
-        <Button variant="outlined">
-          Total Amount: ₹{" "}
-          {FORMAT_INDIAN_CURRENCY(allResponse?.page_total_amount) || "0"}/-
-        </Button>
-      </Box>
 
       <Card sx={{ p: 2, width: "100%" }}>
-        <Typography>Daily Statments</Typography>
+        <Box
+          sx={{
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
+            gap: 1,
+            mb: 1,
+          }}
+        >
+          <Typography>Daily Statments</Typography>
+          <Box
+            sx={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "end",
+              gap: 1,
+            }}
+          >
+            {/* Total Due */}
+            <Button variant="outlined">
+              Total Amount: ₹{" "}
+              {FORMAT_INDIAN_CURRENCY(allResponse?.page_total_amount) || "0"}/-
+            </Button>
+          </Box>
+        </Box>
 
         {/* Search and Filters */}
         <Box

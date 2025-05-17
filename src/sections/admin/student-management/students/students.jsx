@@ -300,104 +300,116 @@ export default function Students() {
       <Helmet>
         <title>Students | SAIFEE</title>
       </Helmet>
-      <Box
-        sx={{
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "end",
-          gap: 1,
-          mb: 1,
-          width: "100%",
-        }}
-      >
-        {/* Add Student */}
-        <Button variant="contained" onClick={handleAddStudent}>
-          Add Student
-        </Button>
-
-        {/* Bulk Actions */}
-        <Button
-          variant="contained"
-          onClick={handleMenuOpen}
-          endIcon={anchorEl ? <ExpandLessRounded /> : <ExpandMoreRounded />}
-          disabled={isExportLoading}
-        >
-          {isExportLoading ? <CircularProgress size={24} /> : `Bulk Actions`}
-        </Button>
-
-        {/* Menu  */}
-        <Menu
-          anchorEl={anchorEl}
-          anchorOrigin={{
-            vertical: "bottom",
-            horizontal: "right",
-          }}
-          transformOrigin={{
-            vertical: "top",
-            horizontal: "right",
-          }}
-          open={Boolean(anchorEl)}
-          onClose={handleMenuClose}
-          sx={{ color: "primary.main" }}
-        >
-          {/* export excel */}
-          <MenuItem
-            onClick={() => handleExport("excel")}
-            sx={{ color: "primary.main" }}
-          >
-            <Iconify icon="uiw:file-excel" sx={{ mr: 1 }} />
-            Export Excel
-          </MenuItem>
-
-          {/* export pdf */}
-          <MenuItem
-            onClick={() => handleExport("pdf")}
-            sx={{ color: "primary.main" }}
-          >
-            <Iconify icon="uiw:file-pdf" sx={{ mr: 1 }} />
-            Export PDF
-          </MenuItem>
-
-          {/* upgrade student */}
-          <MenuItem
-            onClick={handleUpgradeStudentOpen}
-            sx={{ color: "primary.main" }}
-          >
-            <Iconify icon="game-icons:team-upgrade" sx={{ mr: 1 }} />
-            Upgrade Student
-          </MenuItem>
-
-          {/* apply fee plan */}
-          <MenuItem
-            onClick={handleApplyFeePlanOpen}
-            sx={{ color: "primary.main" }}
-          >
-            <Iconify icon="ep:calendar" sx={{ mr: 1 }} />
-            Apply Fee Plan
-          </MenuItem>
-        </Menu>
-
-        {/*Upgrade Student Dialog */}
-        <UpgradeStudentModal
-          open={upgradeStudentOpen}
-          onClose={handleUpgradeStudentClose}
-          selectedRows={selectedRows}
-          setSelectedRows={setSelectedRows}
-          refetch={refetch}
-        />
-
-        {/*Apply Fee Plan Dialog */}
-        <ApplyFeePlanModal
-          open={applyFeePlanOpen}
-          onClose={handleApplyFeePlanClose}
-          selectedRows={selectedRows}
-          setSelectedRows={setSelectedRows}
-          refetch={refetch}
-        />
-      </Box>
 
       <Card sx={{ p: 2, width: "100%" }}>
-        <Typography>All Students Data</Typography>
+        <Box
+          sx={{
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
+            gap: 1,
+            mb: 1,
+          }}
+        >
+          <Typography>All Students Data</Typography>
+          <Box
+            sx={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "end",
+              gap: 1,
+            }}
+          >
+            {/* Add Student */}
+            <Button variant="contained" onClick={handleAddStudent}>
+              Add Student
+            </Button>
+
+            {/* Bulk Actions */}
+            <Button
+              variant="contained"
+              onClick={handleMenuOpen}
+              endIcon={anchorEl ? <ExpandLessRounded /> : <ExpandMoreRounded />}
+              disabled={isExportLoading}
+            >
+              {isExportLoading ? (
+                <CircularProgress size={24} />
+              ) : (
+                `Bulk Actions`
+              )}
+            </Button>
+
+            {/* Menu  */}
+            <Menu
+              anchorEl={anchorEl}
+              anchorOrigin={{
+                vertical: "bottom",
+                horizontal: "right",
+              }}
+              transformOrigin={{
+                vertical: "top",
+                horizontal: "right",
+              }}
+              open={Boolean(anchorEl)}
+              onClose={handleMenuClose}
+              sx={{ color: "primary.main" }}
+            >
+              {/* export excel */}
+              <MenuItem
+                onClick={() => handleExport("excel")}
+                sx={{ color: "primary.main" }}
+              >
+                <Iconify icon="uiw:file-excel" sx={{ mr: 1 }} />
+                Export Excel
+              </MenuItem>
+
+              {/* export pdf */}
+              <MenuItem
+                onClick={() => handleExport("pdf")}
+                sx={{ color: "primary.main" }}
+              >
+                <Iconify icon="uiw:file-pdf" sx={{ mr: 1 }} />
+                Export PDF
+              </MenuItem>
+
+              {/* upgrade student */}
+              <MenuItem
+                onClick={handleUpgradeStudentOpen}
+                sx={{ color: "primary.main" }}
+              >
+                <Iconify icon="game-icons:team-upgrade" sx={{ mr: 1 }} />
+                Upgrade Student
+              </MenuItem>
+
+              {/* apply fee plan */}
+              <MenuItem
+                onClick={handleApplyFeePlanOpen}
+                sx={{ color: "primary.main" }}
+              >
+                <Iconify icon="ep:calendar" sx={{ mr: 1 }} />
+                Apply Fee Plan
+              </MenuItem>
+            </Menu>
+
+            {/*Upgrade Student Dialog */}
+            <UpgradeStudentModal
+              open={upgradeStudentOpen}
+              onClose={handleUpgradeStudentClose}
+              selectedRows={selectedRows}
+              setSelectedRows={setSelectedRows}
+              refetch={refetch}
+            />
+
+            {/*Apply Fee Plan Dialog */}
+            <ApplyFeePlanModal
+              open={applyFeePlanOpen}
+              onClose={handleApplyFeePlanClose}
+              selectedRows={selectedRows}
+              setSelectedRows={setSelectedRows}
+              refetch={refetch}
+            />
+          </Box>
+        </Box>
 
         {/* Search and Filters */}
         <Box

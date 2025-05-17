@@ -265,54 +265,66 @@ export default function Transactions() {
       <Helmet>
         <title>Transactions | SAIFEE</title>
       </Helmet>
-      <Box
-        sx={{
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "end",
-          gap: 1,
-          mb: 1,
-          width: "100%",
-        }}
-      >
-        {/* Bulk Actions */}
-        <Button
-          variant="contained"
-          onClick={handleMenuOpen}
-          endIcon={anchorEl ? <ExpandLessRounded /> : <ExpandMoreRounded />}
-          disabled={isExportLoading}
-        >
-          {isExportLoading ? <CircularProgress size={24} /> : `Bulk Actions`}
-        </Button>
-
-        {/* Menu  */}
-        <Menu
-          anchorEl={anchorEl}
-          anchorOrigin={{
-            vertical: "bottom",
-            horizontal: "right",
-          }}
-          transformOrigin={{
-            vertical: "top",
-            horizontal: "right",
-          }}
-          open={Boolean(anchorEl)}
-          onClose={handleMenuClose}
-          sx={{ color: "primary.main" }}
-        >
-          {/* export pdf */}
-          <MenuItem
-            onClick={() => handleExport("pdf")}
-            sx={{ color: "primary.main" }}
-          >
-            <Iconify icon="uiw:file-pdf" sx={{ mr: 1 }} />
-            Export PDF
-          </MenuItem>
-        </Menu>
-      </Box>
 
       <Card sx={{ p: 2, width: "100%" }}>
-        <Typography>Students Transactions</Typography>
+        <Box
+          sx={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "space-between",
+            gap: 1,
+            mb: 1,
+          }}
+        >
+          <Typography>Students Transactions</Typography>
+          <Box
+            sx={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "end",
+              gap: 1,
+            }}
+          >
+            {/* Bulk Actions */}
+            <Button
+              variant="contained"
+              onClick={handleMenuOpen}
+              endIcon={anchorEl ? <ExpandLessRounded /> : <ExpandMoreRounded />}
+              disabled={isExportLoading}
+            >
+              {isExportLoading ? (
+                <CircularProgress size={24} />
+              ) : (
+                `Bulk Actions`
+              )}
+            </Button>
+
+            {/* Menu  */}
+            <Menu
+              anchorEl={anchorEl}
+              anchorOrigin={{
+                vertical: "bottom",
+                horizontal: "left",
+              }}
+              transformOrigin={{
+                vertical: "top",
+                horizontal: "left",
+              }}
+              open={Boolean(anchorEl)}
+              onClose={handleMenuClose}
+              sx={{ color: "primary.main" }}
+            >
+              {/* export pdf */}
+              <MenuItem
+                onClick={() => handleExport("pdf")}
+                sx={{ color: "primary.main" }}
+              >
+                <Iconify icon="uiw:file-pdf" sx={{ mr: 1 }} />
+                Export PDF
+              </MenuItem>
+            </Menu>
+          </Box>
+        </Box>
 
         {/* Search and Filters */}
         <Box

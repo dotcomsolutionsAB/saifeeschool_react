@@ -333,76 +333,90 @@ export default function Fees() {
       <Helmet>
         <title>Fees | SAIFEE</title>
       </Helmet>
-      <Box
-        sx={{
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "end",
-          gap: 1,
-          mb: 1,
-          width: "100%",
-        }}
-      >
-        {/* Total Paid */}
-        <Button variant="outlined">
-          Total Paid:₹{" "}
-          {FORMAT_INDIAN_CURRENCY(allResponse?.page_total_paid) || "0"}/-
-        </Button>
-        {/* Total Due */}
-        <Button variant="outlined">
-          Total Due: ₹{" "}
-          {FORMAT_INDIAN_CURRENCY(allResponse?.page_total_due) || "0"}/-
-        </Button>
-
-        {/* Bulk Actions */}
-        <Box>
-          <Button
-            variant="contained"
-            onClick={handleMenuOpen}
-            endIcon={anchorEl ? <ExpandLessRounded /> : <ExpandMoreRounded />}
-            disabled={isExportLoading}
-          >
-            {isExportLoading ? <CircularProgress size={24} /> : `Bulk Actions`}
-          </Button>
-
-          {/* Menu  */}
-          <Menu
-            anchorEl={anchorEl}
-            anchorOrigin={{
-              vertical: "bottom",
-              horizontal: "right",
-            }}
-            transformOrigin={{
-              vertical: "top",
-              horizontal: "right",
-            }}
-            open={Boolean(anchorEl)}
-            onClose={handleMenuClose}
-            sx={{ color: "primary.main" }}
-          >
-            {/* export excel */}
-            <MenuItem
-              onClick={() => handleExport("excel")}
-              sx={{ color: "primary.main" }}
-            >
-              <Iconify icon="uiw:file-excel" sx={{ mr: 1 }} />
-              Export Excel
-            </MenuItem>
-
-            {/* export pdf */}
-            <MenuItem
-              onClick={() => handleExport("pdf")}
-              sx={{ color: "primary.main" }}
-            >
-              <Iconify icon="uiw:file-pdf" sx={{ mr: 1 }} />
-              Export PDF
-            </MenuItem>
-          </Menu>
-        </Box>
-      </Box>
 
       <Card sx={{ p: 2, width: "100%" }}>
-        <Typography>Fees</Typography>
+        <Box
+          sx={{
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
+            gap: 1,
+            mb: 1,
+          }}
+        >
+          <Typography>Fees</Typography>
+          <Box
+            sx={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "end",
+              gap: 1,
+            }}
+          >
+            {/* Total Paid */}
+            <Button variant="outlined">
+              Total Paid:₹{" "}
+              {FORMAT_INDIAN_CURRENCY(allResponse?.page_total_paid) || "0"}/-
+            </Button>
+            {/* Total Due */}
+            <Button variant="outlined">
+              Total Due: ₹{" "}
+              {FORMAT_INDIAN_CURRENCY(allResponse?.page_total_due) || "0"}/-
+            </Button>
+
+            {/* Bulk Actions */}
+            <Box sx={{ display: "flex", justifyContent: "flex-end" }}>
+              <Button
+                variant="contained"
+                onClick={handleMenuOpen}
+                endIcon={
+                  anchorEl ? <ExpandLessRounded /> : <ExpandMoreRounded />
+                }
+                disabled={isExportLoading}
+              >
+                {isExportLoading ? (
+                  <CircularProgress size={24} />
+                ) : (
+                  `Bulk Actions`
+                )}
+              </Button>
+
+              {/* Menu  */}
+              <Menu
+                anchorEl={anchorEl}
+                anchorOrigin={{
+                  vertical: "bottom",
+                  horizontal: "left",
+                }}
+                transformOrigin={{
+                  vertical: "top",
+                  horizontal: "left",
+                }}
+                open={Boolean(anchorEl)}
+                onClose={handleMenuClose}
+                sx={{ color: "primary.main" }}
+              >
+                {/* export excel */}
+                <MenuItem
+                  onClick={() => handleExport("excel")}
+                  sx={{ color: "primary.main" }}
+                >
+                  <Iconify icon="uiw:file-excel" sx={{ mr: 1 }} />
+                  Export Excel
+                </MenuItem>
+
+                {/* export pdf */}
+                <MenuItem
+                  onClick={() => handleExport("pdf")}
+                  sx={{ color: "primary.main" }}
+                >
+                  <Iconify icon="uiw:file-pdf" sx={{ mr: 1 }} />
+                  Export PDF
+                </MenuItem>
+              </Menu>
+            </Box>
+          </Box>
+        </Box>
 
         {/* Search and Filters */}
         <Box

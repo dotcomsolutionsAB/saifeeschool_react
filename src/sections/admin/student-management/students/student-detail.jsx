@@ -121,9 +121,7 @@ const StudentDetail = () => {
       <Helmet>
         <title>Student Detail | SAIFEE</title>
       </Helmet>
-      <Box sx={{ display: "flex", justifyContent: "end", mb: 1 }}>
-        <Button variant="contained">Login as Student</Button>
-      </Box>
+
       {isLoading ? (
         <Loader />
       ) : isError ? (
@@ -131,6 +129,9 @@ const StudentDetail = () => {
       ) : (
         <Card>
           <CardContent sx={{ position: "relative", px: 5 }}>
+            <Box sx={{ display: "flex", justifyContent: "end", mb: 1 }}>
+              <Button variant="contained">Login as Student</Button>
+            </Box>
             {/* Image */}
             <Box
               sx={{

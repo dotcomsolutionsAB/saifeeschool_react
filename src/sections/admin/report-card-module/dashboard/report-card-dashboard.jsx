@@ -150,115 +150,135 @@ const ReportCardDashboard = () => {
       <Helmet>
         <title>Report Card | SAIFEE</title>
       </Helmet>
-      {/* header */}
-      <Box
-        sx={{
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "end",
-          gap: 2,
-          my: 2,
-        }}
-      >
-        <TextField
-          placeholder="Roll No"
-          size="small"
-          sx={{ bgcolor: "white" }}
-        />
-        {/* Bulk Actions */}
-        <Box>
-          <Button
-            variant="contained"
-            onClick={handleMenuOpen}
-            endIcon={anchorEl ? <ExpandLessRounded /> : <ExpandMoreRounded />}
-            disabled={isExportLoading}
-          >
-            {isExportLoading ? <CircularProgress size={24} /> : `Bulk Actions`}
-          </Button>
 
-          {/* Menu  */}
-          <Menu
-            anchorEl={anchorEl}
-            anchorOrigin={{
-              vertical: "bottom",
-              horizontal: "right",
-            }}
-            transformOrigin={{
-              vertical: "top",
-              horizontal: "right",
-            }}
-            open={Boolean(anchorEl)}
-            onClose={handleMenuClose}
-            sx={{ color: "primary.main" }}
-          >
-            {/* export excel */}
-            <MenuItem
-              onClick={() => handleExport("excel")}
-              sx={{ color: "primary.main" }}
-            >
-              <Iconify icon="uiw:file-excel" sx={{ mr: 1 }} />
-              Export Excel
-            </MenuItem>
-
-            {/* export pdf */}
-            <MenuItem
-              onClick={() => handleExport("pdf")}
-              sx={{ color: "primary.main" }}
-            >
-              <Iconify icon="uiw:file-pdf" sx={{ mr: 1 }} />
-              Export PDF
-            </MenuItem>
-
-            {/* individual report */}
-            <MenuItem sx={{ color: "primary.main" }} onClick={handleMenuClose}>
-              {/* <Iconify icon="uiw:file-pdf" sx={{ mr: 1 }} /> */}
-              Individual Report
-            </MenuItem>
-          </Menu>
-        </Box>
-      </Box>
       <Card>
         <CardContent>
-          {/* header */}
           <Box
             sx={{
               display: "flex",
+              flexWrap: "wrap",
               alignItems: "center",
-              gap: 2,
-              my: 2,
+              justifyContent: "space-between",
+              gap: 1,
+              mb: 2,
             }}
           >
-            <TextField
-              value={search || ""}
-              onChange={handleSearch}
-              placeholder="Search by class name..."
-              size="small"
-              sx={{ width: "200px" }}
-            />
-            <Autocomplete
-              options={STATUS_LIST || []}
-              renderInput={(params) => (
-                <TextField {...params} label="Status" size="small" />
-              )}
-              value={formData?.status || null}
-              onChange={(_, newValue) =>
-                handleChange({ target: { name: "status", value: newValue } })
-              }
-              sx={{ width: "200px" }}
-            />
-            <Autocomplete
-              options={academicYearList || []}
-              getOptionLabel={(option) => option?.ay_name || ""}
-              renderInput={(params) => (
-                <TextField {...params} label="Select Year" size="small" />
-              )}
-              value={formData?.ay_id || null}
-              onChange={(_, newValue) =>
-                handleChange({ target: { name: "ay_id", value: newValue } })
-              }
-              sx={{ width: "200px" }}
-            />
+            {/* header */}
+            <Box
+              sx={{
+                display: "flex",
+                alignItems: "center",
+                gap: 2,
+              }}
+            >
+              <TextField
+                value={search || ""}
+                onChange={handleSearch}
+                placeholder="Search by class name..."
+                size="small"
+                sx={{ width: "200px" }}
+              />
+              <Autocomplete
+                options={STATUS_LIST || []}
+                renderInput={(params) => (
+                  <TextField {...params} label="Status" size="small" />
+                )}
+                value={formData?.status || null}
+                onChange={(_, newValue) =>
+                  handleChange({ target: { name: "status", value: newValue } })
+                }
+                sx={{ width: "200px" }}
+              />
+              <Autocomplete
+                options={academicYearList || []}
+                getOptionLabel={(option) => option?.ay_name || ""}
+                renderInput={(params) => (
+                  <TextField {...params} label="Select Year" size="small" />
+                )}
+                value={formData?.ay_id || null}
+                onChange={(_, newValue) =>
+                  handleChange({ target: { name: "ay_id", value: newValue } })
+                }
+                sx={{ width: "200px" }}
+              />
+            </Box>
+            <Box
+              sx={{
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "end",
+                gap: 2,
+                ml: "auto",
+              }}
+            >
+              <TextField
+                placeholder="Roll No"
+                size="small"
+                sx={{ bgcolor: "white" }}
+              />
+              {/* Bulk Actions */}
+              <Box>
+                <Button
+                  variant="contained"
+                  onClick={handleMenuOpen}
+                  endIcon={
+                    anchorEl ? <ExpandLessRounded /> : <ExpandMoreRounded />
+                  }
+                  disabled={isExportLoading}
+                >
+                  {isExportLoading ? (
+                    <CircularProgress size={24} />
+                  ) : (
+                    `Bulk Actions`
+                  )}
+                </Button>
+
+                {/* Menu  */}
+                <Menu
+                  anchorEl={anchorEl}
+                  anchorOrigin={{
+                    vertical: "bottom",
+                    horizontal: "right",
+                  }}
+                  transformOrigin={{
+                    vertical: "top",
+                    horizontal: "right",
+                  }}
+                  open={Boolean(anchorEl)}
+                  onClose={handleMenuClose}
+                  sx={{ color: "primary.main" }}
+                >
+                  {/* export excel */}
+                  <MenuItem
+                    onClick={() => handleExport("excel")}
+                    sx={{ color: "primary.main" }}
+                  >
+                    <Iconify icon="uiw:file-excel" sx={{ mr: 1 }} />
+                    Export Excel
+                  </MenuItem>
+
+                  {/* export pdf */}
+                  <MenuItem
+                    onClick={() => handleExport("pdf")}
+                    sx={{ color: "primary.main" }}
+                  >
+                    <Iconify icon="uiw:file-pdf" sx={{ mr: 1 }} />
+                    Export PDF
+                  </MenuItem>
+
+                  {/* individual report */}
+                  <MenuItem
+                    sx={{ color: "primary.main" }}
+                    onClick={handleMenuClose}
+                  >
+                    {/* <Iconify icon="uiw:file-pdf" sx={{ mr: 1 }} /> */}
+                    Individual Report
+                  </MenuItem>
+                </Menu>
+              </Box>
+            </Box>
           </Box>
+
           {isLoading ? (
             <Loader />
           ) : isError ? (

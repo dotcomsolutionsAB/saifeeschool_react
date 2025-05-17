@@ -212,56 +212,71 @@ export default function CharacterCertificate() {
       <Helmet>
         <title>Character Certificate | SAIFEE</title>
       </Helmet>
-      <Box
-        sx={{
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "end",
-          gap: 1,
-          mb: 1,
-          width: "100%",
-        }}
-      >
-        {/* Export Excel */}
-        <Button
-          variant="contained"
-          onClick={handleExcelExport}
-          disabled={isExportLoading}
-          sx={{ bgcolor: "success.main", color: "success.contrastText" }}
-        >
-          {isExportLoading ? <CircularProgress size={24} /> : `Export Excel`}
-        </Button>
-
-        {/* Add Character Certificate */}
-        <Button variant="contained" onClick={() => handleCcCreateModalOpen()}>
-          +Add CC
-        </Button>
-
-        {/* Add Character Certificate */}
-        <Button
-          variant="contained"
-          onClick={() => handleBulkCcCreateModalOpen()}
-        >
-          +Add Bulk CC
-        </Button>
-
-        {/* Create CC Dialog */}
-        <CreateEditCCModal
-          open={ccCreateModalOpen}
-          onClose={handleCcCreateModalClose}
-          refetch={refetch}
-        />
-
-        {/* Create Bulk CC Dialog */}
-        <CreateBulkCCModal
-          open={bulkCcCreateModalOpen}
-          onClose={handleBulkCcCreateModalClose}
-          refetch={refetch}
-        />
-      </Box>
 
       <Card sx={{ p: 2, width: "100%" }}>
-        <Typography>Character Certificate</Typography>
+        <Box
+          sx={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "space-between",
+            gap: 1,
+            mb: 1,
+          }}
+        >
+          <Typography>Character Certificate</Typography>
+          <Box
+            sx={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "end",
+              gap: 1,
+            }}
+          >
+            {/* Export Excel */}
+            <Button
+              variant="contained"
+              onClick={handleExcelExport}
+              disabled={isExportLoading}
+              sx={{ bgcolor: "success.main", color: "success.contrastText" }}
+            >
+              {isExportLoading ? (
+                <CircularProgress size={24} />
+              ) : (
+                `Export Excel`
+              )}
+            </Button>
+
+            {/* Add Character Certificate */}
+            <Button
+              variant="contained"
+              onClick={() => handleCcCreateModalOpen()}
+            >
+              +Add CC
+            </Button>
+
+            {/* Add Character Certificate */}
+            <Button
+              variant="contained"
+              onClick={() => handleBulkCcCreateModalOpen()}
+            >
+              +Add Bulk CC
+            </Button>
+
+            {/* Create CC Dialog */}
+            <CreateEditCCModal
+              open={ccCreateModalOpen}
+              onClose={handleCcCreateModalClose}
+              refetch={refetch}
+            />
+
+            {/* Create Bulk CC Dialog */}
+            <CreateBulkCCModal
+              open={bulkCcCreateModalOpen}
+              onClose={handleBulkCcCreateModalClose}
+              refetch={refetch}
+            />
+          </Box>
+        </Box>
 
         {/* Search and Filters */}
         <Box
@@ -270,7 +285,7 @@ export default function CharacterCertificate() {
             flexWrap: "wrap",
             alignItems: "center",
             gap: 2,
-            my: 2,
+            mb: 2,
           }}
         >
           <TextField

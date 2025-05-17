@@ -200,41 +200,56 @@ export default function TransferCertificate() {
       <Helmet>
         <title>Transfer Certificate | SAIFEE</title>
       </Helmet>
-      <Box
-        sx={{
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "end",
-          gap: 1,
-          mb: 1,
-          width: "100%",
-        }}
-      >
-        {/* Export Excel */}
-        <Button
-          variant="contained"
-          onClick={handleExcelExport}
-          disabled={isExportLoading}
-          sx={{ bgcolor: "success.main", color: "success.contrastText" }}
-        >
-          {isExportLoading ? <CircularProgress size={24} /> : `Export Excel`}
-        </Button>
-
-        {/* Add Transfer Certificate */}
-        <Button variant="contained" onClick={() => handleTcCreateModalOpen()}>
-          +Add TC
-        </Button>
-
-        {/* Create TC Dialog */}
-        <CreateEditTCModal
-          open={tcCreateModalOpen}
-          onClose={handleTcCreateModalClose}
-          refetch={refetch}
-        />
-      </Box>
 
       <Card sx={{ p: 2, width: "100%" }}>
-        <Typography>Transfer Certificate</Typography>
+        <Box
+          sx={{
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
+            gap: 1,
+            mb: 1,
+          }}
+        >
+          <Typography>Transfer Certificate</Typography>
+          <Box
+            sx={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "end",
+              gap: 1,
+            }}
+          >
+            {/* Export Excel */}
+            <Button
+              variant="contained"
+              onClick={handleExcelExport}
+              disabled={isExportLoading}
+              sx={{ bgcolor: "success.main", color: "success.contrastText" }}
+            >
+              {isExportLoading ? (
+                <CircularProgress size={24} />
+              ) : (
+                `Export Excel`
+              )}
+            </Button>
+
+            {/* Add Transfer Certificate */}
+            <Button
+              variant="contained"
+              onClick={() => handleTcCreateModalOpen()}
+            >
+              +Add TC
+            </Button>
+
+            {/* Create TC Dialog */}
+            <CreateEditTCModal
+              open={tcCreateModalOpen}
+              onClose={handleTcCreateModalClose}
+              refetch={refetch}
+            />
+          </Box>
+        </Box>
 
         {/* Search and Filters */}
         <Box
@@ -243,7 +258,7 @@ export default function TransferCertificate() {
             flexWrap: "wrap",
             alignItems: "center",
             gap: 2,
-            my: 2,
+            mb: 2,
           }}
         >
           <TextField

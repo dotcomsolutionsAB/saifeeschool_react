@@ -275,54 +275,65 @@ export default function PaymentAttempts() {
       <Helmet>
         <title>Payment Attempts | SAIFEE</title>
       </Helmet>
-      <Box
-        sx={{
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "end",
-          gap: 1,
-          mb: 1,
-          width: "100%",
-        }}
-      >
-        {/* Bulk Actions */}
-        <Button
-          variant="contained"
-          onClick={handleMenuOpen}
-          endIcon={anchorEl ? <ExpandLessRounded /> : <ExpandMoreRounded />}
-          disabled={isExportLoading}
-        >
-          {isExportLoading ? <CircularProgress size={24} /> : `Bulk Actions`}
-        </Button>
-
-        {/* Menu  */}
-        <Menu
-          anchorEl={anchorEl}
-          anchorOrigin={{
-            vertical: "bottom",
-            horizontal: "right",
-          }}
-          transformOrigin={{
-            vertical: "top",
-            horizontal: "right",
-          }}
-          open={Boolean(anchorEl)}
-          onClose={handleMenuClose}
-          sx={{ color: "primary.main" }}
-        >
-          {/* export excel */}
-          <MenuItem
-            onClick={() => handleExport("excel")}
-            sx={{ color: "primary.main" }}
-          >
-            <Iconify icon="uiw:file-excel" sx={{ mr: 1 }} />
-            Export Excel
-          </MenuItem>
-        </Menu>
-      </Box>
 
       <Card sx={{ p: 2, width: "100%" }}>
-        <Typography>Students Payment Attempts</Typography>
+        <Box
+          sx={{
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
+            gap: 1,
+          }}
+        >
+          <Typography>Students Payment Attempts</Typography>
+          <Box
+            sx={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "end",
+              gap: 1,
+            }}
+          >
+            {/* Bulk Actions */}
+            <Button
+              variant="contained"
+              onClick={handleMenuOpen}
+              endIcon={anchorEl ? <ExpandLessRounded /> : <ExpandMoreRounded />}
+              disabled={isExportLoading}
+            >
+              {isExportLoading ? (
+                <CircularProgress size={24} />
+              ) : (
+                `Bulk Actions`
+              )}
+            </Button>
+
+            {/* Menu  */}
+            <Menu
+              anchorEl={anchorEl}
+              anchorOrigin={{
+                vertical: "bottom",
+                horizontal: "left",
+              }}
+              transformOrigin={{
+                vertical: "top",
+                horizontal: "left",
+              }}
+              open={Boolean(anchorEl)}
+              onClose={handleMenuClose}
+              sx={{ color: "primary.main" }}
+            >
+              {/* export excel */}
+              <MenuItem
+                onClick={() => handleExport("excel")}
+                sx={{ color: "primary.main" }}
+              >
+                <Iconify icon="uiw:file-excel" sx={{ mr: 1 }} />
+                Export Excel
+              </MenuItem>
+            </Menu>
+          </Box>
+        </Box>
 
         {/* Search and Filters */}
         <Box
@@ -331,7 +342,8 @@ export default function PaymentAttempts() {
             flexWrap: "wrap",
             alignItems: "center",
             gap: 2,
-            my: 2,
+            mt: 1,
+            mb: 2,
           }}
         >
           <TextField

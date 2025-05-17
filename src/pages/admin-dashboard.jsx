@@ -66,11 +66,12 @@ const AdminDashboard = () => {
         value={academicYear || null}
         onChange={(_, newValue) => setAcademicYear(newValue)}
         sx={{
-          minWidth: "150px",
+          maxWidth: "150px",
           bgcolor: "white",
-          position: "absolute",
-          top: 15,
-          right: 15,
+          ml: "auto",
+          // position: "absolute",
+          // top: 15,
+          // right: 15,
         }}
       />
       <Box

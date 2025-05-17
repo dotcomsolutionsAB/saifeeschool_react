@@ -119,7 +119,7 @@ export default function DebitVoucher() {
       </Helmet>
 
       {!isLoading && !isError && (
-        <Grid container spacing={2} sx={{ mt: 1 }}>
+        <Grid container spacing={2}>
           {/* Total Cash Card */}
           <Grid item xs={12} sm={6} md={4} lg={3}>
             <Card
@@ -293,7 +293,7 @@ export default function DebitVoucher() {
         </Grid>
       )}
 
-      <Card sx={{ mt: 4, mb: 2, p: 2, width: "100%" }}>
+      <Card sx={{ my: 2, p: 2, width: "100%" }}>
         {/* Search and Add new debit voucher */}
         <Box
           sx={{
