@@ -21,9 +21,12 @@ import {
   AvTimerRounded,
   CloseRounded,
   ProductionQuantityLimits,
+  School,
+  Groups,
 } from "@mui/icons-material";
 import {
   ADMIN_SIDEBAR_ITEMS,
+  PROCUREMENT_SIDEBAR_ITEMS,
   STUDENT_SIDEBAR_ITEMS,
   TEACHER_SIDEBAR_ITEMS,
 } from "../utils/constants";
@@ -37,6 +40,7 @@ import {
 import useLayout from "../hooks/uesLayout";
 import Saifee_Logo from "../assets/logos/Saifee_Logo.png";
 import useAuth from "../hooks/useAuth";
+import Iconify from "../components/iconify/iconify";
 
 const getIcon = (iconName) => {
   switch (iconName) {
@@ -44,16 +48,24 @@ const getIcon = (iconName) => {
       return <AvTimerRounded />;
     case "procurement":
       return <ProductionQuantityLimits />;
-    case "student_management":
+    case "students":
       return <StudentsManagementIcon />;
+    case "new_admissions":
+      return (
+        <Iconify icon="material-symbols:other-admission-outline" width={22} />
+      );
     case "fee_management":
       return <FeesManagementIcon />;
     case "report_card_module":
       return <ReportCardModuleIcon />;
+    case "teachers":
+      return <School />;
     case "accounts":
       return <AccountsIcon />;
-    case "settings":
-      return <SettingsRounded />;
+    case "academic-year":
+      return <Iconify icon="fluent-mdl2:calendar-year" width={18} />;
+    case "users":
+      return <Groups />;
     default:
       return null;
   }
@@ -81,6 +93,8 @@ const Sidebar = () => {
       ? STUDENT_SIDEBAR_ITEMS
       : userInfo?.role === "teacher"
       ? TEACHER_SIDEBAR_ITEMS
+      : userInfo?.role === "procurement"
+      ? PROCUREMENT_SIDEBAR_ITEMS
       : [];
 
   const handleMenuOpen = (event, item) => {

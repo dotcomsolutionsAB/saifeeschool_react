@@ -287,12 +287,12 @@ export default function Students() {
   const notFound = !studentsCount && !!search;
 
   const handleAddStudent = () => {
-    navigate("/students-management/students/add-student");
+    navigate("/students/add-student");
   };
 
   // on row click
   const handleRowClick = (row) => {
-    navigate("/students-management/students/student-detail", { state: row });
+    navigate("/students/student-detail", { state: row });
   };
 
   return (

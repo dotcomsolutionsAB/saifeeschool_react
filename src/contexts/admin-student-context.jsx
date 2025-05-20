@@ -113,6 +113,6 @@ AdminStudentProvider.propTypes = {
   children: PropTypes.node,
 };
 
-export { AdminStudentContext as StudentContext };
+export { AdminStudentContext };
 
 export default AdminStudentProvider;

@@ -24,7 +24,7 @@ import AdminStudentProvider from "../contexts/admin-student-context";
 import Fees from "../sections/admin/fee-management/fees/fees";
 import PaymentAttempts from "../sections/admin/fee-management/payment-attempts/payment-attempts";
 import Transactions from "../sections/admin/fee-management/transactions/transactions";
-import DailyStatements from "../sections/admin/fee-management/daily-statements/daily-statements";
+import DailyStatements from "../sections/admin/accounts/daily-statements/daily-statements";
 import AcademicYear from "../sections/admin/settings/academic-year/academic-year";
 import MarksGradeEntry from "../sections/admin/report-card-module/marks-grade-entry/marks-grade-entry";
 import ReportCardDashboard from "../sections/admin/report-card-module/dashboard/report-card-dashboard";
@@ -49,41 +49,27 @@ export default function Router() {
   const ADMIN_ROUTES = [
     { index: true, element: <AdminDashboard /> },
     {
-      path: "procurement",
+      path: "students",
+      element: (
+        <AdminStudentProvider>
+          <Outlet />
+        </AdminStudentProvider>
+      ),
       children: [
-        { index: true, element: <Navigate to="dashboard" /> },
-        { path: "dashboard", element: <ProcurementDashboard /> },
-        { path: "products", element: <Products /> },
+        { index: true, element: <Students /> },
+        { path: "student-detail", element: <StudentDetail /> },
+        { path: "add-student", element: <CreateEditStudent /> },
+        {
+          path: "edit-student",
+          element: <CreateEditStudent isEdit={true} />,
+        },
       ],
     },
     {
-      path: "students-management",
+      path: "new-admissions",
       children: [
-        { index: true, element: <Navigate to="students" replace /> },
-        {
-          path: "students",
-          element: (
-            <AdminStudentProvider>
-              <Outlet />
-            </AdminStudentProvider>
-          ),
-          children: [
-            { index: true, element: <Students /> },
-            { path: "student-detail", element: <StudentDetail /> },
-            { path: "add-student", element: <CreateEditStudent /> },
-            {
-              path: "edit-student",
-              element: <CreateEditStudent isEdit={true} />,
-            },
-          ],
-        },
-        {
-          path: "new-admissions",
-          children: [
-            { index: true, element: <NewAdmissions /> },
-            { path: "new-admission-detail", element: <NewAdmissionsDetail /> },
-          ],
-        },
+        { index: true, element: <NewAdmissions /> },
+        { path: "new-admission-detail", element: <NewAdmissionsDetail /> },
       ],
     },
     {
@@ -93,7 +79,6 @@ export default function Router() {
         { path: "fees", element: <Fees /> },
         { path: "payment-attempts", element: <PaymentAttempts /> },
         { path: "transactions", element: <Transactions /> },
-        { path: "daily-statements", element: <DailyStatements /> },
       ],
     },
     {
@@ -119,15 +104,10 @@ export default function Router() {
         { path: "debit-voucher", element: <DebitVoucher /> },
         { path: "credit-voucher", element: <CreditVoucher /> },
         { path: "banks", element: <Banks /> },
+        { path: "daily-statements", element: <DailyStatements /> },
       ],
     },
-    {
-      path: "settings",
-      children: [
-        { index: true, element: <Navigate to="academic-year" replace /> },
-        { path: "academic-year", element: <AcademicYear /> },
-      ],
-    },
+    { path: "academic-year", element: <AcademicYear /> },
   ];
   const STUDENT_ROUTES = [
     { index: true, element: <StudentDashboard /> },
@@ -148,6 +128,10 @@ export default function Router() {
     },
   ];
   const TEACHER_ROUTES = [{ index: true, element: <TeacherDashboard /> }];
+  const PROCUREMENT_ROUTES = [
+    { index: true, path: "dashboard", element: <ProcurementDashboard /> },
+    { path: "products", element: <Products /> },
+  ];
 
   useEffect(() => {
     const handleStorageChange = (event) => {
@@ -179,6 +163,8 @@ export default function Router() {
           ? STUDENT_ROUTES
           : userInfo?.role === "teacher"
           ? TEACHER_ROUTES
+          : userInfo?.role === "procurement"
+          ? PROCUREMENT_ROUTES
           : [{ path: "*", element: <Navigate to="/404" replace /> }],
     },
     {

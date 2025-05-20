@@ -1,7 +1,7 @@
 import { useContext } from "react";
-import { StudentContext } from "../contexts/admin-student-context";
+import { AdminStudentContext } from "../contexts/admin-student-context";
 // ----------------------------------------------------------------------
 
-const useStudent = () => useContext(StudentContext);
+const useStudent = () => useContext(AdminStudentContext);
 
 export default useStudent;

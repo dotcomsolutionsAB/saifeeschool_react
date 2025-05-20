@@ -103,7 +103,7 @@ const StudentDetail = () => {
   };
 
   const handleEdit = () => {
-    navigate("/students-management/students/edit-student", { state: detail });
+    navigate("/students/edit-student", { state: detail });
   };
 
   useEffect(() => {

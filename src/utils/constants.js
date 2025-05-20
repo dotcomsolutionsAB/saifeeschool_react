@@ -13,44 +13,18 @@ export const ADMIN_SIDEBAR_ITEMS = [
     iconName: "dashboard",
   },
   {
-    _id: 7,
-    displayName: "Procurement",
-    iconName: "procurement",
-    children: [
-      {
-        _id: 71,
-        displayName: "Dashboard",
-        linkName: "/procurement/dashboard",
-      },
-      {
-        _id: 72,
-        displayName: "Products",
-        linkName: "/procurement/products",
-      },
-      {
-        _id: 73,
-        displayName: "Supplier",
-        linkName: "/procurement/supplier",
-      },
-    ],
+    _id: 21,
+    displayName: "Students",
+    linkName: "/students",
+    iconName: "students",
   },
   {
-    _id: 2,
-    displayName: "Students Management",
-    iconName: "student_management",
-    children: [
-      {
-        _id: 21,
-        displayName: "Students",
-        linkName: "/students-management/students",
-      },
-      {
-        _id: 22,
-        displayName: "New Admissions",
-        linkName: "/students-management/new-admissions",
-      },
-    ],
+    _id: 22,
+    displayName: "New Admissions",
+    linkName: "/new-admissions",
+    iconName: "new_admissions",
   },
+
   {
     _id: 3,
     displayName: "Fees Management",
@@ -71,16 +45,11 @@ export const ADMIN_SIDEBAR_ITEMS = [
         displayName: "Transactions",
         linkName: "/fees-management/transactions",
       },
-      {
-        _id: 34,
-        displayName: "Daily Statements",
-        linkName: "/fees-management/daily-statements",
-      },
     ],
   },
   {
     _id: 4,
-    displayName: "Report Card Module",
+    displayName: "Report Card",
     iconName: "report_card_module",
     children: [
       {
@@ -117,47 +86,69 @@ export const ADMIN_SIDEBAR_ITEMS = [
   },
   {
     _id: 5,
-    displayName: "Accounts",
-    iconName: "accounts",
+    displayName: "Teachers",
+    iconName: "teachers",
     children: [
       {
         _id: 51,
-        displayName: "Cash Received",
-        linkName: "/accounts/cash-received",
+        displayName: "All Teachers",
+        linkName: "/teachers/all-teachers",
       },
       {
         _id: 52,
-        displayName: "Debit Voucher",
-        linkName: "/accounts/debit-voucher",
+        displayName: "Class Timetable",
+        linkName: "/teachers/class-timetable",
       },
       {
         _id: 53,
-        displayName: "Credit Voucher",
-        linkName: "/accounts/credit-voucher",
-      },
-      {
-        _id: 54,
-        displayName: "Banks",
-        linkName: "/accounts/banks",
+        displayName: "Attendance",
+        linkName: "/teachers/attendance",
       },
     ],
   },
   {
     _id: 6,
-    displayName: "Settings",
-    iconName: "settings",
+    displayName: "Accounts",
+    iconName: "accounts",
     children: [
       {
         _id: 61,
-        displayName: "Academic Year",
-        linkName: "/settings/academic-year",
+        displayName: "Cash Received",
+        linkName: "/accounts/cash-received",
       },
       {
         _id: 62,
-        displayName: "Users",
-        linkName: "/settings/users",
+        displayName: "Debit Voucher",
+        linkName: "/accounts/debit-voucher",
+      },
+      {
+        _id: 63,
+        displayName: "Credit Voucher",
+        linkName: "/accounts/credit-voucher",
+      },
+      {
+        _id: 64,
+        displayName: "Banks",
+        linkName: "/accounts/banks",
+      },
+      {
+        _id: 64,
+        displayName: "Daily Statements",
+        linkName: "/accounts/daily-statements",
       },
     ],
+  },
+  {
+    _id: 7,
+    displayName: "Academic Year",
+    linkName: "/academic-year",
+    iconName: "academic-year",
+  },
+  {
+    _id: 8,
+    displayName: "Users",
+    linkName: "/users",
+    iconName: "users",
   },
 ];
 
@@ -198,6 +189,26 @@ export const TEACHER_SIDEBAR_ITEMS = [
     displayName: "Dashboard",
     linkName: "/",
     iconName: "dashboard",
+  },
+];
+export const PROCUREMENT_SIDEBAR_ITEMS = [
+  {
+    _id: 1,
+    displayName: "Dashboard",
+    linkName: "/",
+    iconName: "procurement",
+  },
+  {
+    _id: 2,
+    displayName: "Products",
+    linkName: "/products",
+    iconName: "procurement",
+  },
+  {
+    _id: 3,
+    displayName: "Supplier",
+    linkName: "/supplier",
+    iconName: "procurement",
   },
 ];
 
