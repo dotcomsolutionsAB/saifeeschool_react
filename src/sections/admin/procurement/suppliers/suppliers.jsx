@@ -28,40 +28,38 @@ import Loader from "../../../../components/loader/loader";
 import MessageBox from "../../../../components/error/message-box";
 import {
   getProductCategory,
-  getProducts,
+  getSuppliers,
 } from "../../../../services/admin/procurement.service";
-import AddNewProductModal from "./modals/add-new-product-modal";
-import ProductsTableRow from "./products-table-row";
+import AddNewSupplierModal from "./modals/add-new-supplier-modal";
+import SuppliersTableRow from "./suppliers-table-row";
 import { Helmet } from "react-helmet-async";
+import AddNewProductModal from "../products/modals/add-new-product-modal";
 
 // ----------------------------------------------------------------------
 
 const HEAD_LABEL = [
   { id: "sn", label: "SN" },
   { id: "name", label: "Name" },
-  { id: "category", label: "Category" },
-  { id: "sub_category", label: "Sub-Category" },
-  { id: "unit", label: "Unit" },
-  { id: "price", label: "Rate" },
-  { id: "discount", label: "Discount" },
-  { id: "hsn", label: "HSN" },
+  { id: "mobile", label: "Contact Details" },
+  { id: "address", label: "Address" },
   { id: "", label: "", align: "center" },
 ];
 
-export default function Products() {
-  const [modalOpen, setModalOpen] = useState(false);
+export default function Suppliers() {
+  const [supplierModalOpen, setSupplierModalOpen] = useState(false);
+  const [productModalOpen, setProductModalOpen] = useState(false);
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(DEFAULT_LIMIT);
 
-  // api to get products list
+  // api to get suppliers list
   const {
-    dataCount: productsCount,
-    allResponse,
+    dataList: suppliersList,
+    dataCount: suppliersCount,
     isLoading,
     isError,
     refetch,
   } = useGetApi({
-    apiFunction: getProducts,
+    apiFunction: getSuppliers,
     body: {
       offset: page * rowsPerPage,
       limit: rowsPerPage,
@@ -74,12 +72,19 @@ export default function Products() {
     apiFunction: getProductCategory,
   });
 
-  const handleModalOpen = () => {
-    setModalOpen(true);
+  const handleSupplierModalOpen = () => {
+    setSupplierModalOpen(true);
   };
 
-  const handleModalClose = () => {
-    setModalOpen(false);
+  const handleSupplierModalClose = () => {
+    setSupplierModalOpen(false);
+  };
+  const handleProductModalOpen = () => {
+    setProductModalOpen(true);
+  };
+
+  const handleProductModalClose = () => {
+    setProductModalOpen(false);
   };
 
   // change to next or prev page
@@ -94,12 +99,12 @@ export default function Products() {
   };
 
   // if no search result is found
-  const notFound = !productsCount;
+  const notFound = !suppliersCount;
 
   return (
     <>
       <Helmet>
-        <title>Products | SAIFEE</title>
+        <title>Suppliers | SAIFEE</title>
       </Helmet>
       <Card sx={{ p: 2, width: "100%" }}>
         <Box
@@ -112,16 +117,28 @@ export default function Products() {
             width: "100%",
           }}
         >
-          <Typography variant="h4">Products</Typography>
-          {/* Add New */}
-          <Button variant="contained" onClick={handleModalOpen}>
-            + Add New
-          </Button>
-
-          {/* Modal */}
+          <Typography variant="h4">Suppliers</Typography>
+          <Box sx={{ display: "flex", gap: 1 }}>
+            {/* Add New Supplier */}
+            <Button variant="contained" onClick={handleSupplierModalOpen}>
+              + Add New Supplier
+            </Button>
+            {/* Add New Product */}
+            <Button variant="contained" onClick={handleProductModalOpen}>
+              + Add New Product
+            </Button>
+          </Box>
+          {/*Supplier Modal */}
+          <AddNewSupplierModal
+            open={supplierModalOpen}
+            onClose={handleSupplierModalClose}
+            refetch={refetch}
+            gstinTypeList={["Registered", "Unregistered"]}
+          />
+          {/*Product Modal */}
           <AddNewProductModal
-            open={modalOpen}
-            onClose={handleModalClose}
+            open={productModalOpen}
+            onClose={handleProductModalClose}
             refetch={refetch}
             productCategoryList={
               productCategoryList?.categories?.filter((option) => !!option) ||
@@ -159,25 +176,20 @@ export default function Products() {
               </TableHead>
 
               <TableBody>
-                {allResponse?.item_record?.map((row, index) => (
-                  <ProductsTableRow
+                {suppliersList?.map((row, index) => (
+                  <SuppliersTableRow
                     key={row?.id}
                     index={index}
                     refetch={refetch}
                     page={page}
                     rowsPerPage={rowsPerPage}
                     row={row}
-                    productCategoryList={
-                      productCategoryList?.categories?.filter(
-                        (option) => !!option
-                      ) || []
-                    }
                   />
                 ))}
 
                 <TableEmptyRows
                   height={77}
-                  emptyRows={emptyRows(page, rowsPerPage, productsCount)}
+                  emptyRows={emptyRows(page, rowsPerPage, suppliersCount)}
                 />
 
                 {notFound && <TableNoData query="" />}
@@ -191,7 +203,7 @@ export default function Products() {
         <TablePagination
           page={page}
           component="div"
-          count={productsCount}
+          count={suppliersCount}
           rowsPerPage={rowsPerPage}
           onPageChange={handleChangePage}
           rowsPerPageOptions={ROWS_PER_PAGE_OPTIONS}

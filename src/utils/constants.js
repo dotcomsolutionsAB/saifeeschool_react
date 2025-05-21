@@ -196,19 +196,25 @@ export const PROCUREMENT_SIDEBAR_ITEMS = [
     _id: 1,
     displayName: "Dashboard",
     linkName: "/",
-    iconName: "procurement",
+    iconName: "dashboard",
   },
   {
     _id: 2,
     displayName: "Products",
     linkName: "/products",
-    iconName: "procurement",
+    iconName: "procurement_products",
   },
   {
     _id: 3,
-    displayName: "Supplier",
-    linkName: "/supplier",
-    iconName: "procurement",
+    displayName: "Suppliers",
+    linkName: "/suppliers",
+    iconName: "procurement_suppliers",
+  },
+  {
+    _id: 3,
+    displayName: "Purchase Invoice",
+    linkName: "/purchase-invoice",
+    iconName: "procurement_purchase_invoice",
   },
 ];
 

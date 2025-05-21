@@ -23,10 +23,10 @@ import Saifee_Logo from "../assets/logos/Saifee_Logo.png";
 import { useNavigate } from "react-router-dom";
 
 const MENU_OPTIONS = [
-  {
-    label: "Home",
-    icon: <HomeRounded />,
-  },
+  // {
+  //   label: "Home",
+  //   icon: <HomeRounded />,
+  // },
   {
     label: "Profile",
     icon: <VerifiedUserRounded />,

@@ -5,18 +5,11 @@ import Iconify from "../../../../components/iconify/iconify";
 import { useState } from "react";
 import { toast } from "react-toastify";
 import useAuth from "../../../../hooks/useAuth";
-import AddNewProductModal from "./modals/add-new-product-modal";
-import { deleteProduct } from "../../../../services/admin/procurement.service";
+import AddNewSupplierModal from "./modals/add-new-supplier-modal";
+import { deleteSupplier } from "../../../../services/admin/procurement.service";
 import ConfirmationDialog from "../../../../components/confirmation-dialog/confirmation-dialog";
 
-const ProductsTableRow = ({
-  row,
-  refetch,
-  index,
-  page,
-  rowsPerPage,
-  productCategoryList,
-}) => {
+const SuppliersTableRow = ({ row, refetch, index, page, rowsPerPage }) => {
   const { logout } = useAuth();
   const [anchorEl, setAnchorEl] = useState(null);
   const [editModalOpen, setEditModalOpen] = useState(false);
@@ -52,12 +45,12 @@ const ProductsTableRow = ({
 
   const handleDelete = async () => {
     setIsDeleteLoading(true);
-    const response = await deleteProduct(row);
+    const response = await deleteSupplier(row);
     setIsDeleteLoading(false);
 
     if (response?.code === 200) {
       handleConfirmationModalClose();
-      toast.success(response?.message || "Product deleted successfully!");
+      toast.success(response?.message || "Supplier deleted successfully!");
       refetch();
     } else if (response?.code === 401) {
       logout(response);
@@ -73,13 +66,13 @@ const ProductsTableRow = ({
 
         <TableCell>{row?.name || "-"}</TableCell>
 
-        <TableCell>{row?.category || "-"}</TableCell>
+        <TableCell>{row?.mobile || "-"}</TableCell>
 
-        <TableCell>{row?.sub_category || "-"}</TableCell>
-        <TableCell>{row?.unit || "-"}</TableCell>
-        <TableCell>{row?.price || "-"}</TableCell>
-        <TableCell>{row?.discount || "-"}</TableCell>
-        <TableCell>{row?.hsn || "-"}</TableCell>
+        <TableCell>
+          {row?.address1 || "-"}
+          <br />
+          {row?.address2 || "-"}
+        </TableCell>
         <TableCell align="center">
           <IconButton onClick={handleMenuOpen}>
             <MoreVert />
@@ -115,34 +108,33 @@ const ProductsTableRow = ({
         </MenuItem>
       </Menu>
 
-      {/* Delete Product*/}
+      {/* Delete Supplier*/}
       <ConfirmationDialog
         open={confirmationModalOpen}
         onCancel={handleConfirmationModalClose}
         onConfirm={handleDelete}
         isLoading={isDeleteLoading}
-        title="Are you sure you want to delete this product?"
+        title="Are you sure you want to delete this supplier?"
       />
 
-      {/* Edit Product*/}
-      <AddNewProductModal
+      {/* Edit Supplier*/}
+      <AddNewSupplierModal
         open={editModalOpen}
         onClose={handleEditModalClose}
         refetch={refetch}
-        detail={row}
-        productCategoryList={productCategoryList || []}
+        detail={row} // compulsory for edit
+        gstinTypeList={["Registered", "Unregistered"]}
       />
     </>
   );
 };
 
-ProductsTableRow.propTypes = {
+SuppliersTableRow.propTypes = {
   row: PropTypes.object,
   refetch: PropTypes.func,
   index: PropTypes.number,
   page: PropTypes.number,
   rowsPerPage: PropTypes.number,
-  productCategoryList: PropTypes.array,
 };
 
-export default ProductsTableRow;
+export default SuppliersTableRow;

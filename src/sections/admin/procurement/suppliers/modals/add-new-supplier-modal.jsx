@@ -14,37 +14,44 @@ import { toast } from "react-toastify";
 import useAuth from "../../../../../hooks/useAuth";
 import { CancelOutlined } from "@mui/icons-material";
 import {
-  createProduct,
-  updateProduct,
+  createSupplier,
+  updateSupplier,
 } from "../../../../../services/admin/procurement.service";
 
-const AddNewProductModal = ({
+const AddNewSupplierModal = ({
   open,
   onClose,
   refetch,
   detail,
-  productCategoryList,
+  gstinTypeList,
 }) => {
   const { logout } = useAuth();
 
   const initialState = {
-    category: "",
-    sub_category: "",
+    company: "",
     name: "",
-    description: "",
-    unit: "",
-    price: "",
-    discount: "",
-    tax: "",
-    hsn: "",
+    email: "",
+    mobile: "",
+    address1: "",
+    address2: "",
+    city: "",
+    pincode: null,
+    gstin: "",
+    gstin_type: "",
+    state: "",
+    country: "",
+    documents: "",
+    notes: "",
+    notification: "",
   };
 
   const [isLoading, setIsLoading] = useState(false);
   const [formData, setFormData] = useState(initialState);
 
   const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData((preValue) => ({ ...preValue, [name]: value }));
+    const { name, value, type } = e.target;
+    const parsedValue = type === "number" ? Number(value) : value;
+    setFormData((preValue) => ({ ...preValue, [name]: parsedValue }));
   };
 
   const handleSubmit = async (e) => {
@@ -52,9 +59,9 @@ const AddNewProductModal = ({
     let response;
     setIsLoading(true);
     if (detail?.id) {
-      response = await updateProduct(formData);
+      response = await updateSupplier(formData);
     } else {
-      response = await createProduct(formData);
+      response = await createSupplier(formData);
     }
     setIsLoading(false);
 
@@ -63,7 +70,7 @@ const AddNewProductModal = ({
       refetch();
       toast.success(
         response?.message ||
-          `Product ${detail?.id ? "updated" : "added"} successfully`
+          `Supplier ${detail?.id ? "updated" : "added"} successfully`
       );
     } else if (response?.code === 401) {
       logout(response);
@@ -77,15 +84,21 @@ const AddNewProductModal = ({
       setFormData({
         ...initialState,
         id: detail?.id,
-        category: detail?.category || "",
-        sub_category: detail?.sub_category || "",
+        company: detail?.company || "",
         name: detail?.name || "",
-        description: detail?.description || "",
-        unit: detail?.unit || "",
-        price: detail?.price || "",
-        discount: detail?.discount || "",
-        tax: detail?.tax || "",
-        hsn: detail?.hsn || "",
+        email: detail?.email || "",
+        mobile: detail?.mobile || "",
+        address1: detail?.address1 || "",
+        address2: detail?.address2 || "",
+        city: detail?.city || "",
+        pincode: Number(detail?.pincode) || null,
+        gstin: detail?.gstin || "",
+        gstin_type: detail?.gstin_type || "",
+        state: detail?.state || "",
+        country: detail?.country || "",
+        documents: detail?.documents || "",
+        notes: detail?.notes || "",
+        notification: detail?.notification || "",
         log_date: detail?.log_date || "",
         log_user: detail?.log_user || "",
       });
@@ -100,7 +113,7 @@ const AddNewProductModal = ({
       onClose={!isLoading ? onClose : null}
       PaperProps={{
         sx: {
-          minWidth: { xs: "95vw", sm: "600px" },
+          minWidth: { xs: "95vw", sm: "600px", md: "850px", lg: "1100px" },
           position: "relative",
         },
       }}
@@ -126,44 +139,25 @@ const AddNewProductModal = ({
           fontWeight: 600,
         }}
       >
-        {detail?.id ? "Edit Product" : `Add New Product`}
+        {detail?.id ? "Edit Supplier" : `Add New Supplier`}
       </Box>
 
       <DialogContent>
         <Box component="form" onSubmit={handleSubmit}>
           <Grid container spacing={2}>
-            <Grid item xs={12} sm={6}>
-              <Autocomplete
-                options={productCategoryList || []}
-                getOptionLabel={(option) => option || ""}
-                renderInput={(params) => (
-                  <TextField
-                    {...params}
-                    label="Product Category"
-                    name="category"
-                  />
-                )}
-                value={formData?.category || null}
-                onChange={(_, newValue) =>
-                  handleChange({
-                    target: { name: "category", value: newValue },
-                  })
-                }
-              />
-            </Grid>
-            <Grid item xs={12} sm={6}>
+            <Grid item xs={12} sm={6} md={4} lg={3}>
               <TextField
-                label="Sub Category"
-                name="sub_category"
+                label="Company Name"
+                name="company"
                 fullWidth
                 required
-                value={formData?.sub_category || ""}
+                value={formData?.company || ""}
                 onChange={handleChange}
               />
             </Grid>
-            <Grid item xs={12} sm={6}>
+            <Grid item xs={12} sm={6} md={4} lg={3}>
               <TextField
-                label="Name"
+                label="Supplier Name"
                 name="name"
                 fullWidth
                 required
@@ -171,63 +165,114 @@ const AddNewProductModal = ({
                 onChange={handleChange}
               />
             </Grid>
-            <Grid item xs={12} sm={6}>
+            <Grid item xs={12} sm={6} md={4} lg={3}>
               <TextField
-                label="Description"
-                name="description"
+                label="Email"
+                name="email"
                 fullWidth
                 required
-                value={formData?.description || ""}
+                value={formData?.email || ""}
                 onChange={handleChange}
               />
             </Grid>
-            <Grid item xs={12} sm={6}>
+            <Grid item xs={12} sm={6} md={4} lg={3}>
               <TextField
-                label="Unit"
-                name="unit"
+                label="Mobile"
+                name="mobile"
                 fullWidth
                 required
-                value={formData?.unit || ""}
+                value={formData?.mobile || ""}
                 onChange={handleChange}
               />
             </Grid>
-            <Grid item xs={12} sm={6}>
+
+            <Grid item xs={12} sm={6} md={4} lg={3}>
               <TextField
-                label="Price"
-                name="price"
+                label="City"
+                name="city"
                 fullWidth
                 required
-                value={formData?.price || ""}
+                value={formData?.city || ""}
                 onChange={handleChange}
               />
             </Grid>
-            <Grid item xs={12} sm={6}>
+            <Grid item xs={12} sm={6} md={4} lg={3}>
               <TextField
-                label="Discount"
-                name="discount"
+                label="State"
+                name="state"
                 fullWidth
                 required
-                value={formData?.discount || ""}
+                value={formData?.state || ""}
                 onChange={handleChange}
               />
             </Grid>
-            <Grid item xs={12} sm={6}>
+            <Grid item xs={12} sm={6} md={4} lg={3}>
               <TextField
-                label="Tax"
-                name="tax"
+                label="Country"
+                name="country"
                 fullWidth
                 required
-                value={formData?.tax || ""}
+                value={formData?.country || ""}
                 onChange={handleChange}
               />
             </Grid>
-            <Grid item xs={12} sm={6}>
+            <Grid item xs={12} sm={6} md={4} lg={3}>
               <TextField
-                label="HSN"
-                name="hsn"
+                type="number"
+                label="Pincode"
+                name="pincode"
                 fullWidth
                 required
-                value={formData?.hsn || ""}
+                value={formData?.pincode || ""}
+                onChange={handleChange}
+              />
+            </Grid>
+            <Grid item xs={12} sm={6} md={4} lg={3}>
+              <TextField
+                label="GSTIN"
+                name="gstin"
+                fullWidth
+                required
+                value={formData?.gstin || ""}
+                onChange={handleChange}
+              />
+            </Grid>
+            <Grid item xs={12} sm={6} md={4} lg={3}>
+              <Autocomplete
+                options={gstinTypeList || []}
+                getOptionLabel={(option) => option || ""}
+                renderInput={(params) => (
+                  <TextField
+                    {...params}
+                    label="GSTIN Type"
+                    name="gstin_type"
+                    required
+                  />
+                )}
+                value={formData?.gstin_type || null}
+                onChange={(_, newValue) =>
+                  handleChange({
+                    target: { name: "gstin_type", value: newValue },
+                  })
+                }
+              />
+            </Grid>
+            <Grid item xs={12} sm={6} md={4} lg={3}>
+              <TextField
+                label="Address Line 1"
+                name="address1"
+                fullWidth
+                required
+                value={formData?.address1 || ""}
+                onChange={handleChange}
+              />
+            </Grid>
+            <Grid item xs={12} sm={6} md={4} lg={3}>
+              <TextField
+                label="Address Line 2"
+                name="address2"
+                fullWidth
+                value={formData?.address2 || ""}
                 onChange={handleChange}
               />
             </Grid>
@@ -261,12 +306,12 @@ const AddNewProductModal = ({
   );
 };
 
-AddNewProductModal.propTypes = {
+AddNewSupplierModal.propTypes = {
   open: PropTypes.bool,
   onClose: PropTypes.func,
   refetch: PropTypes.func,
   detail: PropTypes.object,
-  productCategoryList: PropTypes.array,
+  gstinTypeList: PropTypes.array,
 };
 
-export default AddNewProductModal;
+export default AddNewSupplierModal;

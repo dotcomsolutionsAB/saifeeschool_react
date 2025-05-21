@@ -42,6 +42,7 @@ import ProcurementDashboard from "../sections/admin/procurement/dashboard/procur
 import DebitVoucher from "../sections/admin/accounts/debit-voucher/debit-voucher";
 import CreditVoucher from "../sections/admin/accounts/credit-voucher/credit-voucher";
 import Banks from "../sections/admin/accounts/banks/banks";
+import Suppliers from "../sections/admin/procurement/suppliers/suppliers";
 
 export default function Router() {
   const { isLoggedIn, logout, userInfo } = useAuth();
@@ -129,8 +130,10 @@ export default function Router() {
   ];
   const TEACHER_ROUTES = [{ index: true, element: <TeacherDashboard /> }];
   const PROCUREMENT_ROUTES = [
-    { index: true, path: "dashboard", element: <ProcurementDashboard /> },
+    { index: true, element: <ProcurementDashboard /> },
     { path: "products", element: <Products /> },
+    { path: "suppliers", element: <Suppliers /> },
+    // { path: "purchase-invoice", element: <Products /> },
   ];
 
   useEffect(() => {

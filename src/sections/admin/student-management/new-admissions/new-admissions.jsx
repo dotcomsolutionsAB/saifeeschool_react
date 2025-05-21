@@ -49,7 +49,7 @@ const HEAD_LABEL = [
   { id: "child", label: "Child" },
   { id: "ad_paid", label: "Paid Status" },
   { id: "interview_status", label: "Interview Status", align: "center" },
-  { id: "actions", label: "Action", align: "center" },
+  // { id: "actions", label: "Action", align: "center" },
 ];
 
 const PAYMENT_STATUS_LIST = [
@@ -153,7 +153,7 @@ export default function NewAdmissions() {
   };
 
   const handleClick = (row) => {
-    navigate("/students-management/new-admissions/new-admission-detail", {
+    navigate("/new-admissions/new-admission-detail", {
       state: { row: row, allData: newAdmissionsList },
     });
   };
@@ -414,11 +414,11 @@ export default function NewAdmissions() {
                         </Typography>
                       </TableCell>
 
-                      <TableCell align="center">
+                      {/* <TableCell align="center">
                         <IconButton>
                           <MoreVert />
                         </IconButton>
-                      </TableCell>
+                      </TableCell> */}
                     </TableRow>
                   );
                 })}

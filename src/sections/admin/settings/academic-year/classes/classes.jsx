@@ -24,7 +24,7 @@ const Classes = ({ academicYear }) => {
   const theme = useTheme();
 
   const [page, setPage] = useState(0);
-  const [rowsPerPage, setRowsPerPage] = useState(DEFAULT_LIMIT);
+  const [rowsPerPage, setRowsPerPage] = useState(12);
   const [search, setSearch] = useState("");
   const [modalOpen, setModalOpen] = useState(false);
   const [selectedRow, setSelectedRow] = useState();
@@ -202,7 +202,7 @@ const Classes = ({ academicYear }) => {
             count={classCount}
             rowsPerPage={rowsPerPage}
             onPageChange={handleChangePage}
-            rowsPerPageOptions={ROWS_PER_PAGE_OPTIONS}
+            rowsPerPageOptions={[4, 12, 24, 48, 100]}
             onRowsPerPageChange={handleChangeRowsPerPage}
           />
         </Box>

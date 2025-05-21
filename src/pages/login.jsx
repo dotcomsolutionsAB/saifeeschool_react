@@ -20,8 +20,18 @@ import Saifee_Logo_White from "../assets/logos/Saifee_Logo_White.png";
 
 const NAV_OPTIONS = [
   { _id: "1", label: "Home", link: "/" },
-  { _id: "2", label: "About Us", link: "/about-us" },
-  { _id: "3", label: "Contact Us", link: "/contact-us" },
+  {
+    _id: "2",
+    label: "About Us",
+    link: "https://www.saifeeschool.in/overview-of-the-school/",
+    redirect: true,
+  },
+  {
+    _id: "3",
+    label: "Contact Us",
+    link: "https://www.saifeeschool.in/contact-us/",
+    redirect: true,
+  },
   { _id: "4", label: "New Admission", link: "/new-admission" },
 ];
 
@@ -34,8 +44,8 @@ const Login = () => {
   const passwordRef = useRef(null);
 
   const [formData, setFormData] = useState({
-    username: "1700041",
-    password: "Saifeeschool",
+    username: "",
+    password: "",
   });
   const [showPassword, setShowPassword] = useState(false);
   const [isForgotPassword, setIsForgotPassword] = useState(false);
@@ -112,7 +122,11 @@ const Login = () => {
         }}
       >
         {NAV_OPTIONS?.map((option, index) => (
-          <NavLink key={index} to={option?.link}>
+          <NavLink
+            key={index}
+            to={option?.link}
+            target={option?.redirect ? "_blank" : "_self"}
+          >
             <Button
               variant="contained"
               sx={{ bgcolor: "primary.light", color: "primary.main" }}
@@ -312,7 +326,7 @@ const Login = () => {
                     onChange={handleChange}
                   />
 
-                  <Typography
+                  {/* <Typography
                     sx={{
                       cursor: "pointer",
                       textDecoration: "underline",
@@ -325,12 +339,13 @@ const Login = () => {
                     onClick={handleForgotPassword}
                   >
                     Forgot your password?
-                  </Typography>
+                  </Typography> */}
                   <Button
                     type="submit"
                     variant="contained"
                     size="large"
                     disabled={isLoading}
+                    sx={{ mt: 3 }}
                   >
                     {isLoading ? (
                       <CircularProgress size={27} color="inherit" />

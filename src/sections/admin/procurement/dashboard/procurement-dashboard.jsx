@@ -9,7 +9,7 @@ import {
 } from "@mui/material";
 import { FORMAT_INDIAN_CURRENCY } from "../../../../utils/constants";
 import { useGetApi } from "../../../../hooks/useGetApi";
-import { getAllItem } from "../../../../services/admin/procurement.service";
+import { getProcurementDashboard } from "../../../../services/admin/procurement.service";
 import { Helmet } from "react-helmet-async";
 import Loader from "../../../../components/loader/loader";
 import MessageBox from "../../../../components/error/message-box";
@@ -18,11 +18,11 @@ const ProcurementDashboard = () => {
   const cardHeight = "200px";
 
   const {
-    allResponse: productList, // need to change this list
+    dataList: procurementDashboardData, // need to change this list
     isLoading,
     isError,
   } = useGetApi({
-    apiFunction: getAllItem,
+    apiFunction: getProcurementDashboard,
   });
   return (
     <>
@@ -81,7 +81,9 @@ const ProcurementDashboard = () => {
                     Total Products
                   </Typography>
                   <Typography variant="h6">
-                    {FORMAT_INDIAN_CURRENCY(productList?.total) || "0"}
+                    {FORMAT_INDIAN_CURRENCY(
+                      procurementDashboardData?.total_items
+                    ) || "0"}
                   </Typography>
                 </Box>
               </Box>
@@ -135,7 +137,7 @@ const ProcurementDashboard = () => {
                   </Typography>
                   <Typography variant="h6">
                     {FORMAT_INDIAN_CURRENCY(
-                      productList?.current_month_unpaid_amount
+                      procurementDashboardData?.total_purchases
                     ) || "0"}
                   </Typography>
                 </Box>

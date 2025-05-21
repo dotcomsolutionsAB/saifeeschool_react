@@ -15,7 +15,6 @@ import {
   useTheme,
 } from "@mui/material";
 import {
-  SettingsRounded,
   ExpandMoreRounded,
   ExpandLessRounded,
   AvTimerRounded,
@@ -34,6 +33,7 @@ import { usePathname } from "../hooks/usePathname";
 import {
   AccountsIcon,
   FeesManagementIcon,
+  PurchaseInvoiceIcon,
   ReportCardModuleIcon,
   StudentsManagementIcon,
 } from "../theme/overrides/CustomIcons";
@@ -46,8 +46,12 @@ const getIcon = (iconName) => {
   switch (iconName) {
     case "dashboard":
       return <AvTimerRounded />;
-    case "procurement":
-      return <ProductionQuantityLimits />;
+    case "procurement_products":
+      return <Iconify icon="radix-icons:dashboard" width={20} />;
+    case "procurement_suppliers":
+      return <Iconify icon="bx:box" width={20} />;
+    case "procurement_purchase_invoice":
+      return <PurchaseInvoiceIcon sx={{ width: "18px" }} />;
     case "students":
       return <StudentsManagementIcon />;
     case "new_admissions":
