@@ -49,7 +49,7 @@ const StudentPieChart = ({ studentStats }) => {
   };
 
   return (
-    <Card elevation={10}>
+    <Card elevation={10} sx={{ height: "350px" }}>
       <CardContent>
         {/* Donut Chart */}
         {hasValidData ? (

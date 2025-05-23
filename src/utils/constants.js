@@ -128,7 +128,7 @@ export const ADMIN_SIDEBAR_ITEMS = [
       },
       {
         _id: 64,
-        displayName: "Banks",
+        displayName: "Bank Transactions",
         linkName: "/accounts/banks",
       },
       {

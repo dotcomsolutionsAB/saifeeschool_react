@@ -19,12 +19,16 @@ import { getAllAcademicYears } from "../services/admin/students-management.servi
 import { useGetApi } from "../hooks/useGetApi";
 import { useState } from "react";
 import useAuth from "../hooks/useAuth";
-import { getStudentStats } from "../services/admin/dashboard.service";
+import {
+  getStudentStats,
+  getTransactionStats,
+} from "../services/admin/dashboard.service";
 import Loader from "../components/loader/loader";
 import MessageBox from "../components/error/message-box";
 import StudentPieChart from "../sections/admin/dashboard/student-pie-chart";
 import { Helmet } from "react-helmet-async";
 import { FORMAT_INDIAN_CURRENCY } from "../utils/constants";
+import FeesCollectionBarChart from "../sections/admin/dashboard/fees-collection-bar-chart";
 
 const AdminDashboard = () => {
   const { userInfo } = useAuth();
@@ -41,6 +45,14 @@ const AdminDashboard = () => {
     isError,
   } = useGetApi({
     apiFunction: getStudentStats,
+    body: {
+      ay_id: Number(academicYear?.ay_id) || userInfo?.ay_id,
+    },
+    dependencies: [academicYear?.ay_id],
+  });
+
+  const { dataList: transactionStats } = useGetApi({
+    apiFunction: getTransactionStats,
     body: {
       ay_id: Number(academicYear?.ay_id) || userInfo?.ay_id,
     },
@@ -221,10 +233,10 @@ const AdminDashboard = () => {
                 </Typography>
               </Card>
             </Grid>
-            <Grid item xs={12} sm={6} md={6} lg={3}>
+            <Grid item xs={12} sm={6} md={12} lg={3}>
               <Grid container spacing={2}>
                 {/* Late Fees Card */}
-                <Grid item xs={12}>
+                <Grid item xs={12} md={6} lg={12}>
                   <Card
                     elevation={10}
                     sx={{
@@ -232,7 +244,7 @@ const AdminDashboard = () => {
                       display: "flex",
                       alignItems: "center",
                       justifyContent: "center",
-                      px: 2,
+                      px: { xs: 2, sm: 1, md: 2, lg: 1, xl: 2 },
                     }}
                   >
                     <Box
@@ -240,7 +252,7 @@ const AdminDashboard = () => {
                         height: "100%",
                         display: "flex",
                         alignItems: "center",
-                        gap: 2,
+                        gap: { xs: 2, lg: 1, xl: 2 },
                         width: { xs: "80%", md: "100%", lg: "90%", xl: "80%" },
                       }}
                     >
@@ -273,7 +285,7 @@ const AdminDashboard = () => {
                         <Typography variant="h6">
                           ₹{" "}
                           {FORMAT_INDIAN_CURRENCY(
-                            studentStats?.total_late_fees_paid?.amount
+                            studentStats?.current_month_late_fees?.amount
                           ) || "0"}
                         </Typography>
                       </Box>
@@ -282,7 +294,7 @@ const AdminDashboard = () => {
                 </Grid>
 
                 {/* Fees Due Card */}
-                <Grid item xs={12}>
+                <Grid item xs={12} md={6} lg={12}>
                   <Card
                     elevation={10}
                     sx={{
@@ -290,7 +302,7 @@ const AdminDashboard = () => {
                       display: "flex",
                       alignItems: "center",
                       justifyContent: "center",
-                      px: 2,
+                      px: { xs: 2, sm: 1, md: 2, lg: 1, xl: 2 },
                     }}
                   >
                     <Box
@@ -298,7 +310,7 @@ const AdminDashboard = () => {
                         height: "100%",
                         display: "flex",
                         alignItems: "center",
-                        gap: 2,
+                        gap: { xs: 2, lg: 1, xl: 2 },
                         width: { xs: "80%", md: "100%", lg: "90%", xl: "80%" },
                       }}
                     >
@@ -330,13 +342,14 @@ const AdminDashboard = () => {
                         </Typography>
                         <Typography
                           sx={{ color: "text.disabled", fontSize: 10 }}
+                          noWrap
                         >
                           (Until Current Month)
                         </Typography>
-                        <Typography variant="h6">
+                        <Typography variant="h6" noWrap>
                           ₹{" "}
                           {FORMAT_INDIAN_CURRENCY(
-                            studentStats?.current_month_unpaid_amount
+                            studentStats?.current_month_pending_fees?.amount
                           ) || "0"}
                         </Typography>
                       </Box>
@@ -349,10 +362,10 @@ const AdminDashboard = () => {
             {/* Charts */}
             <Grid item xs={12}>
               <Grid container spacing={2}>
-                <Grid item xs={12} sm={6}>
-                  <StudentPieChart studentStats={studentStats} />
+                <Grid item xs={12} md={6}>
+                  <FeesCollectionBarChart transactionStats={transactionStats} />
                 </Grid>
-                <Grid item xs={12} sm={6}>
+                <Grid item xs={12} md={6}>
                   <StudentPieChart studentStats={studentStats} />
                 </Grid>
               </Grid>

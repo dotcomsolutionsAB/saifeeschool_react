@@ -60,7 +60,7 @@ const WalletModal = ({ open, onClose, detail }) => {
     const response = await addMoneyToWallet({
       ...formData,
       type: formData?.type?.value,
-      st_id: detail?.id,
+      st_id: detail?.student_id,
       amount: Number(formData?.amount),
     });
     setIsLoading(false);
