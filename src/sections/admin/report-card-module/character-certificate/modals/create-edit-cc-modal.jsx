@@ -8,6 +8,8 @@ import {
   Dialog,
   DialogContent,
   Grid,
+  IconButton,
+  InputAdornment,
   TextField,
 } from "@mui/material";
 import { toast } from "react-toastify";
@@ -24,45 +26,65 @@ import dayjs from "dayjs";
 const CreateEditCCModal = ({ open, onClose, refetch, detail }) => {
   const { logout } = useAuth();
   const [isLoading, setIsLoading] = useState(false);
+  const [newDataLoading, setNewDataLoading] = useState(false);
 
   const initialState = {
     st_roll_no: detail?.st_roll_no || "",
     name: detail?.name || "",
-    joining_date: detail?.joining_date || "",
-    leaving_date: detail?.leaving_date || dayjs(),
+    joining_date: detail?.joining_date ? dayjs(detail?.joining_date) : null,
+    leaving_date: detail?.leaving_date ? dayjs(detail?.leaving_date) : dayjs(),
     stream: detail?.stream || "",
-    date_from: detail?.date_from || "",
-    dob: detail?.dob || "",
+    date_from: detail?.date_from ? dayjs(detail?.date_from) : null,
+    dob: detail?.dob ? dayjs(detail?.dob) : null,
   };
 
   const [formData, setFormData] = useState(initialState);
 
   const handleChange = (e) => {
-    const { name, value } = e.target;
+    const { name, value, type } = e.target;
+    const parsedValue =
+      type === "date" ? dayjs(value).format("YYYY-MM-DD") : value;
     setFormData((preValue) => ({
       ...preValue,
-      [name]: value,
+      [name]: parsedValue,
     }));
+  };
+
+  const handleCancel = () => {
+    onClose();
+    // setFormData(initialState);
   };
 
   const handleCreateEditCharacterCertificate = async (e) => {
     e.preventDefault();
     let response = null;
     setIsLoading(true);
+
+    const payload = {
+      ...formData,
+      promotion:
+        typeof formData?.promotion === "string"
+          ? formData?.promotion
+          : formData?.promotion?.value,
+      joining_date: formData?.joining_date
+        ? dayjs(formData?.joining_date).format("YYYY-MM-DD")
+        : null,
+      leaving_date: formData?.leaving_date
+        ? dayjs(formData?.leaving_date).format("YYYY-MM-DD")
+        : dayjs().format("YYYY-MM-DD"),
+      date_from: formData?.date_from
+        ? dayjs(formData?.date_from).format("YYYY-MM-DD")
+        : null,
+      dob: formData?.dob ? dayjs(formData?.dob).format("YYYY-MM-DD") : null,
+    };
+
     if (detail?.id) {
       response = await updateCharacterCertificate({
-        ...formData,
+        ...payload,
         id: detail.id,
-        promotion:
-          typeof formData?.promotion === "string"
-            ? formData?.promotion
-            : formData?.promotion?.value,
       });
     } else {
-      response = await createCharacterCertificate({
-        ...formData,
-        promotion: formData?.promotion?.value,
-      });
+      response = await createCharacterCertificate(payload);
     }
     setIsLoading(false);
 
@@ -79,30 +101,45 @@ const CreateEditCCModal = ({ open, onClose, refetch, detail }) => {
       );
     } else if (response?.code === 401) {
       logout(response);
-      // toast.error(response?.message || "Unauthorized");
     } else {
       toast.error(response?.message || "Some error occurred.");
     }
   };
 
   const fetchStudentDetail = async () => {
+    setFormData((prevData) => ({
+      ...prevData,
+      ...initialState,
+      st_roll_no: prevData?.st_roll_no,
+    }));
+    setNewDataLoading(true);
     const response = await getStudentByRollNo({
       st_roll_no: formData?.st_roll_no,
     });
+    setNewDataLoading(false);
+    if (response?.code === 401) {
+      logout(response);
+    } else if (response?.code !== 200) {
+      return toast.error(response?.message || "Some error occurred.");
+    } else {
+      toast.success(response?.message || "Details fetched successfully");
+    }
 
     const studentDetail = response?.data;
 
     setFormData((prev) => ({
       ...prev,
       name: studentDetail?.name || "",
-      // joining_date: studentDetail?.st_admitted
-      //   ? dayjs(studentDetail?.st_admitted, "DD-MM-YYYY").isValid()
-      //     ? dayjs(studentDetail?.st_admitted, "DD-MM-YYYY")
-      //     : null
-      //   : null,
-      // dob: studentDetail?.st_dob
-      //   ? dayjs(studentDetail?.st_dob).format("YYYY-MM-DD")
-      //   : "",
+      joining_date: studentDetail?.joining_date
+        ? dayjs(studentDetail?.joining_date)
+        : null,
+      leaving_date: studentDetail?.leaving_date
+        ? dayjs(studentDetail?.leaving_date)
+        : dayjs(),
+      date_from: studentDetail?.date_from
+        ? dayjs(studentDetail?.date_from)
+        : null,
+      dob: studentDetail?.dob ? dayjs(studentDetail?.dob) : null,
     }));
   };
 
@@ -113,6 +150,10 @@ const CreateEditCCModal = ({ open, onClose, refetch, detail }) => {
       timer = setTimeout(fetchStudentDetail, 500);
     }
 
+    if (!formData?.st_roll_no) {
+      setFormData(initialState);
+    }
+
     return () => {
       if (timer) clearTimeout(timer);
     };
@@ -120,7 +161,7 @@ const CreateEditCCModal = ({ open, onClose, refetch, detail }) => {
   return (
     <Dialog
       open={open}
-      onClose={!isLoading ? onClose : null}
+      onClose={!isLoading ? handleCancel : null}
       PaperProps={{
         sx: {
           minWidth: { xs: "90%", md: "800px", lg: "1000px" },
@@ -166,6 +207,17 @@ const CreateEditCCModal = ({ open, onClose, refetch, detail }) => {
                 fullWidth
                 value={formData?.st_roll_no || ""}
                 onChange={handleChange}
+                slotProps={{
+                  input: {
+                    endAdornment: newDataLoading ? (
+                      <InputAdornment position="end">
+                        <IconButton>
+                          <CircularProgress size={24} />
+                        </IconButton>
+                      </InputAdornment>
+                    ) : null,
+                  },
+                }}
               />
             </Grid>
 
@@ -198,10 +250,16 @@ const CreateEditCCModal = ({ open, onClose, refetch, detail }) => {
               <DatePicker
                 name="joining_date"
                 label="Admitted Date"
-                value={formData?.joining_date || null}
+                value={
+                  formData?.joining_date ? dayjs(formData?.joining_date) : null
+                }
                 onChange={(newValue) =>
                   handleChange({
-                    target: { name: "joining_date", value: newValue },
+                    target: {
+                      type: "date",
+                      name: "joining_date",
+                      value: newValue,
+                    },
                   })
                 }
                 slotProps={{
@@ -219,10 +277,16 @@ const CreateEditCCModal = ({ open, onClose, refetch, detail }) => {
               <DatePicker
                 name="leaving_date"
                 label="Leaving Date"
-                value={formData?.leaving_date || null}
+                value={
+                  formData?.leaving_date ? dayjs(formData?.leaving_date) : null
+                }
                 onChange={(newValue) =>
                   handleChange({
-                    target: { name: "leaving_date", value: newValue },
+                    target: {
+                      type: "date",
+                      name: "leaving_date",
+                      value: newValue,
+                    },
                   })
                 }
                 slotProps={{
@@ -240,10 +304,14 @@ const CreateEditCCModal = ({ open, onClose, refetch, detail }) => {
               <DatePicker
                 name="date_from"
                 label="Date From"
-                value={formData?.date_from || null}
+                value={formData?.date_from ? dayjs(formData?.date_from) : null}
                 onChange={(newValue) =>
                   handleChange({
-                    target: { name: "date_from", value: newValue },
+                    target: {
+                      type: "date",
+                      name: "date_from",
+                      value: newValue,
+                    },
                   })
                 }
                 slotProps={{
@@ -261,9 +329,12 @@ const CreateEditCCModal = ({ open, onClose, refetch, detail }) => {
               <DatePicker
                 name="dob"
                 label="Date of Birth"
-                value={formData?.dob || null}
+                value={formData?.dob ? dayjs(formData?.dob) : null}
                 onChange={(newValue) =>
-                  handleChange({ target: { name: "dob", value: newValue } })
+                  handleChange({
+                    type: "date",
+                    target: { name: "dob", value: newValue },
+                  })
                 }
                 slotProps={{
                   textField: {
@@ -285,11 +356,25 @@ const CreateEditCCModal = ({ open, onClose, refetch, detail }) => {
               mt: 2,
             }}
           >
-            <Button variant="outlined" onClick={onClose} disabled={isLoading}>
+            <Button
+              variant="outlined"
+              onClick={handleCancel}
+              disabled={isLoading || newDataLoading}
+            >
               Close
             </Button>
-            <Button variant="contained" type="submit" disabled={isLoading}>
-              {isLoading ? <CircularProgress size={24} /> : `Submit`}
+            <Button
+              variant="contained"
+              type="submit"
+              disabled={isLoading || newDataLoading}
+            >
+              {isLoading ? (
+                <CircularProgress size={24} />
+              ) : detail?.id ? (
+                `Update`
+              ) : (
+                `Submit`
+              )}
             </Button>
           </Box>
         </Box>

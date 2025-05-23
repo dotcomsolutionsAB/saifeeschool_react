@@ -13,7 +13,7 @@ import {
 } from "@mui/material";
 import Iconify from "../../../../components/iconify/iconify";
 import { useState } from "react";
-import { printTCPdf } from "../../../../services/admin/report-card-module.service";
+import { printCCPdf } from "../../../../services/admin/report-card-module.service";
 import { toast } from "react-toastify";
 import useAuth from "../../../../hooks/useAuth";
 import CreateEditCCModal from "./modals/create-edit-cc-modal";
@@ -52,7 +52,7 @@ const CharacterCertificateTableRow = ({
 
   const handlePrint = async () => {
     setIsPrintLoading(true);
-    const response = await printTCPdf(row);
+    const response = await printCCPdf(row);
     setIsPrintLoading(false);
 
     if (response?.code === 200) {
