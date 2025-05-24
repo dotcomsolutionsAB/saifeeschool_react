@@ -44,6 +44,7 @@ import CreditVoucher from "../sections/admin/accounts/credit-voucher/credit-vouc
 import Banks from "../sections/admin/accounts/banks/banks";
 import Suppliers from "../sections/admin/procurement/suppliers/suppliers";
 import Users from "../sections/admin/settings/users/users";
+import ChangePassword from "../pages/change-password";
 
 export default function Router() {
   const { isLoggedIn, logout, userInfo } = useAuth();
@@ -111,6 +112,7 @@ export default function Router() {
     },
     { path: "academic-year", element: <AcademicYear /> },
     { path: "users", element: <Users /> },
+    { path: "change-password", element: <ChangePassword /> },
   ];
   const STUDENT_ROUTES = [
     { index: true, element: <StudentDashboard /> },
@@ -129,13 +131,18 @@ export default function Router() {
         { path: "transactions", element: <TransactionFees /> },
       ],
     },
+    { path: "change-password", element: <ChangePassword /> },
   ];
-  const TEACHER_ROUTES = [{ index: true, element: <TeacherDashboard /> }];
+  const TEACHER_ROUTES = [
+    { index: true, element: <TeacherDashboard /> },
+    { path: "change-password", element: <ChangePassword /> },
+  ];
   const PROCUREMENT_ROUTES = [
     { index: true, element: <ProcurementDashboard /> },
     { path: "products", element: <Products /> },
     { path: "suppliers", element: <Suppliers /> },
     // { path: "purchase-invoice", element: <Products /> },
+    { path: "change-password", element: <ChangePassword /> },
   ];
 
   useEffect(() => {

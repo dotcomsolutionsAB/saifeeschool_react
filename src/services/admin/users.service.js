@@ -2,6 +2,11 @@ import { getRequest, postRequest, deleteRequest } from "../api.request";
 
 const USERS_PATH = "/users";
 
+// change password api
+
+export const changePassword = async (body) =>
+  await postRequest(`${USERS_PATH}/change_password`, body);
+
 // users apis
 
 export const getUsers = async (body) =>

@@ -59,6 +59,9 @@ const Header = () => {
     if (option.label === "Home") {
       navigate("/");
     }
+    if (option.label === "Profile") {
+      navigate("/change-password");
+    }
   };
 
   const handleImageError = () => {
