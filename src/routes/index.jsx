@@ -43,6 +43,7 @@ import DebitVoucher from "../sections/admin/accounts/debit-voucher/debit-voucher
 import CreditVoucher from "../sections/admin/accounts/credit-voucher/credit-voucher";
 import Banks from "../sections/admin/accounts/banks/banks";
 import Suppliers from "../sections/admin/procurement/suppliers/suppliers";
+import Users from "../sections/admin/settings/users/users";
 
 export default function Router() {
   const { isLoggedIn, logout, userInfo } = useAuth();
@@ -109,6 +110,7 @@ export default function Router() {
       ],
     },
     { path: "academic-year", element: <AcademicYear /> },
+    { path: "users", element: <Users /> },
   ];
   const STUDENT_ROUTES = [
     { index: true, element: <StudentDashboard /> },
