@@ -39,18 +39,30 @@ import { DatePicker } from "@mui/x-date-pickers";
 import {
   createPurchase,
   getPurchases,
+  getSuppliers,
   updatePurchase,
 } from "../../../../services/admin/procurement.service";
 // ----------------------------------------------------------------------
 
-const HEAD_LABEL = [
+const PRODUCTS_HEAD_LABEL = [
   { id: "sn", label: "SN" },
-  { id: "type", label: "Type" },
+  { id: "qty", label: "Quantity" },
+  { id: "unit", label: "Unit" },
+  { id: "price", label: "Price" },
+  { id: "discount", label: "Discount" },
+  { id: "hsn", label: "HSN" },
+  { id: "tax", label: "Tax" },
+  { id: "gross", label: "Gross" },
+  { id: "total", label: "Total" },
+  { id: "", label: "", align: "center" },
+];
+const HEAD_LABEL = [
+  { id: "", label: "" },
+  { id: "supplier", label: "Supplier" },
+  { id: "invoice", label: "Invoice" },
   { id: "date", label: "Date" },
   { id: "amount", label: "Amount" },
-  { id: "comments", label: "Comments" },
-  { id: "user", label: "User" },
-  { id: "actions", label: "Actions", align: "center" },
+  { id: "", label: "", align: "center" },
 ];
 
 export default function PurchaseInvoice() {
@@ -58,18 +70,41 @@ export default function PurchaseInvoice() {
   const topRef = useRef(null);
 
   const initialState = {
-    date: dayjs().format("YYYY-MM-DD"),
-    type: "",
-    amount: 0,
-    comments: "",
+    supplier: "",
+    purchase_invoice_no: "",
+    purchase_invoice_date: null,
+    series: "",
+    currency: "",
+    total: 0,
+    paid: 0,
+    cgst: 0,
+    sgst: 0,
+    igst: 0,
+    status: 1,
+    items: [],
+    addons: {
+      freight_value: 0,
+      freight_cgst: 0,
+      freight_sgst: 0,
+      freight_igst: 0,
+      roundoff: 0,
+    },
   };
 
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(DEFAULT_LIMIT);
   const [formData, setFormData] = useState(initialState);
   const [search, setSearch] = useState("");
-  const [isExportLoading, setIsExportLoading] = useState(false);
   const [loading, setLoading] = useState(false);
+
+  // api to get suppliers list
+  const { dataList: suppliersList } = useGetApi({
+    apiFunction: getSuppliers,
+    body: {
+      offset: 0,
+      limit: 200,
+    },
+  });
 
   // api to get bank transaction list
   const { allResponse, isLoading, isError, refetch } = useGetApi({
@@ -116,37 +151,6 @@ export default function PurchaseInvoice() {
       setFormData(initialState);
       refetch();
       toast.success(response?.message || "Purchase invoice added successfully");
-    } else if (response?.code === 401) {
-      logout(response);
-    } else {
-      toast.error(response?.message || "Some error occurred.");
-    }
-  };
-
-  // function to export students data
-  const handleExcelExport = async () => {
-    setIsExportLoading(true);
-    let response;
-    // const response = await exportTCDetails({
-    //   ...dataSendToBackend,
-    //   type: "excel",
-    // });
-    setIsExportLoading(false);
-
-    if (response?.code === 200) {
-      const link = document.createElement("a");
-      link.href = response?.data?.file_url || "";
-      link.target = "_blank"; // Open in a new tab
-      link.rel = "noopener noreferrer"; // Add security attributes
-
-      // Append the link to the document and trigger the download
-      document.body.appendChild(link);
-      link.click();
-
-      // Remove the link after triggering the download
-      document.body.removeChild(link);
-
-      toast.success(response?.message || "File downloaded successfully!");
     } else if (response?.code === 401) {
       logout(response);
     } else {
@@ -206,33 +210,60 @@ export default function PurchaseInvoice() {
           </Box>
           <Box component="form" onSubmit={handleSubmit}>
             <Grid container spacing={2}>
-              {/* Transaction Type */}
+              {/* Supplier */}
               <Grid item xs={12} sm={6} md={4} lg={3}>
                 <Autocomplete
-                  options={["Deposit", "Withdrawal"]}
+                  getOptionLabel={(option) => option?.name || ""}
+                  options={
+                    suppliersList?.filter((option) => !!option?.name) || []
+                  }
                   renderInput={(params) => (
                     <TextField
                       {...params}
                       size="small"
-                      label="Select Transaction Type"
+                      label="Select Supplier"
                       required
                     />
                   )}
-                  value={formData?.type || ""}
+                  value={formData?.supplier || ""}
                   onChange={(_, newValue) =>
-                    handleChange({ target: { name: "type", value: newValue } })
+                    handleChange({
+                      target: { name: "supplier", value: newValue },
+                    })
                   }
                 />
               </Grid>
-              {/* Date */}
+
+              {/* Purchase Invoice */}
+              <Grid item xs={12} sm={6} md={4} lg={3}>
+                <TextField
+                  name="purchase_invoice_no"
+                  label="Purchase Invoice"
+                  required
+                  fullWidth
+                  size="small"
+                  value={formData?.purchase_invoice_no || ""}
+                  onChange={handleChange}
+                />
+              </Grid>
+
+              {/* Purchase Invoice Date */}
               <Grid item xs={12} sm={6} md={4} lg={3}>
                 <DatePicker
-                  name="date"
-                  label="Date"
-                  value={formData?.date ? dayjs(formData?.date) : null}
+                  name="purchase_invoice_date"
+                  label="Purchase Invoice Date"
+                  value={
+                    formData?.purchase_invoice_date
+                      ? dayjs(formData?.purchase_invoice_date)
+                      : null
+                  }
                   onChange={(newValue) =>
                     handleChange({
-                      target: { type: "date", name: "date", value: newValue },
+                      target: {
+                        type: "date",
+                        name: "purchase_invoice_date",
+                        value: newValue,
+                      },
                     })
                   }
                   slotProps={{
@@ -246,30 +277,51 @@ export default function PurchaseInvoice() {
                 />
               </Grid>
 
-              {/* Amount */}
+              {/* Purchase Invoice Series */}
               <Grid item xs={12} sm={6} md={4} lg={3}>
-                <TextField
-                  type="number"
-                  name="amount"
-                  label="Amount"
-                  required
-                  fullWidth
-                  size="small"
-                  value={formData?.amount || ""}
-                  onChange={handleChange}
+                <Autocomplete
+                  options={["Primary", "Secondary"]}
+                  renderInput={(params) => (
+                    <TextField
+                      {...params}
+                      size="small"
+                      label="Series"
+                      required
+                    />
+                  )}
+                  value={formData?.series || ""}
+                  onChange={(_, newValue) =>
+                    handleChange({
+                      target: { name: "series", value: newValue },
+                    })
+                  }
                 />
               </Grid>
 
-              {/* Comments */}
+              {/* Currency*/}
               <Grid item xs={12} sm={6} md={4} lg={3}>
-                <TextField
-                  name="comments"
-                  label="Comments"
-                  required
-                  fullWidth
-                  size="small"
-                  value={formData?.comments || ""}
-                  onChange={handleChange}
+                <Autocomplete
+                  options={[
+                    "INR - Indian Rupee",
+                    "AED - Emirati Dirham",
+                    "USD - United States Dollar",
+                    "EUR - Euro",
+                    "GBP - Great Britain Pound",
+                  ]}
+                  renderInput={(params) => (
+                    <TextField
+                      {...params}
+                      size="small"
+                      label="Currency"
+                      required
+                    />
+                  )}
+                  value={formData?.currency || ""}
+                  onChange={(_, newValue) =>
+                    handleChange({
+                      target: { name: "currency", value: newValue },
+                    })
+                  }
                 />
               </Grid>
 
@@ -303,49 +355,20 @@ export default function PurchaseInvoice() {
       </Card>
 
       <Card sx={{ mt: 4, mb: 2, p: 2, width: "100%" }}>
+        {/* Search */}
+        <TextField
+          value={search || ""}
+          onChange={handleSearch}
+          placeholder="Search"
+          size="small"
+          sx={{ mb: 2, width: "clamp(250px, 40%, 350px)" }}
+        />
         {isLoading ? (
           <Loader />
         ) : isError ? (
           <MessageBox />
         ) : (
           <>
-            {/* Search and Add new debit voucher */}
-            <Box
-              sx={{
-                display: "flex",
-                flexWrap: "wrap",
-                justifyContent: "space-between",
-                alignItems: "center",
-                gap: 2,
-                mb: 2,
-                width: "100%",
-              }}
-            >
-              <TextField
-                value={search || ""}
-                onChange={handleSearch}
-                placeholder="Search"
-                size="small"
-              />
-
-              {/* Export Excel */}
-              {/* <Button
-                variant="contained"
-                onClick={handleExcelExport}
-                disabled={isExportLoading}
-                sx={{
-                  bgcolor: "success.main",
-                  color: "success.contrastText",
-                  ml: "auto",
-                }}
-              >
-                {isExportLoading ? (
-                  <CircularProgress size={24} />
-                ) : (
-                  `Export Excel`
-                )}
-              </Button> */}
-            </Box>
             {/* Table */}
             <TableContainer sx={{ overflowY: "unset" }}>
               <Table sx={{ minWidth: 800 }}>
