@@ -3,8 +3,8 @@ import { getRequest, postRequest } from "../api.request";
 const STUDENTS_PATH = "/student";
 const CLASS_PATH = "/class_group";
 const ACADEMIC_PATH = "/academic_year";
-const BLOOD_GROUP_PATH = "/blood-groups";
-const HOUSE_PATH = "/house-options";
+const BLOOD_GROUP_PATH = "/users/blood-groups";
+const HOUSE_PATH = "/users/house-options";
 const FEE_PLAN_PATH = "/fee_plan";
 const NEW_ADMISSION_PATH = "/new_admission";
 

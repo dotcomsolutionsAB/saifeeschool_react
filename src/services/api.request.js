@@ -36,9 +36,11 @@ api.interceptors.request.use(
  * console.log(data);
  */
 
-export const getRequest = async (path) => {
+export const getRequest = async (path, params = {}) => {
   try {
-    let result = await api.get(path);
+    const queryString = new URLSearchParams(params).toString();
+    const fullPath = queryString ? `${path}?${queryString}` : path;
+    const result = await api.get(fullPath);
     return result?.data;
   } catch (error) {
     return GET_ERROR(error);

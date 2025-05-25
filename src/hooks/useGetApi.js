@@ -33,7 +33,9 @@ export const useGetApi = ({
           ? response?.data || null
           : response?.data || []
       );
-      setDataCount(response?.total || response?.count || 0);
+      setDataCount(
+        response?.total || response?.count || response?.total_records || 0
+      );
       setAllResponse(response || {});
     } else if (response?.code === 401) {
       logout(response);

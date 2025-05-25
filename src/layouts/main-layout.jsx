@@ -7,6 +7,7 @@ import useLayout from "../hooks/uesLayout";
 import { usePathname } from "../hooks/usePathname";
 import { CAPITALIZE, ADMIN_SIDEBAR_ITEMS } from "../utils/constants";
 import { useEffect } from "react";
+import LoginBackground from "../assets/images/Login_Background.jpeg";
 
 const MainLayout = () => {
   const theme = useTheme();
@@ -51,6 +52,12 @@ const MainLayout = () => {
           height: `calc(100% - ${layout?.headerHeight})`,
           display: "flex",
           bgcolor: "custom.body_color",
+          ...(pathname === "/change-password"
+            ? {
+                background: `url(${LoginBackground}) no-repeat center center`,
+                backgroundSize: "cover",
+              }
+            : null),
         }}
       >
         {/* sidebar */}
@@ -127,9 +134,27 @@ const MainLayout = () => {
             </Typography>
           </Box> */}
 
-          <Breadcrumbs aria-label="breadcrumb" separator=">" sx={{ mb: 1 }}>
+          <Breadcrumbs
+            aria-label="breadcrumb"
+            separator={
+              <Typography
+                sx={{
+                  color: pathname === "/change-password" ? "#eee" : "inherit",
+                }}
+              >
+                {">"}
+              </Typography> // Change color here
+            }
+            sx={{ mb: 1 }}
+          >
             {pathname !== "/" && (
-              <Link to="/" style={{ textDecoration: "none", color: "inherit" }}>
+              <Link
+                to="/"
+                style={{
+                  textDecoration: "none",
+                  color: pathname === "/change-password" ? "#eee" : "inherit",
+                }}
+              >
                 Home
               </Link>
             )}
@@ -155,14 +180,23 @@ const MainLayout = () => {
                 return null;
               }
               return isLast ? (
-                <Typography key={to} color="primary.main">
+                <Typography
+                  key={to}
+                  color={
+                    pathname === "/change-password" ? "white" : "primary.main"
+                  }
+                >
                   {CAPITALIZE(segment)?.replace(/-/g, " ")}
                 </Typography>
               ) : (
                 <Link
                   key={to}
                   to={to}
-                  style={{ textDecoration: "none", color: "inherit" }}
+                  style={{
+                    textDecoration: "none",
+                    color:
+                      pathname === "/change-password" ? "white" : "inherit",
+                  }}
                 >
                   {CAPITALIZE(segment)?.replace(/-/g, " ")}
                 </Link>

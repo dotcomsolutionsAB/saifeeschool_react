@@ -21,8 +21,13 @@ const ConfirmationDialog = ({
       // onClose={onCancel}
       aria-labelledby="confirmation-dialog-title"
       aria-describedby="confirmation-dialog-description"
+      PaperProps={{
+        sx: {
+          minWidth: { xs: "80vw", sm: "300px" },
+        },
+      }}
     >
-      <DialogTitle id="confirmation-dialog-title">
+      <DialogTitle id="confirmation-dialog-title" sx={{ textAlign: "center" }}>
         {title || "Are you sure you want to proceed?"}
       </DialogTitle>
       <DialogActions>

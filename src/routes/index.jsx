@@ -45,6 +45,10 @@ import Banks from "../sections/admin/accounts/banks/banks";
 import Suppliers from "../sections/admin/procurement/suppliers/suppliers";
 import Users from "../sections/admin/settings/users/users";
 import ChangePassword from "../pages/change-password";
+import PurchaseInvoice from "../sections/admin/procurement/purchase-invoice/purchase-invoice";
+import CashReceived from "../sections/admin/accounts/cash-received/cash-received";
+import AllTeachers from "../sections/admin/teachers/all-teachers/all-teachers";
+import TeachersAttendance from "../sections/admin/teachers/attendance/teachers-attendance";
 
 export default function Router() {
   const { isLoggedIn, logout, userInfo } = useAuth();
@@ -101,9 +105,18 @@ export default function Router() {
       ],
     },
     {
+      path: "teachers",
+      children: [
+        { index: true, element: <Navigate to="all-teachers" /> },
+        { path: "all-teachers", element: <AllTeachers /> },
+        { path: "attendance", element: <TeachersAttendance /> },
+      ],
+    },
+    {
       path: "accounts",
       children: [
         { index: true, element: <Navigate to="debit-voucher" /> },
+        { path: "cash-received", element: <CashReceived /> },
         { path: "debit-voucher", element: <DebitVoucher /> },
         { path: "credit-voucher", element: <CreditVoucher /> },
         { path: "banks", element: <Banks /> },
@@ -141,7 +154,7 @@ export default function Router() {
     { index: true, element: <ProcurementDashboard /> },
     { path: "products", element: <Products /> },
     { path: "suppliers", element: <Suppliers /> },
-    // { path: "purchase-invoice", element: <Products /> },
+    { path: "purchase-invoice", element: <PurchaseInvoice /> },
     { path: "change-password", element: <ChangePassword /> },
   ];
 

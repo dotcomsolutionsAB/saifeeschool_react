@@ -220,16 +220,16 @@ export const PROCUREMENT_SIDEBAR_ITEMS = [
 
 export const CAPITALIZE = (text) => {
   return text
-    .split(/[-\s]/)
-    .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
-    .join(" ");
+    ?.split(/[-\s]/)
+    ?.map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+    ?.join(" ");
 };
 
 export const REMOVE_UNDERSCORE = (text) => {
   return text
-    .split(/[_\s]/)
-    .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
-    .join(" ");
+    ?.split(/[_\s]/)
+    ?.map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+    ?.join(" ");
 };
 
 export const FORMAT_INDIAN_CURRENCY = (amount) => {
