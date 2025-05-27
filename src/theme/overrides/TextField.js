@@ -8,6 +8,10 @@ export default function TextField(theme) {
           input: {
             // padding: theme.spacing(1, 1), // Adjust padding for better alignment
             // borderRadius: theme.shape.borderRadius,
+
+            "&:disabled": {
+              background: theme.palette.grey[200], // Light grey text when disabled
+            },
           },
         },
 

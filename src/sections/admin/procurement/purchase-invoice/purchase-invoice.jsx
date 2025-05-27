@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { useMemo, useRef, useState } from "react";
 
 import Card from "@mui/material/Card";
 import Table from "@mui/material/Table";
@@ -38,21 +38,24 @@ import dayjs from "dayjs";
 import { DatePicker } from "@mui/x-date-pickers";
 import {
   createPurchase,
+  getProducts,
   getPurchases,
   getSuppliers,
   updatePurchase,
 } from "../../../../services/admin/procurement.service";
+import PurchaseInvoiceItems from "./purchase-invoice-items";
 // ----------------------------------------------------------------------
 
 const PRODUCTS_HEAD_LABEL = [
-  { id: "sn", label: "SN" },
+  { id: "", label: "" },
   { id: "qty", label: "Quantity" },
   { id: "unit", label: "Unit" },
   { id: "price", label: "Price" },
   { id: "discount", label: "Discount" },
   { id: "hsn", label: "HSN" },
-  { id: "tax", label: "Tax" },
+  { id: "tax_percentage", label: "Tax (%)" },
   { id: "gross", label: "Gross" },
+  { id: "tax", label: "Tax" },
   { id: "total", label: "Total" },
   { id: "", label: "", align: "center" },
 ];
@@ -106,6 +109,15 @@ export default function PurchaseInvoice() {
     },
   });
 
+  // api to get products list
+  const { allResponse: productsAllResponse } = useGetApi({
+    apiFunction: getProducts,
+    body: {
+      offset: 0,
+      limit: 200,
+    },
+  });
+
   // api to get bank transaction list
   const { allResponse, isLoading, isError, refetch } = useGetApi({
     apiFunction: getPurchases,
@@ -118,7 +130,7 @@ export default function PurchaseInvoice() {
     debounceDelay: 500,
   });
 
-  const handleChange = (e) => {
+  const handleChange = (index, e, key = null) => {
     const { name, value, type } = e.target;
     const parsedValue =
       type === "date"
@@ -126,6 +138,42 @@ export default function PurchaseInvoice() {
         : type === "number"
         ? Number(value)
         : value;
+    if (key && Array.isArray(formData?.[key])) {
+      setFormData((preValue) => ({
+        ...preValue,
+        [key]: preValue?.[key]?.map((option, i) => {
+          if (i === index) {
+            if (name === "product") {
+              return {
+                ...option,
+                product: parsedValue,
+                description: parsedValue?.description,
+                quantity: 1,
+                unit: parsedValue?.unit,
+                price: parsedValue?.price,
+                discount: parsedValue?.discount,
+                hsn: parsedValue?.hsn,
+                tax: parsedValue?.tax,
+                cgst: parsedValue?.cgst,
+                sgst: parsedValue?.sgst,
+                igst: parsedValue?.igst,
+              };
+            }
+            return { ...option, [name]: parsedValue };
+          }
+          return option;
+        }),
+      }));
+      return;
+    } else if (key && typeof formData?.[key] === "object") {
+      setFormData((preValue) => ({
+        ...preValue,
+        [key]: {
+          ...preValue?.[key],
+          [name]: parsedValue,
+        },
+      }));
+    }
     setFormData((preValue) => ({
       ...preValue,
       [name]: parsedValue,
@@ -135,6 +183,38 @@ export default function PurchaseInvoice() {
   const handleReset = () => {
     setFormData(initialState);
   };
+
+  const handleRemoveItem = (index) => {
+    setFormData((prev) => {
+      const updatedItems = [...prev.items];
+      updatedItems.splice(index, 1);
+      return { ...prev, items: updatedItems };
+    });
+  };
+
+  const handleAddItems = () => {
+    setFormData((prev) => ({
+      ...prev,
+      items: [
+        ...prev.items,
+        {
+          product: null,
+          description: "",
+          quantity: 0,
+          unit: "",
+          price: 0,
+          discount: 0,
+          hsn: "",
+          tax: 0,
+          cgst: 0,
+          sgst: 0,
+          igst: 0,
+        },
+      ],
+    }));
+  };
+
+  console.log(formData?.items, "items");
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -182,6 +262,48 @@ export default function PurchaseInvoice() {
 
   // if no search result is found
   const notFound = !allResponse?.total_records && !!search;
+
+  const extraDetail = useMemo(() => {
+    let grossTotal = 0;
+    let totalTax = 0;
+
+    formData?.items?.forEach((item) => {
+      const quantity = Number(item?.quantity) || 0;
+      const price = Number(item?.price) || 0;
+      const discount = Number(item?.discount) || 0;
+      // const cgst = Number(item?.cgst) || 0;
+      // const sgst = Number(item?.sgst) || 0;
+
+      const itemGross = quantity * price - (quantity * price * discount) / 100;
+      const itemTax = (itemGross * ((Number(item?.tax) || 0) / 2)) / 100;
+
+      grossTotal += itemGross;
+      totalTax += itemTax;
+    });
+
+    const roundOff = Number(
+      Math.abs(totalTax - Math.round(totalTax)).toFixed(2)
+    );
+
+    const grandTotal =
+      (Number(formData?.addons?.freight_value) || 0) +
+      grossTotal +
+      totalTax +
+      roundOff;
+
+    setFormData((preValue) => ({
+      ...preValue,
+      total: grandTotal?.toFixed(2),
+      addons: { ...preValue?.addons, roundoff: roundOff },
+    }));
+
+    return {
+      grossTotal,
+      totalTax,
+      roundOff,
+      grandTotal: grandTotal?.toFixed(2),
+    };
+  }, [formData?.items, formData?.addons?.freight_value]);
 
   return (
     <>
@@ -302,11 +424,16 @@ export default function PurchaseInvoice() {
               <Grid item xs={12} sm={6} md={4} lg={3}>
                 <Autocomplete
                   options={[
-                    "INR - Indian Rupee",
-                    "AED - Emirati Dirham",
-                    "USD - United States Dollar",
-                    "EUR - Euro",
-                    "GBP - Great Britain Pound",
+                    // "INR - Indian Rupee",
+                    // "AED - Emirati Dirham",
+                    // "USD - United States Dollar",
+                    // "EUR - Euro",
+                    // "GBP - Great Britain Pound",
+                    "INR",
+                    "AED",
+                    "USD",
+                    "EUR",
+                    "GBP",
                   ]}
                   renderInput={(params) => (
                     <TextField
@@ -324,6 +451,120 @@ export default function PurchaseInvoice() {
                   }
                 />
               </Grid>
+
+              {formData?.items?.length > 0 && (
+                <Grid item xs={12}>
+                  {/* Table */}
+                  <TableContainer sx={{ overflowY: "unset" }}>
+                    <Table sx={{ minWidth: 800 }}>
+                      <TableHead>
+                        <TableRow>
+                          {PRODUCTS_HEAD_LABEL?.map((headCell) => (
+                            <TableCell
+                              key={headCell?.id}
+                              align={headCell?.align || "left"}
+                              sx={{
+                                width: headCell?.width,
+                                minWidth: headCell?.minWidth,
+                                whiteSpace: "nowrap",
+                              }}
+                            >
+                              <TableSortLabel hideSortIcon>
+                                {headCell?.label}
+                              </TableSortLabel>
+                            </TableCell>
+                          ))}
+                        </TableRow>
+                      </TableHead>
+
+                      <TableBody>
+                        {formData?.items?.map((row, index) => {
+                          return (
+                            <PurchaseInvoiceItems
+                              key={row?.id || index}
+                              row={row}
+                              index={index}
+                              handleChange={handleChange}
+                              handleRemoveItem={handleRemoveItem}
+                              productsList={
+                                productsAllResponse?.item_record || []
+                              }
+                            />
+                          );
+                        })}
+                      </TableBody>
+                    </Table>
+                  </TableContainer>
+                </Grid>
+              )}
+
+              <Grid item xs={12}>
+                <Button variant="contained" onClick={handleAddItems}>
+                  + Add
+                </Button>
+              </Grid>
+
+              {formData?.items?.length > 0 && (
+                <Grid item xs={12} sx={{ mt: 3 }}>
+                  <Grid container spacing={2}>
+                    <Grid item xs={12} sm={6} md={4} lg={3} xl>
+                      <TextField
+                        type="number"
+                        label="Freight"
+                        name="freight_value"
+                        value={formData?.addons?.freight_value || ""}
+                        onChange={(e) => handleChange(null, e, "addons")}
+                        fullWidth
+                        size="small"
+                      />
+                    </Grid>
+                    <Grid item xs={12} sm={6} md={4} lg={3} xl>
+                      <TextField
+                        type="number"
+                        label="Gross Total"
+                        name="gross_total"
+                        value={extraDetail?.grossTotal || ""}
+                        fullWidth
+                        size="small"
+                        disabled
+                      />
+                    </Grid>
+                    <Grid item xs={12} sm={6} md={4} lg={3} xl>
+                      <TextField
+                        type="number"
+                        label="Total Tax"
+                        name="total_tax"
+                        value={extraDetail?.totalTax || ""}
+                        fullWidth
+                        size="small"
+                        disabled
+                      />
+                    </Grid>
+                    <Grid item xs={12} sm={6} md={4} lg={3} xl>
+                      <TextField
+                        type="number"
+                        label="Round Off"
+                        name="round_off"
+                        value={extraDetail?.roundOff || ""}
+                        fullWidth
+                        size="small"
+                        disabled
+                      />
+                    </Grid>
+                    <Grid item xs={12} sm={6} md={4} lg={3} xl>
+                      <TextField
+                        type="number"
+                        label="Grand Total"
+                        name="grand_total"
+                        value={extraDetail?.grandTotal || ""}
+                        fullWidth
+                        size="small"
+                        disabled
+                      />
+                    </Grid>
+                  </Grid>
+                </Grid>
+              )}
 
               {/* Button */}
               <Grid item xs={12} sx={{ textAlign: "right" }}>
@@ -396,7 +637,7 @@ export default function PurchaseInvoice() {
                   {allResponse?.purchase_records?.map((row, index) => {
                     return (
                       <PurchaseInvoiceTableRow
-                        key={row?.id}
+                        key={row?.id || index + page * rowsPerPage}
                         row={row}
                         index={index}
                         refetch={refetch}
@@ -427,7 +668,7 @@ export default function PurchaseInvoice() {
         <TablePagination
           page={page}
           component="div"
-          count={allResponse?.total_records}
+          count={allResponse?.total_records ?? 0}
           rowsPerPage={rowsPerPage}
           onPageChange={handleChangePage}
           rowsPerPageOptions={ROWS_PER_PAGE_OPTIONS}

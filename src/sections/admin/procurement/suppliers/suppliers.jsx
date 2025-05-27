@@ -41,6 +41,7 @@ const HEAD_LABEL = [
   { id: "sn", label: "SN" },
   { id: "name", label: "Name" },
   { id: "mobile", label: "Contact Details" },
+  { id: "company", label: "Company" },
   { id: "address", label: "Address" },
   { id: "", label: "", align: "center" },
 ];

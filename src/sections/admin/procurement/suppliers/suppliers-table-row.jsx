@@ -67,6 +67,7 @@ const SuppliersTableRow = ({ row, refetch, index, page, rowsPerPage }) => {
         <TableCell>{row?.name || "-"}</TableCell>
 
         <TableCell>{row?.mobile || "-"}</TableCell>
+        <TableCell>{row?.company || "-"}</TableCell>
 
         <TableCell>
           {row?.address1 || "-"}

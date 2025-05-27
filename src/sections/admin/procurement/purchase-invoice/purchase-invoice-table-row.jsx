@@ -61,7 +61,7 @@ const PurchaseInvoiceTableRow = ({
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(DEFAULT_LIMIT);
 
-  const productLength = row?.details?.products?.length;
+  const productLength = row?.products?.length;
 
   // open action menu open
 
@@ -82,8 +82,16 @@ const PurchaseInvoiceTableRow = ({
     handleMenuClose();
   };
 
+  console.log(row, "invoiceTableRow");
+
   const handleEdit = () => {
-    setFormData({ ...row, sn: index + 1 });
+    const { products, ...rest } = row || {};
+    setFormData({
+      ...rest,
+      items: products,
+      sn: index + 1,
+    });
+
     handleMenuClose();
     setTimeout(() => {
       handleScrollToTop();
@@ -130,18 +138,16 @@ const PurchaseInvoiceTableRow = ({
           </IconButton>
         </TableCell>
 
-        <TableCell>{row?.details?.supplier || "-"}</TableCell>
-        <TableCell>{row?.details?.purchase_invoice_no || "-"}</TableCell>
+        <TableCell>{row?.supplier || "-"}</TableCell>
+        <TableCell>{row?.purchase_invoice_no || "-"}</TableCell>
 
         <TableCell>
-          {row?.details?.purchase_invoice_date
-            ? dayjs(row?.details?.purchase_invoice_date).format("DD-MM-YYYY")
+          {row?.purchase_invoice_date
+            ? dayjs(row?.purchase_invoice_date).format("DD-MM-YYYY")
             : "-"}
         </TableCell>
 
-        <TableCell>
-          ₹ {FORMAT_INDIAN_CURRENCY(row?.details?.total) || ""}
-        </TableCell>
+        <TableCell>₹ {FORMAT_INDIAN_CURRENCY(row?.total) || ""}</TableCell>
 
         <TableCell align="center">
           <IconButton sx={{ cursor: "pointer" }} onClick={handleMenuOpen}>
@@ -179,7 +185,7 @@ const PurchaseInvoiceTableRow = ({
                   </TableHead>
 
                   <TableBody>
-                    {row?.details?.products?.map((row, index) => {
+                    {row?.products?.map((row, index) => {
                       return (
                         <TableRow key={index}>
                           <TableCell>{index + 1}</TableCell>
