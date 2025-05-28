@@ -62,6 +62,7 @@ const Classes = ({ academicYear }) => {
     isLoading,
     isError,
     refetch,
+    errorMessage,
   } = useGetApi({
     apiFunction: getAllClassGroup,
     body: {
@@ -107,7 +108,7 @@ const Classes = ({ academicYear }) => {
       {isLoading ? (
         <Loader />
       ) : isError ? (
-        <MessageBox />
+        <MessageBox errorMessage={errorMessage} />
       ) : (
         <Box sx={{ py: 2 }}>
           <Grid container spacing={3}>

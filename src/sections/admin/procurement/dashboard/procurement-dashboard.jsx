@@ -21,6 +21,7 @@ const ProcurementDashboard = () => {
     dataList: procurementDashboardData, // need to change this list
     isLoading,
     isError,
+    errorMessage,
   } = useGetApi({
     apiFunction: getProcurementDashboard,
   });
@@ -32,7 +33,7 @@ const ProcurementDashboard = () => {
       {isLoading ? (
         <Loader />
       ) : isError ? (
-        <MessageBox />
+        <MessageBox errorMessage={errorMessage} />
       ) : (
         <Grid container spacing={2}>
           {/* Total Products Card */}

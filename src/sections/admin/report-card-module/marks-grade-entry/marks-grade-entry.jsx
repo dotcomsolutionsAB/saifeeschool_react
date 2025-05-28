@@ -97,6 +97,7 @@ export default function MarksGradeEntry() {
     isLoading,
     isError,
     refetch,
+    errorMessage,
   } = useGetApi({
     apiFunction: formData?.term && formData?.cg_id ? getMarksDetails : null,
     body: {
@@ -390,7 +391,7 @@ export default function MarksGradeEntry() {
         {isLoading ? (
           <Loader />
         ) : isError ? (
-          <MessageBox />
+          <MessageBox errorMessage={errorMessage} />
         ) : (
           <Box
             sx={{

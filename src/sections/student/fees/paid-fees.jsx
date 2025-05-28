@@ -51,6 +51,7 @@ export default function PaidFees() {
     allResponse,
     isLoading,
     isError,
+    errorMessage,
   } = useGetApi({
     apiFunction: getPaidFees,
     body: {
@@ -88,7 +89,7 @@ export default function PaidFees() {
       {isLoading ? (
         <Loader />
       ) : isError ? (
-        <MessageBox />
+        <MessageBox errorMessage={errorMessage} />
       ) : (
         <Card sx={{ width: "100%", mt: 2 }}>
           <CardContent>

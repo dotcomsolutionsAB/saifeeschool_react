@@ -77,6 +77,7 @@ const NewAdmissionsDetail = () => {
     dataList: newAdmissionsList,
     isLoading,
     isError,
+    errorMessage,
   } = useGetApi({
     apiFunction: getNewAdmissions,
     body: {
@@ -93,6 +94,7 @@ const NewAdmissionsDetail = () => {
     isLoading: isLoadingDetail,
     isError: isErrorDetail,
     refetch,
+    errorMessage: errorMessage2,
   } = useGetApi({
     apiFunction: getNewAdmissionById,
     body: {
@@ -268,7 +270,7 @@ const NewAdmissionsDetail = () => {
           {isLoading ? (
             <Loader />
           ) : isError ? (
-            <MessageBox />
+            <MessageBox errorMessage={errorMessage} />
           ) : (
             newAdmissionsList?.map((row, index) => {
               const isPaid = row?.ad_paid === "1";
@@ -341,7 +343,7 @@ const NewAdmissionsDetail = () => {
         {isLoadingDetail ? (
           <Loader />
         ) : isErrorDetail ? (
-          <MessageBox />
+          <MessageBox errorMessage={errorMessage2} />
         ) : (
           <Box>
             <Box sx={{ display: "flex", alignItems: "center", gap: 2, px: 2 }}>

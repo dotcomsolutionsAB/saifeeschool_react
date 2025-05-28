@@ -19,6 +19,7 @@ const PaymentStatus = () => {
     allResponse: transactionData,
     isLoading,
     isError,
+    errorMessage,
   } = useGetApi({
     apiFunction: getTransactionStatus,
     body: txn_id ? { txn_id } : null,
@@ -40,6 +41,7 @@ const PaymentStatus = () => {
             transactionData={transactionData}
             isLoading={isLoading}
             isError={isError}
+            errorMessage={errorMessage}
           />
         ) : status === "pending" ? (
           <PaymentPendingPage transactionData={transactionData} />

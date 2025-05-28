@@ -20,17 +20,6 @@ const PurchaseInvoiceItems = ({
   handleChange,
   handleRemoveItem,
 }) => {
-  const gross =
-    (Number(row?.quantity) || 0) * (Number(row?.price) || 0) -
-    ((Number(row?.quantity) || 0) *
-      (Number(row?.price) || 0) *
-      (Number(row?.discount) || 0)) /
-      100;
-
-  const tax_total = (gross * ((Number(row?.tax) || 0) / 2)) / 100;
-
-  const total = gross + (Number(row?.cgst) || 0) + (Number(row?.sgst) || 0);
-
   return (
     <TableRow tabIndex={-1}>
       <TableCell>{index + 1}</TableCell>
@@ -50,8 +39,8 @@ const PurchaseInvoiceItems = ({
           value={row?.product || null}
           onChange={(_, newValue) => {
             handleChange(
-              index,
               { target: { name: "product", value: newValue } },
+              index,
               "items"
             );
           }}
@@ -64,7 +53,7 @@ const PurchaseInvoiceItems = ({
               label="Qty"
               name="quantity"
               value={row?.quantity || ""}
-              onChange={(e) => handleChange(index, e, "items")}
+              onChange={(e) => handleChange(e, index, "items")}
               fullWidth
               size="small"
             />
@@ -79,8 +68,8 @@ const PurchaseInvoiceItems = ({
               value={row?.unit || null}
               onChange={(_, newValue) => {
                 handleChange(
-                  index,
                   { target: { name: "unit", value: newValue } },
+                  index,
                   "items"
                 );
               }}
@@ -92,7 +81,7 @@ const PurchaseInvoiceItems = ({
               label="Price"
               name="price"
               value={row?.price || ""}
-              onChange={(e) => handleChange(index, e, "items")}
+              onChange={(e) => handleChange(e, index, "items")}
               fullWidth
               size="small"
             />
@@ -103,7 +92,7 @@ const PurchaseInvoiceItems = ({
               label="Discount"
               name="discount"
               value={row?.discount || ""}
-              onChange={(e) => handleChange(index, e, "items")}
+              onChange={(e) => handleChange(e, index, "items")}
               fullWidth
               size="small"
             />
@@ -115,7 +104,7 @@ const PurchaseInvoiceItems = ({
           label="Product Description"
           name="description"
           value={row?.description || ""}
-          onChange={(e) => handleChange(index, e, "items")}
+          onChange={(e) => handleChange(e, index, "items")}
           fullWidth
           size="small"
           sx={{ mb: 2 }}
@@ -126,7 +115,7 @@ const PurchaseInvoiceItems = ({
               label="HSN"
               name="hsn"
               value={row?.hsn || ""}
-              onChange={(e) => handleChange(index, e, "items")}
+              onChange={(e) => handleChange(e, index, "items")}
               fullWidth
               size="small"
             />
@@ -139,7 +128,7 @@ const PurchaseInvoiceItems = ({
                 label="Tax (%)"
                 name="tax"
                 value={row?.tax ?? ""}
-                onChange={(e) => handleChange(index, e, "items")}
+                onChange={(e) => handleChange(e, index, "items")}
               >
                 <MenuItem value="">Select</MenuItem>
                 <MenuItem value={0}>0</MenuItem>
@@ -153,8 +142,8 @@ const PurchaseInvoiceItems = ({
           <Grid item xs>
             <TextField
               label="Gross"
-              name="gross"
-              value={gross ?? ""}
+              name="Gross"
+              value={row?.Gross ?? ""}
               fullWidth
               size="small"
               disabled
@@ -163,8 +152,8 @@ const PurchaseInvoiceItems = ({
           <Grid item xs>
             <TextField
               label="Tax"
-              name="tax"
-              value={tax_total ?? ""}
+              name="tax_amount"
+              value={row?.tax_amount ?? ""}
               fullWidth
               size="small"
               disabled
@@ -173,8 +162,8 @@ const PurchaseInvoiceItems = ({
           <Grid item xs>
             <TextField
               label="Total"
-              name="total"
-              value={total ?? ""}
+              name="Total"
+              value={row?.Total ?? ""}
               fullWidth
               size="small"
               disabled

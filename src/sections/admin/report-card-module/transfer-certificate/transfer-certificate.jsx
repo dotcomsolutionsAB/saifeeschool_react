@@ -79,6 +79,7 @@ export default function TransferCertificate() {
     isLoading,
     isError,
     refetch,
+    errorMessage,
   } = useGetApi({
     apiFunction: getTransferCertificates,
     body: {
@@ -300,7 +301,7 @@ export default function TransferCertificate() {
         {isLoading ? (
           <Loader />
         ) : isError ? (
-          <MessageBox />
+          <MessageBox errorMessage={errorMessage} />
         ) : (
           <TableContainer sx={{ overflowY: "unset" }}>
             <Table sx={{ minWidth: 800 }}>

@@ -1,4 +1,4 @@
-import { useMemo, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 import Card from "@mui/material/Card";
 import Table from "@mui/material/Table";
@@ -84,14 +84,21 @@ export default function PurchaseInvoice() {
     sgst: 0,
     igst: 0,
     status: 1,
-    items: [],
-    addons: {
-      freight_value: 0,
-      freight_cgst: 0,
-      freight_sgst: 0,
-      freight_igst: 0,
-      roundoff: 0,
-    },
+    items: [
+      {
+        product: null,
+        description: "",
+        quantity: 0,
+        unit: "",
+        price: 0,
+        discount: 0,
+        hsn: "",
+        tax: 0,
+        tax_amount: 0,
+        Gross: 0,
+        Total: 0,
+      },
+    ],
   };
 
   const [page, setPage] = useState(0);
@@ -119,7 +126,7 @@ export default function PurchaseInvoice() {
   });
 
   // api to get bank transaction list
-  const { allResponse, isLoading, isError, refetch } = useGetApi({
+  const { allResponse, isLoading, isError, refetch, errorMessage } = useGetApi({
     apiFunction: getPurchases,
     body: {
       search,
@@ -130,52 +137,84 @@ export default function PurchaseInvoice() {
     debounceDelay: 500,
   });
 
-  const handleChange = (index, e, key = null) => {
+  const handleChange = (e, index, key = null) => {
     const { name, value, type } = e.target;
+
+    // Parse value based on input type
     const parsedValue =
       type === "date"
         ? dayjs(value).format("YYYY-MM-DD")
         : type === "number"
         ? Number(value)
         : value;
+
+    // Handle nested updates for arrays (e.g., product items)
     if (key && Array.isArray(formData?.[key])) {
-      setFormData((preValue) => ({
-        ...preValue,
-        [key]: preValue?.[key]?.map((option, i) => {
-          if (i === index) {
-            if (name === "product") {
-              return {
-                ...option,
-                product: parsedValue,
-                description: parsedValue?.description,
-                quantity: 1,
-                unit: parsedValue?.unit,
-                price: parsedValue?.price,
-                discount: parsedValue?.discount,
-                hsn: parsedValue?.hsn,
-                tax: parsedValue?.tax,
-                cgst: parsedValue?.cgst,
-                sgst: parsedValue?.sgst,
-                igst: parsedValue?.igst,
-              };
-            }
-            return { ...option, [name]: parsedValue };
+      setFormData((prevData) => ({
+        ...prevData,
+        [key]: prevData?.[key]?.map((item, i) => {
+          if (i !== index) return item;
+
+          // If product is being selected, use full product object to update
+          if (name === "product" && typeof parsedValue === "object") {
+            const price = Number(parsedValue?.price) || 0;
+            const discount = Number(parsedValue?.discount) || 0;
+            const tax = Number(parsedValue?.tax) || 0;
+
+            const gross = price - (price * discount) / 100;
+            const tax_amount = (gross * (tax / 2)) / 100;
+            const total =
+              gross +
+              (Number(parsedValue?.cgst) || 0) +
+              (Number(parsedValue?.sgst) || 0);
+
+            return {
+              ...item,
+              product: parsedValue,
+              description: parsedValue?.description,
+              quantity: 1,
+              unit: parsedValue?.unit,
+              price: parsedValue?.price,
+              discount: parsedValue?.discount,
+              hsn: parsedValue?.hsn,
+              tax: parsedValue?.tax,
+              Gross: gross,
+              tax_amount,
+              Total: total,
+            };
           }
-          return option;
+
+          // Otherwise, update the specific field and recalculate totals
+          const updatedItem = {
+            ...item,
+            [name]: parsedValue,
+          };
+
+          const price = Number(updatedItem?.price) || 0;
+          const discount = Number(updatedItem?.discount) || 0;
+          const tax = Number(updatedItem?.tax) || 0;
+
+          const gross = price - (price * discount) / 100;
+          const tax_amount = (gross * (tax / 2)) / 100;
+          const total =
+            gross +
+            (Number(updatedItem?.cgst) || 0) +
+            (Number(updatedItem?.sgst) || 0);
+
+          return {
+            ...updatedItem,
+            Gross: gross,
+            tax_amount,
+            Total: total,
+          };
         }),
       }));
       return;
-    } else if (key && typeof formData?.[key] === "object") {
-      setFormData((preValue) => ({
-        ...preValue,
-        [key]: {
-          ...preValue?.[key],
-          [name]: parsedValue,
-        },
-      }));
     }
-    setFormData((preValue) => ({
-      ...preValue,
+
+    // Handle top-level form field
+    setFormData((prevData) => ({
+      ...prevData,
       [name]: parsedValue,
     }));
   };
@@ -206,9 +245,9 @@ export default function PurchaseInvoice() {
           discount: 0,
           hsn: "",
           tax: 0,
-          cgst: 0,
-          sgst: 0,
-          igst: 0,
+          Gross: 0,
+          tax_amount: 0,
+          Total: 0,
         },
       ],
     }));
@@ -263,7 +302,7 @@ export default function PurchaseInvoice() {
   // if no search result is found
   const notFound = !allResponse?.total_records && !!search;
 
-  const extraDetail = useMemo(() => {
+  useEffect(() => {
     let grossTotal = 0;
     let totalTax = 0;
 
@@ -271,11 +310,10 @@ export default function PurchaseInvoice() {
       const quantity = Number(item?.quantity) || 0;
       const price = Number(item?.price) || 0;
       const discount = Number(item?.discount) || 0;
-      // const cgst = Number(item?.cgst) || 0;
-      // const sgst = Number(item?.sgst) || 0;
+      const tax = Number(item?.tax) || 0;
 
       const itemGross = quantity * price - (quantity * price * discount) / 100;
-      const itemTax = (itemGross * ((Number(item?.tax) || 0) / 2)) / 100;
+      const itemTax = (itemGross * (tax / 2)) / 100;
 
       grossTotal += itemGross;
       totalTax += itemTax;
@@ -285,25 +323,17 @@ export default function PurchaseInvoice() {
       Math.abs(totalTax - Math.round(totalTax)).toFixed(2)
     );
 
-    const grandTotal =
-      (Number(formData?.addons?.freight_value) || 0) +
-      grossTotal +
-      totalTax +
-      roundOff;
+    const freight = Number(formData?.freight) || 0;
+    const grandTotal = freight + grossTotal + totalTax + roundOff;
 
-    setFormData((preValue) => ({
-      ...preValue,
-      total: grandTotal?.toFixed(2),
-      addons: { ...preValue?.addons, roundoff: roundOff },
+    setFormData((prev) => ({
+      ...prev,
+      gross: grossTotal.toFixed(2),
+      total: grandTotal.toFixed(2),
+      tax: totalTax.toFixed(2),
+      round_off: roundOff,
     }));
-
-    return {
-      grossTotal,
-      totalTax,
-      roundOff,
-      grandTotal: grandTotal?.toFixed(2),
-    };
-  }, [formData?.items, formData?.addons?.freight_value]);
+  }, [formData?.items, formData?.freight]);
 
   return (
     <>
@@ -511,9 +541,9 @@ export default function PurchaseInvoice() {
                       <TextField
                         type="number"
                         label="Freight"
-                        name="freight_value"
-                        value={formData?.addons?.freight_value || ""}
-                        onChange={(e) => handleChange(null, e, "addons")}
+                        name="freight"
+                        value={formData?.freight || ""}
+                        onChange={handleChange}
                         fullWidth
                         size="small"
                       />
@@ -522,8 +552,8 @@ export default function PurchaseInvoice() {
                       <TextField
                         type="number"
                         label="Gross Total"
-                        name="gross_total"
-                        value={extraDetail?.grossTotal || ""}
+                        name="gross"
+                        value={formData?.gross || ""}
                         fullWidth
                         size="small"
                         disabled
@@ -533,8 +563,8 @@ export default function PurchaseInvoice() {
                       <TextField
                         type="number"
                         label="Total Tax"
-                        name="total_tax"
-                        value={extraDetail?.totalTax || ""}
+                        name="tax"
+                        value={formData?.tax || ""}
                         fullWidth
                         size="small"
                         disabled
@@ -545,7 +575,7 @@ export default function PurchaseInvoice() {
                         type="number"
                         label="Round Off"
                         name="round_off"
-                        value={extraDetail?.roundOff || ""}
+                        value={formData?.round_off || ""}
                         fullWidth
                         size="small"
                         disabled
@@ -555,8 +585,8 @@ export default function PurchaseInvoice() {
                       <TextField
                         type="number"
                         label="Grand Total"
-                        name="grand_total"
-                        value={extraDetail?.grandTotal || ""}
+                        name="total"
+                        value={formData?.total || ""}
                         fullWidth
                         size="small"
                         disabled
@@ -607,7 +637,7 @@ export default function PurchaseInvoice() {
         {isLoading ? (
           <Loader />
         ) : isError ? (
-          <MessageBox />
+          <MessageBox errorMessage={errorMessage} />
         ) : (
           <>
             {/* Table */}

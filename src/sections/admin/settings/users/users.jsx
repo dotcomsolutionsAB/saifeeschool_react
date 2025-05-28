@@ -57,6 +57,7 @@ export default function Users() {
     isLoading,
     isError,
     refetch,
+    errorMessage,
   } = useGetApi({
     apiFunction: getUsers,
     body: {
@@ -139,7 +140,7 @@ export default function Users() {
         {isLoading ? (
           <Loader />
         ) : isError ? (
-          <MessageBox />
+          <MessageBox errorMessage={errorMessage} />
         ) : (
           <TableContainer sx={{ overflowY: "unset" }}>
             <Table sx={{ minWidth: 800 }}>

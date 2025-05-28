@@ -77,6 +77,7 @@ export default function Banks() {
     isLoading,
     isError,
     refetch,
+    errorMessage,
   } = useGetApi({
     apiFunction: getBankTransactions,
     // body: {
@@ -311,7 +312,7 @@ export default function Banks() {
         {isLoading ? (
           <Loader />
         ) : isError ? (
-          <MessageBox />
+          <MessageBox errorMessage={errorMessage} />
         ) : (
           <>
             {/* Search and Add new debit voucher */}

@@ -53,6 +53,7 @@ const AcademicYear = () => {
     isLoading,
     isError,
     refetch,
+    errorMessage,
   } = useGetApi({
     apiFunction: getAcademicYear,
   });
@@ -146,7 +147,7 @@ const AcademicYear = () => {
       {isLoading ? (
         <Loader />
       ) : isError ? (
-        <MessageBox />
+        <MessageBox errorMessage={errorMessage} />
       ) : (
         <Box sx={{ width: "100%" }}>
           {academicYearList?.map((academicYear, index) => (

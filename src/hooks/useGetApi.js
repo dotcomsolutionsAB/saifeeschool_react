@@ -15,6 +15,7 @@ export const useGetApi = ({
   const [dataList, setDataList] = useState(null);
   const [dataCount, setDataCount] = useState(0);
   const [allResponse, setAllResponse] = useState(null);
+  const [errorMessage, setErrorMessage] = useState(null);
 
   const [isLoading, setIsLoading] = useState(true);
   const [isError, setIsError] = useState(false);
@@ -42,6 +43,7 @@ export const useGetApi = ({
       // toast.error(response?.message || "Unauthorized");
     } else {
       setIsError(true);
+      setErrorMessage(response?.message || "Some error occurred.");
       toast.error(response?.message || "Some error occurred.");
     }
   };
@@ -69,5 +71,6 @@ export const useGetApi = ({
     isError,
     refetch: fetchData,
     allResponse,
+    errorMessage,
   };
 };

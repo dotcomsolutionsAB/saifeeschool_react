@@ -16,6 +16,7 @@ const StudentDashboard = () => {
     dataList: studentStats,
     isLoading,
     isError,
+    errorMessage,
   } = useGetApi({
     apiFunction: getStudentStats,
     body: {
@@ -31,7 +32,7 @@ const StudentDashboard = () => {
         {isLoading ? (
           <Loader />
         ) : isError ? (
-          <MessageBox />
+          <MessageBox errorMessage={errorMessage} />
         ) : (
           <Card sx={{ minHeight: "450px" }}>
             <CardContent>

@@ -22,7 +22,7 @@ const AttachmentsTab = ({ detail }) => {
   const { dataList: attachmentsList, refetch } = useGetApi({
     apiFunction: getAttachments,
     body: {
-      st_id: detail?.id,
+      st_id: detail?.student_id,
     },
   });
 

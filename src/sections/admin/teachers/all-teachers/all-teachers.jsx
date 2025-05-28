@@ -63,6 +63,7 @@ export default function AllTeachers() {
     isLoading,
     isError,
     refetch,
+    errorMessage,
   } = useGetApi({
     apiFunction: getTeachers,
     body: {
@@ -146,7 +147,7 @@ export default function AllTeachers() {
         {isLoading ? (
           <Loader />
         ) : isError ? (
-          <MessageBox />
+          <MessageBox errorMessage={errorMessage} />
         ) : (
           <TableContainer sx={{ overflowY: "unset" }}>
             <Table sx={{ minWidth: 800 }}>

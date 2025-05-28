@@ -70,6 +70,7 @@ export default function DebitVoucher() {
     isLoading,
     isError,
     refetch,
+    errorMessage,
   } = useGetApi({
     apiFunction: getDebit,
     // body: {
@@ -333,7 +334,7 @@ export default function DebitVoucher() {
         {isLoading ? (
           <Loader />
         ) : isError ? (
-          <MessageBox />
+          <MessageBox errorMessage={errorMessage} />
         ) : (
           <TableContainer sx={{ overflowY: "unset" }}>
             <Table sx={{ minWidth: 800 }}>

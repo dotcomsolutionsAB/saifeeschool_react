@@ -86,9 +86,28 @@ const PurchaseInvoiceTableRow = ({
 
   const handleEdit = () => {
     const { products, ...rest } = row || {};
+    const computedItems = (products || []).map((item) => {
+      const price = Number(item?.price) || 0;
+      const discount = Number(item?.discount) || 0;
+      const tax = Number(item?.tax) || 0;
+      const cgst = Number(item?.cgst) || 0;
+      const sgst = Number(item?.sgst) || 0;
+
+      const gross = price - (price * discount) / 100;
+      const tax_amount = (gross * (tax / 2)) / 100;
+      const total = gross + cgst + sgst;
+
+      return {
+        ...item,
+        Gross: gross,
+        tax_amount,
+        Total: total,
+      };
+    });
+
     setFormData({
       ...rest,
-      items: products,
+      items: computedItems,
       sn: index + 1,
     });
 

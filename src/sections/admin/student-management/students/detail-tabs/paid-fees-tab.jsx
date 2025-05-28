@@ -46,10 +46,11 @@ export default function PaidFees({ detail, academicYear }) {
     isLoading,
     isError,
     refetch,
+    errorMessage,
   } = useGetApi({
     apiFunction: getAllPaidFees,
     body: {
-      st_id: detail?.id,
+      st_id: detail?.student_id,
       offset: page * rowsPerPage,
       limit: rowsPerPage,
       ay_id: Number(academicYear?.ay_id),
@@ -109,7 +110,7 @@ export default function PaidFees({ detail, academicYear }) {
         {isLoading ? (
           <Loader />
         ) : isError ? (
-          <MessageBox />
+          <MessageBox errorMessage={errorMessage} />
         ) : (
           <TableContainer sx={{ overflowY: "unset" }}>
             <Table sx={{ minWidth: 800 }}>

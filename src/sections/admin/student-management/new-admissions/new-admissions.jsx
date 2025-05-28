@@ -98,6 +98,7 @@ export default function NewAdmissions() {
     dataCount: newAdmissionsCount,
     isLoading,
     isError,
+    errorMessage,
   } = useGetApi({
     apiFunction: getNewAdmissions,
     body: {
@@ -270,7 +271,7 @@ export default function NewAdmissions() {
         {isLoading ? (
           <Loader />
         ) : isError ? (
-          <MessageBox />
+          <MessageBox errorMessage={errorMessage} />
         ) : (
           <TableContainer sx={{ overflowY: "unset" }}>
             <Table sx={{ minWidth: 800 }}>

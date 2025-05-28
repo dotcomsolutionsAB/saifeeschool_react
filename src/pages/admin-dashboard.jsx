@@ -43,6 +43,7 @@ const AdminDashboard = () => {
     dataList: studentStats,
     isLoading,
     isError,
+    errorMessage,
   } = useGetApi({
     apiFunction: getStudentStats,
     body: {
@@ -98,7 +99,7 @@ const AdminDashboard = () => {
         {isLoading ? (
           <Loader />
         ) : isError ? (
-          <MessageBox />
+          <MessageBox errorMessage={errorMessage} />
         ) : (
           <Grid container spacing={2}>
             <Grid item xs={12} sm={6} md={4} lg={3}>

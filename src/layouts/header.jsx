@@ -179,7 +179,7 @@ const Header = () => {
             </IconButton>
           )}
 
-          {/* SAIFEE GOLDEN JUBILEE PUBLIC SCHOOL */}
+          {/* SAIFEE GOLDEN JUBILEE ENGLISH PUBLIC SCHOOL */}
           <Box
             sx={{
               height: "100%",
@@ -199,7 +199,7 @@ const Header = () => {
                 fontWeight: { xs: "600" },
               }}
             >
-              SAIFEE GOLDEN JUBILEE PUBLIC SCHOOL
+              SAIFEE GOLDEN JUBILEE ENGLISH PUBLIC SCHOOL
             </Typography>
           </Box>
 

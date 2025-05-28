@@ -25,7 +25,12 @@ const HEAD_LABEL = [
   { id: "download_url", label: "Download Receipt", align: "center" },
 ];
 
-const PaymentSuccessPage = ({ transactionData, isLoading, isError }) => {
+const PaymentSuccessPage = ({
+  transactionData,
+  isLoading,
+  isError,
+  errorMessage,
+}) => {
   return (
     <Box
       sx={{
@@ -45,7 +50,7 @@ const PaymentSuccessPage = ({ transactionData, isLoading, isError }) => {
       {isLoading ? (
         <Loader />
       ) : isError ? (
-        <MessageBox />
+        <MessageBox errorMessage={errorMessage} />
       ) : (
         transactionData?.payment_status === "Completed" && (
           <TableContainer sx={{ overflowY: "unset" }}>
@@ -110,6 +115,7 @@ PaymentSuccessPage.propTypes = {
   transactionData: PropTypes.object,
   isLoading: PropTypes.bool,
   isError: PropTypes.bool,
+  errorMessage: PropTypes.string,
 };
 
 export default PaymentSuccessPage;

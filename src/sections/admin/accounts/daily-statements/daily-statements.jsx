@@ -75,6 +75,7 @@ export default function DailyStatements() {
     isLoading,
     isError,
     allResponse,
+    errorMessage,
   } = useGetApi({
     apiFunction: getRecords,
     body: {
@@ -252,7 +253,7 @@ export default function DailyStatements() {
         {isLoading ? (
           <Loader />
         ) : isError ? (
-          <MessageBox />
+          <MessageBox errorMessage={errorMessage} />
         ) : (
           <TableContainer sx={{ overflowY: "unset" }}>
             <Table sx={{ minWidth: 800 }}>

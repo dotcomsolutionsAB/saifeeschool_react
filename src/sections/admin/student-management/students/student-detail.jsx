@@ -43,6 +43,7 @@ const StudentDetail = () => {
     dataList: detail,
     isLoading,
     isError,
+    errorMessage,
   } = useGetApi({
     apiFunction: getStudentById,
     body: { id: studentId },
@@ -125,7 +126,7 @@ const StudentDetail = () => {
       {isLoading ? (
         <Loader />
       ) : isError ? (
-        <MessageBox />
+        <MessageBox errorMessage={errorMessage} />
       ) : (
         <Card>
           <CardContent sx={{ position: "relative", px: 5 }}>

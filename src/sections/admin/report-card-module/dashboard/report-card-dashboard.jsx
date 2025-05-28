@@ -130,6 +130,7 @@ const ReportCardDashboard = () => {
     dataCount: classCount,
     isLoading,
     isError,
+    errorMessage,
   } = useGetApi({
     apiFunction: getAllClassGroup,
     body: {
@@ -282,7 +283,7 @@ const ReportCardDashboard = () => {
           {isLoading ? (
             <Loader />
           ) : isError ? (
-            <MessageBox />
+            <MessageBox errorMessage={errorMessage} />
           ) : (
             <Box sx={{ py: 2 }}>
               <Grid container spacing={3}>

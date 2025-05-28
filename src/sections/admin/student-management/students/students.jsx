@@ -109,6 +109,7 @@ export default function Students() {
     isLoading,
     isError,
     refetch,
+    errorMessage,
   } = useStudent();
 
   const [upgradeStudentOpen, setUpgradeStudentOpen] = useState(false);
@@ -276,6 +277,8 @@ export default function Students() {
         break;
       case "academicYear":
         setAcademicYear(value);
+        setSelectedOptions([]);
+        setCgId(null);
         break;
       default:
         break;
@@ -529,7 +532,7 @@ export default function Students() {
         {isLoading ? (
           <Loader />
         ) : isError ? (
-          <MessageBox />
+          <MessageBox errorMessage={errorMessage} />
         ) : (
           <TableContainer sx={{ overflowY: "unset" }}>
             <Table sx={{ minWidth: 800 }}>

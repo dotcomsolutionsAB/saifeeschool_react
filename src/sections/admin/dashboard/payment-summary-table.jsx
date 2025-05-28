@@ -48,7 +48,7 @@ const HEAD_LABEL = [
 const PaymentSummaryTable = ({ academicYear }) => {
   const { userInfo } = useAuth();
 
-  const { dataList, isLoading, isError } = useGetApi({
+  const { dataList, isLoading, isError, errorMessage } = useGetApi({
     apiFunction: getFeeStats,
     body: {
       ay_id: Number(academicYear?.ay_id) || userInfo?.ay_id,
@@ -82,7 +82,7 @@ const PaymentSummaryTable = ({ academicYear }) => {
       {isLoading ? (
         <Loader />
       ) : isError ? (
-        <MessageBox />
+        <MessageBox errorMessage={errorMessage} />
       ) : (
         <Card sx={{ width: "100%", mt: 3 }} elevation={10}>
           <TableContainer sx={{ overflowY: "unset", bgcolor: "white" }}>

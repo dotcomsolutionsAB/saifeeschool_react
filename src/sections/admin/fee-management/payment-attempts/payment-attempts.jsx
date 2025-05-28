@@ -107,6 +107,7 @@ export default function PaymentAttempts() {
     dataCount: paymentAttemptsCount,
     isLoading,
     isError,
+    errorMessage,
   } = useGetApi({
     apiFunction: paymentAttempts,
     body: {
@@ -417,7 +418,7 @@ export default function PaymentAttempts() {
         {isLoading ? (
           <Loader />
         ) : isError ? (
-          <MessageBox />
+          <MessageBox errorMessage={errorMessage} />
         ) : (
           <TableContainer sx={{ overflowY: "unset" }}>
             <Table sx={{ minWidth: 800 }}>

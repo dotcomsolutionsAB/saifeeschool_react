@@ -123,6 +123,7 @@ export default function Fees() {
     allResponse,
     isLoading,
     isError,
+    errorMessage,
   } = useGetApi({
     apiFunction: getAllFees,
     body: {
@@ -547,7 +548,7 @@ export default function Fees() {
         {isLoading ? (
           <Loader />
         ) : isError ? (
-          <MessageBox />
+          <MessageBox errorMessage={errorMessage} />
         ) : (
           <TableContainer sx={{ overflowY: "unset" }}>
             <Table sx={{ minWidth: 800 }}>

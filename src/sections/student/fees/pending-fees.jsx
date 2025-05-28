@@ -52,6 +52,7 @@ export default function PendingFees() {
     isLoading,
     isError,
     refetch,
+    errorMessage,
   } = useGetApi({
     apiFunction: getPendingFees,
     body: {
@@ -150,7 +151,7 @@ export default function PendingFees() {
       {isLoading ? (
         <Loader />
       ) : isError ? (
-        <MessageBox />
+        <MessageBox errorMessage={errorMessage} />
       ) : (
         <Card sx={{ width: "100%", mt: 2 }}>
           <CardContent>

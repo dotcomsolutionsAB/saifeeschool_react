@@ -333,7 +333,7 @@ const NewAdmission = () => {
               color: "primary.main",
             }}
           >
-            SAIFEE GOLDEN JUBILEE PUBLIC SCHOOL
+            SAIFEE GOLDEN JUBILEE ENGLISH PUBLIC SCHOOL
           </Typography>
         </Box>
         <Card>

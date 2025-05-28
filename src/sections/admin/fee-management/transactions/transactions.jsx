@@ -102,6 +102,7 @@ export default function Transactions() {
     dataCount: transactionsCount,
     isLoading,
     isError,
+    errorMessage,
   } = useGetApi({
     apiFunction: getAllTransactions,
     body: {
@@ -422,7 +423,7 @@ export default function Transactions() {
         {isLoading ? (
           <Loader />
         ) : isError ? (
-          <MessageBox />
+          <MessageBox errorMessage={errorMessage} />
         ) : (
           <TableContainer sx={{ overflowY: "unset" }}>
             <Table sx={{ minWidth: 800 }}>

@@ -53,6 +53,7 @@ export default function TransactionFees() {
     dataCount: transactionCount,
     isLoading,
     isError,
+    errorMessage,
   } = useGetApi({
     apiFunction: getTransactions,
     body: {
@@ -89,7 +90,7 @@ export default function TransactionFees() {
       {isLoading ? (
         <Loader />
       ) : isError ? (
-        <MessageBox />
+        <MessageBox errorMessage={errorMessage} />
       ) : (
         <Card sx={{ width: "100%", mt: 2 }}>
           <CardContent>

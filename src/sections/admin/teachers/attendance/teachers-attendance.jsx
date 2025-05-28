@@ -52,6 +52,7 @@ export default function TeachersAttendance() {
     isLoading,
     isError,
     refetch,
+    errorMessage,
   } = useGetApi({
     apiFunction: getTeachersAttenandance,
     body: {
@@ -114,7 +115,7 @@ export default function TeachersAttendance() {
         {isLoading ? (
           <Loader />
         ) : isError ? (
-          <MessageBox />
+          <MessageBox errorMessage={errorMessage} />
         ) : (
           <TableContainer sx={{ overflowY: "unset" }}>
             <Table sx={{ minWidth: 800 }}>

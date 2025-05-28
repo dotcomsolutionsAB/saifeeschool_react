@@ -47,6 +47,7 @@ const AdminStudentProvider = ({ children }) => {
     isLoading,
     isError,
     refetch,
+    errorMessage,
   } = useGetApi({
     apiFunction: getAllStudents,
     body: {
@@ -100,6 +101,7 @@ const AdminStudentProvider = ({ children }) => {
     isLoading,
     isError,
     refetch,
+    errorMessage,
   };
 
   return (
