@@ -17,6 +17,7 @@ const PurchaseInvoiceItems = ({
   index,
   row,
   productsList,
+  unitsList,
   handleChange,
   handleRemoveItem,
 }) => {
@@ -60,7 +61,7 @@ const PurchaseInvoiceItems = ({
           </Grid>
           <Grid item xs>
             <Autocomplete
-              options={["pcs", "nos"]}
+              options={unitsList || []}
               getOptionLabel={(option) => option?.toUpperCase() || ""}
               renderInput={(params) => (
                 <TextField {...params} label="Unit" name="unit" size="small" />
@@ -197,6 +198,7 @@ PurchaseInvoiceItems.propTypes = {
   row: PropTypes.object,
   index: PropTypes.number,
   productsList: PropTypes.array,
+  unitsList: PropTypes.array,
   handleChange: PropTypes.func,
   handleRemoveItem: PropTypes.func,
 };

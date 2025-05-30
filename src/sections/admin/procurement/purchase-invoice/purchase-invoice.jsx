@@ -38,9 +38,11 @@ import dayjs from "dayjs";
 import { DatePicker } from "@mui/x-date-pickers";
 import {
   createPurchase,
+  getCurrency,
   getProducts,
   getPurchases,
   getSuppliers,
+  getUnits,
   updatePurchase,
 } from "../../../../services/admin/procurement.service";
 import PurchaseInvoiceItems from "./purchase-invoice-items";
@@ -79,11 +81,14 @@ export default function PurchaseInvoice() {
     series: "",
     currency: "",
     total: 0,
-    paid: 0,
-    cgst: 0,
-    sgst: 0,
-    igst: 0,
-    status: 1,
+    tax: 0,
+    freight: 0,
+    round_off: 0,
+    // paid: 0,
+    // cgst: 0,
+    // sgst: 0,
+    // igst: 0,
+    // status: 1,
     items: [
       {
         product: null,
@@ -110,6 +115,22 @@ export default function PurchaseInvoice() {
   // api to get suppliers list
   const { dataList: suppliersList } = useGetApi({
     apiFunction: getSuppliers,
+    body: {
+      offset: 0,
+      limit: 200,
+    },
+  });
+  // api to get units list
+  const { dataList: unitsList } = useGetApi({
+    apiFunction: getUnits,
+    body: {
+      offset: 0,
+      limit: 200,
+    },
+  });
+  // api to get currency list
+  const { dataList: currencyList } = useGetApi({
+    apiFunction: getCurrency,
     body: {
       offset: 0,
       limit: 200,
@@ -259,10 +280,18 @@ export default function PurchaseInvoice() {
     e.preventDefault();
     let response;
     setLoading(true);
-    if (formData?.id) {
-      response = await updatePurchase(formData);
+    const payload = {
+      ...formData,
+      supplier: formData?.supplier?.name,
+      items: formData?.items?.map((item) => ({
+        ...item,
+        product: item?.product?.name,
+      })),
+    };
+    if (payload?.id) {
+      response = await updatePurchase(payload);
     } else {
-      response = await createPurchase(formData);
+      response = await createPurchase(payload);
     }
     setLoading(false);
 
@@ -453,18 +482,7 @@ export default function PurchaseInvoice() {
               {/* Currency*/}
               <Grid item xs={12} sm={6} md={4} lg={3}>
                 <Autocomplete
-                  options={[
-                    // "INR - Indian Rupee",
-                    // "AED - Emirati Dirham",
-                    // "USD - United States Dollar",
-                    // "EUR - Euro",
-                    // "GBP - Great Britain Pound",
-                    "INR",
-                    "AED",
-                    "USD",
-                    "EUR",
-                    "GBP",
-                  ]}
+                  options={currencyList || []}
                   renderInput={(params) => (
                     <TextField
                       {...params}
@@ -519,6 +537,7 @@ export default function PurchaseInvoice() {
                               productsList={
                                 productsAllResponse?.item_record || []
                               }
+                              unitsList={unitsList || []}
                             />
                           );
                         })}
@@ -673,6 +692,7 @@ export default function PurchaseInvoice() {
                         refetch={refetch}
                         setFormData={setFormData}
                         handleScrollToTop={handleScrollToTop}
+                        productsList={productsAllResponse?.item_record || []}
                       />
                     );
                   })}

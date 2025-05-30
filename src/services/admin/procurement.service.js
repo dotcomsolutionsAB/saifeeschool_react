@@ -48,6 +48,11 @@ export const deleteSupplier = async (body) =>
 
 // purchase apis
 
+export const getUnits = async () => await getRequest(`${PURCHASE_PATH}/units`);
+
+export const getCurrency = async () =>
+  await getRequest(`${PURCHASE_PATH}/currency`);
+
 export const getPurchases = async (body) =>
   await postRequest(`${PURCHASE_PATH}/view`, body);
 

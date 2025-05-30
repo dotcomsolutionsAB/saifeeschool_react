@@ -52,6 +52,7 @@ const PurchaseInvoiceTableRow = ({
   refetch,
   setFormData,
   handleScrollToTop,
+  productsList,
 }) => {
   const { logout } = useAuth();
   const [anchorEl, setAnchorEl] = useState(null);
@@ -61,7 +62,7 @@ const PurchaseInvoiceTableRow = ({
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(DEFAULT_LIMIT);
 
-  const productLength = row?.products?.length;
+  const productLength = row?.purchase_details?.products?.length;
 
   // open action menu open
 
@@ -85,7 +86,7 @@ const PurchaseInvoiceTableRow = ({
   console.log(row, "invoiceTableRow");
 
   const handleEdit = () => {
-    const { products, ...rest } = row || {};
+    const { products, ...rest } = row?.purchase_details || {};
     const computedItems = (products || []).map((item) => {
       const price = Number(item?.price) || 0;
       const discount = Number(item?.discount) || 0;
@@ -102,6 +103,10 @@ const PurchaseInvoiceTableRow = ({
         Gross: gross,
         tax_amount,
         Total: total,
+        product: productsList?.find(
+          (option) =>
+            option?.name?.toLowerCase() === item?.product?.toLowerCase()
+        ),
       };
     });
 
@@ -109,6 +114,7 @@ const PurchaseInvoiceTableRow = ({
       ...rest,
       items: computedItems,
       sn: index + 1,
+      supplier: row?.supplier || [],
     });
 
     handleMenuClose();
@@ -157,16 +163,22 @@ const PurchaseInvoiceTableRow = ({
           </IconButton>
         </TableCell>
 
-        <TableCell>{row?.supplier || "-"}</TableCell>
-        <TableCell>{row?.purchase_invoice_no || "-"}</TableCell>
+        <TableCell>{row?.purchase_details?.supplier || "-"}</TableCell>
+        <TableCell>
+          {row?.purchase_details?.purchase_invoice_no || "-"}
+        </TableCell>
 
         <TableCell>
-          {row?.purchase_invoice_date
-            ? dayjs(row?.purchase_invoice_date).format("DD-MM-YYYY")
+          {row?.purchase_details?.purchase_invoice_date
+            ? dayjs(row?.purchase_details?.purchase_invoice_date).format(
+                "DD-MM-YYYY"
+              )
             : "-"}
         </TableCell>
 
-        <TableCell>₹ {FORMAT_INDIAN_CURRENCY(row?.total) || ""}</TableCell>
+        <TableCell>
+          ₹ {FORMAT_INDIAN_CURRENCY(row?.purchase_details?.total) || ""}
+        </TableCell>
 
         <TableCell align="center">
           <IconButton sx={{ cursor: "pointer" }} onClick={handleMenuOpen}>
@@ -204,19 +216,21 @@ const PurchaseInvoiceTableRow = ({
                   </TableHead>
 
                   <TableBody>
-                    {row?.products?.map((row, index) => {
-                      return (
-                        <TableRow key={index}>
-                          <TableCell>{index + 1}</TableCell>
-                          <TableCell>{row?.product || "-"}</TableCell>
-                          <TableCell>{row?.quantity || "-"}</TableCell>
-                          <TableCell>{row?.price || "-"}</TableCell>
-                          <TableCell>{row?.discount || "0"}</TableCell>
-                          <TableCell>{row?.hsn || "-"}</TableCell>
-                          <TableCell>{row?.tax || "0"}%</TableCell>
-                        </TableRow>
-                      );
-                    })}
+                    {row?.purchase_details?.products?.map(
+                      (productRow, index) => {
+                        return (
+                          <TableRow key={index}>
+                            <TableCell>{index + 1}</TableCell>
+                            <TableCell>{productRow?.product || "-"}</TableCell>
+                            <TableCell>{productRow?.quantity || "-"}</TableCell>
+                            <TableCell>{productRow?.price || "-"}</TableCell>
+                            <TableCell>{productRow?.discount || "0"}</TableCell>
+                            <TableCell>{productRow?.hsn || "-"}</TableCell>
+                            <TableCell>{productRow?.tax || "0"}%</TableCell>
+                          </TableRow>
+                        );
+                      }
+                    )}
                   </TableBody>
 
                   <TableEmptyRows
@@ -290,6 +304,7 @@ PurchaseInvoiceTableRow.propTypes = {
   setFormData: PropTypes.func,
   handleScrollToTop: PropTypes.func,
   index: PropTypes.number,
+  productsList: PropTypes.array,
 };
 
 export default PurchaseInvoiceTableRow;

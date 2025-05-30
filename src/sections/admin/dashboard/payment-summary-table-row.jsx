@@ -7,14 +7,24 @@ const PaymentSummaryTableRow = ({ sn, row }) => {
   const navigate = useNavigate();
 
   const handleClick = () => {
+    if (row?.month_name === "Total") {
+      return;
+    }
     navigate("/fees-management/fees", { state: row });
   };
   return (
     <>
-      <TableRow hover tabIndex={-1}>
+      <TableRow
+        // hover
+        tabIndex={-1}
+        sx={{
+          bgcolor:
+            row?.month_name === "Total" ? "primary.lightHover" : "inherit",
+        }}
+      >
         <TableCell>{sn || "-"}</TableCell>
 
-        <TableCell>
+        <TableCell sx={{ fontWeight: row?.month_name === "Total" && 800 }}>
           {row?.category === "monthly_fees"
             ? row?.month_name || row?.month_no || "0"
             : row?.category || "-"}
@@ -27,10 +37,11 @@ const PaymentSummaryTableRow = ({ sn, row }) => {
         <TableCell>
           <Box
             sx={{
-              color: "primary.main",
-              cursor: "pointer",
+              color: row?.month_name === "Total" ? "inherit" : "primary.main",
+              textDecoration:
+                row?.month_name === "Total" ? "none" : "underline",
+              cursor: row?.month_name === "Total" ? "inherit" : "pointer",
               fontWeight: 600,
-              textDecoration: "underline",
               textUnderlineOffset: "3px",
             }}
             onClick={handleClick}
