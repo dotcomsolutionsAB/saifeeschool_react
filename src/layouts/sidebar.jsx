@@ -19,7 +19,6 @@ import {
   ExpandLessRounded,
   AvTimerRounded,
   CloseRounded,
-  ProductionQuantityLimits,
   School,
   Groups,
 } from "@mui/icons-material";
@@ -78,7 +77,8 @@ const getIcon = (iconName) => {
 const Sidebar = () => {
   const pathname = usePathname();
   const theme = useTheme();
-  const { userInfo } = useAuth();
+  const { userInfo, accessTo } = useAuth();
+
   const {
     layout,
     handleDrawerClose,
@@ -90,9 +90,20 @@ const Sidebar = () => {
   const [anchorEl, setAnchorEl] = useState(null);
   const [selectedItem, setSelectedItem] = useState(null);
 
+  const filterTopLevelItems = (items, accessTo = []) => {
+    // If accessTo includes "all", return all items
+    if (accessTo?.includes("all")) return items;
+
+    return items?.filter((item) => {
+      // If no accessKey is defined, include by default (like Dashboard)
+      if (!item?.accessKey) return true;
+      return accessTo?.includes(item.accessKey);
+    });
+  };
+
   const MAIN_SIDEBAR_ITEMS =
     userInfo?.role === "admin"
-      ? ADMIN_SIDEBAR_ITEMS
+      ? filterTopLevelItems(ADMIN_SIDEBAR_ITEMS, accessTo)
       : userInfo?.role === "student"
       ? STUDENT_SIDEBAR_ITEMS
       : userInfo?.role === "teacher"

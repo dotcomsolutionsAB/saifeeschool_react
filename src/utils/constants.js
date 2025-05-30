@@ -19,18 +19,21 @@ export const ADMIN_SIDEBAR_ITEMS = [
     displayName: "Students",
     linkName: "/students",
     iconName: "students",
+    accessKey: "students",
   },
   {
     _id: 22,
     displayName: "New Admissions",
     linkName: "/new-admissions",
     iconName: "new_admissions",
+    accessKey: "admissions",
   },
 
   {
     _id: 3,
     displayName: "Fees Management",
     iconName: "fee_management",
+    accessKey: "fees",
     children: [
       {
         _id: 31,
@@ -53,6 +56,7 @@ export const ADMIN_SIDEBAR_ITEMS = [
     _id: 4,
     displayName: "Report Card",
     iconName: "report_card_module",
+    accessKey: "report",
     children: [
       {
         _id: 41,
@@ -90,6 +94,7 @@ export const ADMIN_SIDEBAR_ITEMS = [
     _id: 5,
     displayName: "Teachers",
     iconName: "teachers",
+    accessKey: "teachers",
     children: [
       {
         _id: 51,
@@ -112,6 +117,7 @@ export const ADMIN_SIDEBAR_ITEMS = [
     _id: 6,
     displayName: "Accounts",
     iconName: "accounts",
+    accessKey: "accounts",
     children: [
       {
         _id: 61,

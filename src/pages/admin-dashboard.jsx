@@ -31,8 +31,10 @@ import { FORMAT_INDIAN_CURRENCY } from "../utils/constants";
 import FeesCollectionBarChart from "../sections/admin/dashboard/fees-collection-bar-chart";
 
 const AdminDashboard = () => {
-  const { userInfo } = useAuth();
+  const { userInfo, accessTo } = useAuth();
   const cardHeight = "200px";
+
+  const hasAccess = accessTo?.includes("fees") || accessTo?.includes("all");
 
   const [academicYear, setAcademicYear] = useState({
     ay_id: userInfo?.ay_id,
@@ -102,7 +104,7 @@ const AdminDashboard = () => {
           <MessageBox errorMessage={errorMessage} />
         ) : (
           <Grid container spacing={2}>
-            <Grid item xs={12} sm={6} md={4} lg={3}>
+            <Grid item xs={12} sm={6} md={hasAccess && 4} lg={3}>
               <Card
                 elevation={10}
                 sx={{
@@ -145,7 +147,7 @@ const AdminDashboard = () => {
                 </Typography>
               </Card>
             </Grid>
-            <Grid item xs={12} sm={6} md={4} lg={3}>
+            <Grid item xs={12} sm={6} md={hasAccess && 4} lg={3}>
               <Card
                 elevation={10}
                 sx={{
@@ -188,186 +190,207 @@ const AdminDashboard = () => {
                 </Typography>
               </Card>
             </Grid>
-            <Grid item xs={12} sm={6} md={4} lg={3}>
-              <Card
-                elevation={10}
-                sx={{
-                  height: cardHeight,
-                  display: "flex",
-                  flexDirection: "column",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  gap: 1,
-                  p: 1,
-                }}
-              >
-                <IconButton
-                  sx={{
-                    bgcolor: "warning.lightHover",
-                    color: "warning.main",
-                    width: "80px",
-                    height: "80px",
-                  }}
-                  disableRipple
-                >
-                  <MoneyDollarIcon sx={{ fontSize: "50px" }} />
-                </IconButton>
-
-                <Divider
-                  sx={{
-                    width: "90%",
-                    height: "2px",
-                    bgcolor: "error.main",
-                  }}
-                />
-                <Typography
-                  variant="h6"
-                  sx={{ color: "text.disabled", textAlign: "center" }}
-                >
-                  Total Fees Due
-                </Typography>
-                <Typography variant="h4">
-                  ₹{" "}
-                  {FORMAT_INDIAN_CURRENCY(
-                    studentStats?.total_unpaid_fees?.amount
-                  ) || "0"}
-                </Typography>
-              </Card>
-            </Grid>
-            <Grid item xs={12} sm={6} md={12} lg={3}>
-              <Grid container spacing={2}>
-                {/* Late Fees Card */}
-                <Grid item xs={12} md={6} lg={12}>
+            {hasAccess && (
+              <>
+                <Grid item xs={12} sm={6} md={4} lg={3}>
                   <Card
                     elevation={10}
                     sx={{
-                      height: `calc(${cardHeight} / 2 - 8px)`,
+                      height: cardHeight,
                       display: "flex",
+                      flexDirection: "column",
                       alignItems: "center",
                       justifyContent: "center",
-                      px: { xs: 2, sm: 1, md: 2, lg: 1, xl: 2 },
+                      gap: 1,
+                      p: 1,
                     }}
                   >
-                    <Box
+                    <IconButton
                       sx={{
-                        height: "100%",
-                        display: "flex",
-                        alignItems: "center",
-                        gap: { xs: 2, lg: 1, xl: 2 },
-                        width: { xs: "80%", md: "100%", lg: "90%", xl: "80%" },
+                        bgcolor: "warning.lightHover",
+                        color: "warning.main",
+                        width: "80px",
+                        height: "80px",
                       }}
+                      disableRipple
                     >
-                      <IconButton
-                        sx={{
-                          bgcolor: "error.lightHover",
-                          color: "error.main",
-                          width: 60,
-                          height: 60,
-                        }}
-                        disableRipple
-                        aria-label="Late fees warning"
-                      >
-                        <PriorityHigh sx={{ fontSize: 40 }} />
-                      </IconButton>
-                      <Divider
-                        orientation="vertical"
-                        sx={{
-                          height: "40%",
-                          width: 2,
-                          bgcolor: "error.main",
-                        }}
-                      />
-                      <Box>
-                        <Typography
-                          sx={{ color: "text.disabled", fontSize: 14 }}
-                        >
-                          Late Fees
-                        </Typography>
-                        <Typography variant="h6">
-                          ₹{" "}
-                          {FORMAT_INDIAN_CURRENCY(
-                            studentStats?.current_month_late_fees?.amount
-                          ) || "0"}
-                        </Typography>
-                      </Box>
-                    </Box>
-                  </Card>
-                </Grid>
+                      <MoneyDollarIcon sx={{ fontSize: "50px" }} />
+                    </IconButton>
 
-                {/* Fees Due Card */}
-                <Grid item xs={12} md={6} lg={12}>
-                  <Card
-                    elevation={10}
-                    sx={{
-                      height: `calc(${cardHeight} / 2 - 8px)`,
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "center",
-                      px: { xs: 2, sm: 1, md: 2, lg: 1, xl: 2 },
-                    }}
-                  >
-                    <Box
+                    <Divider
                       sx={{
-                        height: "100%",
-                        display: "flex",
-                        alignItems: "center",
-                        gap: { xs: 2, lg: 1, xl: 2 },
-                        width: { xs: "80%", md: "100%", lg: "90%", xl: "80%" },
+                        width: "90%",
+                        height: "2px",
+                        bgcolor: "error.main",
                       }}
+                    />
+                    <Typography
+                      variant="h6"
+                      sx={{ color: "text.disabled", textAlign: "center" }}
                     >
-                      <IconButton
-                        sx={{
-                          bgcolor: "error.lightHover",
-                          color: "error.main",
-                          width: 60,
-                          height: 60,
-                        }}
-                        disableRipple
-                        aria-label="Fees due indicator"
-                      >
-                        <CurrencyRupee sx={{ fontSize: 40 }} />
-                      </IconButton>
-                      <Divider
-                        orientation="vertical"
-                        sx={{
-                          height: "40%",
-                          width: 2,
-                          bgcolor: "error.main",
-                        }}
-                      />
-                      <Box>
-                        <Typography
-                          sx={{ color: "text.disabled", fontSize: 14 }}
-                        >
-                          Fees Due
-                        </Typography>
-                        <Typography
-                          sx={{ color: "text.disabled", fontSize: 10 }}
-                          noWrap
-                        >
-                          (Until Current Month)
-                        </Typography>
-                        <Typography variant="h6" noWrap>
-                          ₹{" "}
-                          {FORMAT_INDIAN_CURRENCY(
-                            studentStats?.current_month_pending_fees?.amount
-                          ) || "0"}
-                        </Typography>
-                      </Box>
-                    </Box>
+                      Total Fees Due
+                    </Typography>
+                    <Typography variant="h4">
+                      ₹{" "}
+                      {FORMAT_INDIAN_CURRENCY(
+                        studentStats?.total_unpaid_fees?.amount
+                      ) || "0"}
+                    </Typography>
                   </Card>
                 </Grid>
-              </Grid>
-            </Grid>
+                <Grid item xs={12} sm={6} md={12} lg={3}>
+                  <Grid container spacing={2}>
+                    {/* Late Fees Card */}
+                    <Grid item xs={12} md={6} lg={12}>
+                      <Card
+                        elevation={10}
+                        sx={{
+                          height: `calc(${cardHeight} / 2 - 8px)`,
+                          display: "flex",
+                          alignItems: "center",
+                          justifyContent: "center",
+                          px: { xs: 2, sm: 1, md: 2, lg: 1, xl: 2 },
+                        }}
+                      >
+                        <Box
+                          sx={{
+                            height: "100%",
+                            display: "flex",
+                            alignItems: "center",
+                            gap: { xs: 2, lg: 1, xl: 2 },
+                            width: {
+                              xs: "80%",
+                              md: "100%",
+                              lg: "90%",
+                              xl: "80%",
+                            },
+                          }}
+                        >
+                          <IconButton
+                            sx={{
+                              bgcolor: "error.lightHover",
+                              color: "error.main",
+                              width: 60,
+                              height: 60,
+                            }}
+                            disableRipple
+                            aria-label="Late fees warning"
+                          >
+                            <PriorityHigh sx={{ fontSize: 40 }} />
+                          </IconButton>
+                          <Divider
+                            orientation="vertical"
+                            sx={{
+                              height: "40%",
+                              width: 2,
+                              bgcolor: "error.main",
+                            }}
+                          />
+                          <Box>
+                            <Typography
+                              sx={{ color: "text.disabled", fontSize: 14 }}
+                            >
+                              Late Fees
+                            </Typography>
+                            <Typography variant="h6">
+                              ₹{" "}
+                              {FORMAT_INDIAN_CURRENCY(
+                                studentStats?.current_month_late_fees?.amount
+                              ) || "0"}
+                            </Typography>
+                          </Box>
+                        </Box>
+                      </Card>
+                    </Grid>
+
+                    {/* Fees Due Card */}
+                    <Grid item xs={12} md={6} lg={12}>
+                      <Card
+                        elevation={10}
+                        sx={{
+                          height: `calc(${cardHeight} / 2 - 8px)`,
+                          display: "flex",
+                          alignItems: "center",
+                          justifyContent: "center",
+                          px: { xs: 2, sm: 1, md: 2, lg: 1, xl: 2 },
+                        }}
+                      >
+                        <Box
+                          sx={{
+                            height: "100%",
+                            display: "flex",
+                            alignItems: "center",
+                            gap: { xs: 2, lg: 1, xl: 2 },
+                            width: {
+                              xs: "80%",
+                              md: "100%",
+                              lg: "90%",
+                              xl: "80%",
+                            },
+                          }}
+                        >
+                          <IconButton
+                            sx={{
+                              bgcolor: "error.lightHover",
+                              color: "error.main",
+                              width: 60,
+                              height: 60,
+                            }}
+                            disableRipple
+                            aria-label="Fees due indicator"
+                          >
+                            <CurrencyRupee sx={{ fontSize: 40 }} />
+                          </IconButton>
+                          <Divider
+                            orientation="vertical"
+                            sx={{
+                              height: "40%",
+                              width: 2,
+                              bgcolor: "error.main",
+                            }}
+                          />
+                          <Box>
+                            <Typography
+                              sx={{ color: "text.disabled", fontSize: 14 }}
+                            >
+                              Fees Due
+                            </Typography>
+                            <Typography
+                              sx={{ color: "text.disabled", fontSize: 10 }}
+                              noWrap
+                            >
+                              (Until Current Month)
+                            </Typography>
+                            <Typography variant="h6" noWrap>
+                              ₹{" "}
+                              {FORMAT_INDIAN_CURRENCY(
+                                studentStats?.current_month_pending_fees?.amount
+                              ) || "0"}
+                            </Typography>
+                          </Box>
+                        </Box>
+                      </Card>
+                    </Grid>
+                  </Grid>
+                </Grid>
+              </>
+            )}
 
             {/* Charts */}
-            <Grid item xs={12}>
+            <Grid item xs={12} sm={!hasAccess && 6}>
               <Grid container spacing={2}>
-                <Grid item xs={12} md={6}>
-                  <FeesCollectionBarChart transactionStats={transactionStats} />
-                </Grid>
-                <Grid item xs={12} md={6}>
-                  <StudentPieChart studentStats={studentStats} />
+                {hasAccess && (
+                  <Grid item xs={12} md={6}>
+                    <FeesCollectionBarChart
+                      transactionStats={transactionStats}
+                    />
+                  </Grid>
+                )}
+                <Grid item xs={12} md={hasAccess && 6}>
+                  <StudentPieChart
+                    studentStats={studentStats}
+                    hasAccess={hasAccess}
+                  />
                 </Grid>
               </Grid>
             </Grid>
@@ -375,7 +398,7 @@ const AdminDashboard = () => {
         )}
 
         {/* <PaymentSummaryTable /> */}
-        {!isError && !isLoading && (
+        {!isError && !isLoading && hasAccess && (
           <PaymentSummaryTable academicYear={academicYear} />
         )}
       </Box>

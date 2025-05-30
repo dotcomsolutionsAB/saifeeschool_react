@@ -22,6 +22,12 @@ const AuthProvider = ({ children }) => {
   );
   const [isLoading, setIsLoading] = useState(false);
 
+  // Derive accessTo array from userInfo.access_to
+  const accessTo =
+    userInfo?.access_to === null
+      ? ["all"]
+      : userInfo?.access_to?.split(",") || [];
+
   const login = async (formData) => {
     setIsLoading(true);
     const response = await loginApi(formData);
@@ -56,6 +62,7 @@ const AuthProvider = ({ children }) => {
         login,
         logout,
         isLoading,
+        accessTo,
       }}
     >
       {children}

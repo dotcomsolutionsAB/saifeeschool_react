@@ -2,7 +2,7 @@ import PropTypes from "prop-types";
 import Chart from "react-apexcharts";
 import { Box, Card, CardContent, Typography } from "@mui/material";
 
-const StudentPieChart = ({ studentStats }) => {
+const StudentPieChart = ({ studentStats, hasAccess }) => {
   // Handle null, undefined, or 0 values with default of 0
   const maleCount = studentStats?.male_student_count ?? 0;
   const femaleCount = studentStats?.female_student_count ?? 0;
@@ -49,7 +49,7 @@ const StudentPieChart = ({ studentStats }) => {
   };
 
   return (
-    <Card elevation={10} sx={{ height: "350px" }}>
+    <Card elevation={10} sx={{ height: hasAccess ? "350px" : "auto" }}>
       <CardContent>
         {/* Donut Chart */}
         {hasValidData ? (
@@ -136,6 +136,7 @@ const StudentPieChart = ({ studentStats }) => {
 
 StudentPieChart.propTypes = {
   studentStats: PropTypes.object,
+  hasAccess: PropTypes.boolean,
 };
 
 export default StudentPieChart;

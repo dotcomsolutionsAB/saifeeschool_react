@@ -122,8 +122,15 @@ const AcademicYear = lazy(() =>
 );
 const Users = lazy(() => import("../sections/admin/settings/users/users"));
 
+function withAccess(accessTo = [], routeKey, route) {
+  if (accessTo?.[0] === "all") {
+    return [route]; // ✅ allow all routes
+  }
+  return accessTo?.includes(routeKey) ? [route] : [];
+}
+
 export default function Router() {
-  const { isLoggedIn, logout, userInfo } = useAuth();
+  const { isLoggedIn, logout, userInfo, accessTo } = useAuth();
 
   useEffect(() => {
     const handleStorageChange = (event) => {
@@ -143,7 +150,7 @@ export default function Router() {
 
   const ADMIN_ROUTES = [
     { index: true, element: <AdminDashboard /> },
-    {
+    ...withAccess(accessTo, "students", {
       path: "students",
       element: (
         <AdminStudentProvider>
@@ -156,15 +163,15 @@ export default function Router() {
         { path: "add-student", element: <CreateEditStudent /> },
         { path: "edit-student", element: <CreateEditStudent isEdit={true} /> },
       ],
-    },
-    {
+    }),
+    ...withAccess(accessTo, "admissions", {
       path: "new-admissions",
       children: [
         { index: true, element: <NewAdmissions /> },
         { path: "new-admission-detail", element: <NewAdmissionsDetail /> },
       ],
-    },
-    {
+    }),
+    ...withAccess(accessTo, "fees", {
       path: "fees-management",
       children: [
         { index: true, element: <Navigate to="fees" /> },
@@ -172,8 +179,8 @@ export default function Router() {
         { path: "payment-attempts", element: <PaymentAttempts /> },
         { path: "transactions", element: <Transactions /> },
       ],
-    },
-    {
+    }),
+    ...withAccess(accessTo, "report", {
       path: "report-card-module",
       children: [
         { index: true, element: <Navigate to="dashboard" /> },
@@ -182,16 +189,16 @@ export default function Router() {
         { path: "transfer-certificate", element: <TransferCertificate /> },
         { path: "character-certificate", element: <CharacterCertificate /> },
       ],
-    },
-    {
+    }),
+    ...withAccess(accessTo, "teachers", {
       path: "teachers",
       children: [
         { index: true, element: <Navigate to="all-teachers" /> },
         { path: "all-teachers", element: <AllTeachers /> },
         { path: "attendance", element: <TeachersAttendance /> },
       ],
-    },
-    {
+    }),
+    ...withAccess(accessTo, "accounts", {
       path: "accounts",
       children: [
         { index: true, element: <Navigate to="debit-voucher" /> },
@@ -201,11 +208,11 @@ export default function Router() {
         { path: "banks", element: <Banks /> },
         { path: "daily-statements", element: <DailyStatements /> },
       ],
-    },
+    }),
     { path: "academic-year", element: <AcademicYear /> },
     { path: "users", element: <Users /> },
     { path: "change-password", element: <ChangePassword /> },
-  ];
+  ].filter(Boolean);
 
   const STUDENT_ROUTES = [
     { index: true, element: <StudentDashboard /> },
