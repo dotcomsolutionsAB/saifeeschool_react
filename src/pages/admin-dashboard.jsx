@@ -375,7 +375,9 @@ const AdminDashboard = () => {
         )}
 
         {/* <PaymentSummaryTable /> */}
-        <PaymentSummaryTable academicYear={academicYear} />
+        {!isError && !isLoading && (
+          <PaymentSummaryTable academicYear={academicYear} />
+        )}
       </Box>
     </>
   );

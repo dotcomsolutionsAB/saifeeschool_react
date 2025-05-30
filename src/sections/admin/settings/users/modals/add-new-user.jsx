@@ -4,6 +4,8 @@ import {
   Autocomplete,
   Box,
   Button,
+  Checkbox,
+  Chip,
   CircularProgress,
   Dialog,
   DialogContent,
@@ -15,6 +17,8 @@ import { toast } from "react-toastify";
 import useAuth from "../../../../../hooks/useAuth";
 import {
   CancelOutlined,
+  CheckBox,
+  CheckBoxOutlineBlank,
   VisibilityOffRounded,
   VisibilityRounded,
 } from "@mui/icons-material";
@@ -24,7 +28,14 @@ import {
 } from "../../../../../services/admin/users.service";
 import { CAPITALIZE } from "../../../../../utils/constants";
 
-const AddNewUserModal = ({ open, onClose, refetch, detail, userTypeList }) => {
+const AddNewUserModal = ({
+  open,
+  onClose,
+  refetch,
+  detail,
+  userTypeList = [],
+  modulesList = [],
+}) => {
   const { logout } = useAuth();
 
   const initialState = {
@@ -34,14 +45,38 @@ const AddNewUserModal = ({ open, onClose, refetch, detail, userTypeList }) => {
     mobile: "",
     email: "",
     role: "",
+    access_to: "",
   };
 
   const [isLoading, setIsLoading] = useState(false);
   const [formData, setFormData] = useState(initialState);
   const [showPassword, setShowPassword] = useState(false);
+  const [selectedOptions, setSelectedOptions] = useState([]); // to select multiple checkboxes in class field
 
   const handleShowPassword = () => {
     setShowPassword((preValue) => !preValue);
+  };
+
+  // for multiple checkbox selection
+  const handleSelectionChange = (event, newValues) => {
+    // Check if "all" was selected
+    const isAllSelected =
+      newValues.includes("all") ||
+      newValues?.length === modulesList?.length - 1;
+
+    if (isAllSelected) {
+      // Set only "all"
+      setSelectedOptions(["all"]);
+      handleChange({
+        target: { name: "access_to", value: "all" },
+      });
+    } else {
+      // Set only other options
+      setSelectedOptions(newValues);
+      handleChange({
+        target: { name: "access_to", value: newValues.join(",") },
+      });
+    }
   };
 
   const handleChange = (e) => {
@@ -51,6 +86,10 @@ const AddNewUserModal = ({ open, onClose, refetch, detail, userTypeList }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (!selectedOptions || selectedOptions?.length === 0) {
+      toast.error("Please select at least one module");
+      return;
+    }
     let response;
     setIsLoading(true);
     if (detail?.id) {
@@ -85,7 +124,9 @@ const AddNewUserModal = ({ open, onClose, refetch, detail, userTypeList }) => {
         mobile: detail?.mobile || "",
         email: detail?.email || "",
         role: detail?.role || "",
+        access_to: detail?.access_to || "",
       });
+      setSelectedOptions(detail?.access_to?.split(",") || []);
     } else {
       setFormData(initialState);
     }
@@ -156,7 +197,7 @@ const AddNewUserModal = ({ open, onClose, refetch, detail, userTypeList }) => {
                 name="password"
                 value={formData?.password || ""}
                 onChange={handleChange}
-                required
+                required={detail?.id ? false : true}
                 fullWidth
                 slotProps={{
                   input: {
@@ -222,6 +263,49 @@ const AddNewUserModal = ({ open, onClose, refetch, detail, userTypeList }) => {
                 }
               />
             </Grid>
+            <Grid item xs={12} sm={6} md={4}>
+              <Autocomplete
+                multiple
+                disableCloseOnSelect
+                limitTags={1}
+                options={modulesList || []}
+                getOptionLabel={(option) => CAPITALIZE(option) || ""}
+                getOptionDisabled={(option) =>
+                  selectedOptions.includes("all") && option !== "all"
+                }
+                renderInput={(params) => (
+                  <TextField
+                    {...params}
+                    label="Module Permission"
+                    name="access_to"
+                  />
+                )}
+                renderOption={(props, option, { selected }) => (
+                  <li {...props} key={option}>
+                    <Checkbox
+                      size="small"
+                      icon={<CheckBoxOutlineBlank fontSize="small" />}
+                      checkedIcon={<CheckBox fontSize="small" />}
+                      checked={selected}
+                      sx={{ mr: 1 }}
+                    />
+                    {CAPITALIZE(option) || ""}
+                  </li>
+                )}
+                renderTags={(selected, getTagProps) =>
+                  selected?.map((option, index) => (
+                    <Chip
+                      label={CAPITALIZE(option)}
+                      size="small"
+                      {...getTagProps({ index })}
+                      key={option || index}
+                    />
+                  ))
+                }
+                value={selectedOptions || []}
+                onChange={handleSelectionChange}
+              />
+            </Grid>
           </Grid>
           <Box
             sx={{
@@ -258,6 +342,7 @@ AddNewUserModal.propTypes = {
   refetch: PropTypes.func,
   detail: PropTypes.object,
   userTypeList: PropTypes.array,
+  modulesList: PropTypes.array,
 };
 
 export default AddNewUserModal;

@@ -9,6 +9,9 @@ export const changePassword = async (body) =>
 
 // users apis
 
+export const getUsersModule = async () =>
+  await getRequest(`${USERS_PATH}/modules`);
+
 export const getUsers = async (body) =>
   await postRequest(`${USERS_PATH}/fetch_users`, body);
 
@@ -19,7 +22,7 @@ export const createUser = async (body) =>
   await postRequest(`${USERS_PATH}/register`, body);
 
 export const updateUser = async (body) =>
-  await postRequest(`${USERS_PATH}/${body?.id}`, body);
+  await postRequest(`${USERS_PATH}/update/${body?.id}`, body);
 
 export const deleteUser = async (body) =>
   await deleteRequest(`${USERS_PATH}/${body?.id}`);

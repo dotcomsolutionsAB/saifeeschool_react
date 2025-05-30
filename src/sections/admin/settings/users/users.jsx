@@ -29,7 +29,10 @@ import Loader from "../../../../components/loader/loader";
 import MessageBox from "../../../../components/error/message-box";
 import { Helmet } from "react-helmet-async";
 import UsersTableRow from "./users-table-row";
-import { getUsers } from "../../../../services/admin/users.service";
+import {
+  getUsers,
+  getUsersModule,
+} from "../../../../services/admin/users.service";
 import AddNewUserModal from "./modals/add-new-user";
 
 // ----------------------------------------------------------------------
@@ -68,6 +71,16 @@ export default function Users() {
     dependencies: [page, rowsPerPage, search],
   });
 
+  const { dataList: modulesList } = useGetApi({
+    apiFunction: getUsersModule,
+  });
+
+  /*************  ✨ Windsurf Command ⭐  *************/
+  /**
+   * Open add new user modal
+   */
+
+  /*******  b0e56500-b2fa-496b-8fb6-f9c08743b458  *******/
   const handleModalOpen = () => {
     setModalOpen(true);
   };
@@ -133,6 +146,7 @@ export default function Users() {
             onClose={handleModalClose}
             refetch={refetch}
             userTypeList={["admin", "student", "teacher", "procurement"]}
+            modulesList={modulesList}
           />
         </Box>
 
@@ -179,6 +193,7 @@ export default function Users() {
                       "teacher",
                       "procurement",
                     ]}
+                    modulesList={modulesList}
                   />
                 ))}
 

@@ -1,6 +1,8 @@
 export const USER_INFO = "userInfo";
 export const IS_LOGGED_IN = "isLoggedIn";
 
+export const WEBSITE_NAME = "SAIFEE GOLDEN JUBILEE ENGLISH PUBLIC SCHOOL";
+
 export const DEFAULT_LIMIT = 10;
 
 export const ROWS_PER_PAGE_OPTIONS = [5, 10, 25, 50, 100];

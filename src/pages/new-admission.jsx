@@ -30,6 +30,7 @@ import { useGetApi } from "../hooks/useGetApi";
 import { getClasses } from "../services/admin/students-management.service";
 import dayjs from "dayjs";
 import { useNavigate } from "react-router-dom";
+import { WEBSITE_NAME } from "../utils/constants";
 
 const TABS_LIST = [
   "Instructions",
@@ -333,7 +334,7 @@ const NewAdmission = () => {
               color: "primary.main",
             }}
           >
-            SAIFEE GOLDEN JUBILEE ENGLISH PUBLIC SCHOOL
+            {WEBSITE_NAME}
           </Typography>
         </Box>
         <Card>

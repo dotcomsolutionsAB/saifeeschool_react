@@ -17,6 +17,7 @@ const UsersTableRow = ({
   page,
   rowsPerPage,
   userTypeList,
+  modulesList,
 }) => {
   const { logout } = useAuth();
   const [anchorEl, setAnchorEl] = useState(null);
@@ -130,6 +131,7 @@ const UsersTableRow = ({
         refetch={refetch}
         detail={row}
         userTypeList={userTypeList || []}
+        modulesList={modulesList || []}
       />
     </>
   );
@@ -142,6 +144,7 @@ UsersTableRow.propTypes = {
   page: PropTypes.number,
   rowsPerPage: PropTypes.number,
   userTypeList: PropTypes.array,
+  modulesList: PropTypes.array,
 };
 
 export default UsersTableRow;

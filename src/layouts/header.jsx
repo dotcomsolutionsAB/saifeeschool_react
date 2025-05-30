@@ -21,6 +21,7 @@ import {
 import { useState } from "react";
 import Saifee_Logo from "../assets/logos/Saifee_Logo.png";
 import { useNavigate } from "react-router-dom";
+import { WEBSITE_NAME } from "../utils/constants";
 
 const MENU_OPTIONS = [
   // {
@@ -179,7 +180,7 @@ const Header = () => {
             </IconButton>
           )}
 
-          {/* SAIFEE GOLDEN JUBILEE ENGLISH PUBLIC SCHOOL */}
+          {/* Website Name */}
           <Box
             sx={{
               height: "100%",
@@ -199,7 +200,7 @@ const Header = () => {
                 fontWeight: { xs: "600" },
               }}
             >
-              SAIFEE GOLDEN JUBILEE ENGLISH PUBLIC SCHOOL
+              {WEBSITE_NAME}
             </Typography>
           </Box>
 
