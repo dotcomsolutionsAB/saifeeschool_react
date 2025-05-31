@@ -209,8 +209,14 @@ export default function Router() {
         { path: "daily-statements", element: <DailyStatements /> },
       ],
     }),
-    { path: "academic-year", element: <AcademicYear /> },
-    { path: "users", element: <Users /> },
+    ...withAccess(accessTo, "academics", {
+      path: "academic-year",
+      element: <AcademicYear />,
+    }),
+    ...withAccess(accessTo, "users", {
+      path: "users",
+      element: <Users />,
+    }),
     { path: "change-password", element: <ChangePassword /> },
   ].filter(Boolean);
 

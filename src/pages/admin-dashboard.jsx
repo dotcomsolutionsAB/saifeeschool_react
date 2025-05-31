@@ -34,7 +34,8 @@ const AdminDashboard = () => {
   const { userInfo, accessTo } = useAuth();
   const cardHeight = "200px";
 
-  const hasAccess = accessTo?.includes("fees") || accessTo?.includes("all");
+  const hasAccess =
+    accessTo?.includes("fees") || accessTo?.includes("all") || false;
 
   const [academicYear, setAcademicYear] = useState({
     ay_id: userInfo?.ay_id,

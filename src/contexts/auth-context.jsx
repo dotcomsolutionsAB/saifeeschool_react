@@ -23,10 +23,7 @@ const AuthProvider = ({ children }) => {
   const [isLoading, setIsLoading] = useState(false);
 
   // Derive accessTo array from userInfo.access_to
-  const accessTo =
-    userInfo?.access_to === null
-      ? ["all"]
-      : userInfo?.access_to?.split(",") || [];
+  const accessTo = userInfo?.access_to?.split(",") || [];
 
   const login = async (formData) => {
     setIsLoading(true);

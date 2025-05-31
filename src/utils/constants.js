@@ -151,12 +151,14 @@ export const ADMIN_SIDEBAR_ITEMS = [
     displayName: "Academic Year",
     linkName: "/academic-year",
     iconName: "academic-year",
+    accessKey: "academics",
   },
   {
     _id: 8,
     displayName: "Users",
     linkName: "/users",
     iconName: "users",
+    accessKey: "users",
   },
 ];
 
