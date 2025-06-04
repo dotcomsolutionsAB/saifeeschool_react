@@ -145,7 +145,7 @@ export default function Users() {
             open={modalOpen}
             onClose={handleModalClose}
             refetch={refetch}
-            userTypeList={["admin", "student", "teacher", "procurement"]}
+            userTypeList={["admin", "procurement"]}
             modulesList={modulesList}
           />
         </Box>
@@ -187,12 +187,7 @@ export default function Users() {
                     page={page}
                     rowsPerPage={rowsPerPage}
                     row={row}
-                    userTypeList={[
-                      "admin",
-                      "student",
-                      "teacher",
-                      "procurement",
-                    ]}
+                    userTypeList={["admin", "procurement"]}
                     modulesList={modulesList}
                   />
                 ))}

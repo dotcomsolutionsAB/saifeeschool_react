@@ -287,6 +287,9 @@ export default function Fees() {
         break;
       case "academicYear":
         setAcademicYear(value);
+        setSelectedOptions([]); // Reset selected options when academic year changes
+        setCgId(null); // Reset class group ID when academic year changes
+        setOneTimeFees(null); // Reset one-time fees when academic year changes
         break;
       case "oneTimeFees":
         setOneTimeFees(value);

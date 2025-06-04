@@ -2,7 +2,6 @@ import { useState } from "react";
 
 import Card from "@mui/material/Card";
 import Table from "@mui/material/Table";
-import Button from "@mui/material/Button";
 import TableBody from "@mui/material/TableBody";
 import Typography from "@mui/material/Typography";
 import TableContainer from "@mui/material/TableContainer";
@@ -12,7 +11,6 @@ import TableNoData from "../../../../components/table/table-no-data";
 import TableEmptyRows from "../../../../components/table/table-empty-rows";
 
 import {
-  exportStudents,
   getAllAcademicYears,
   getClasses,
 } from "../../../../services/admin/students-management.service";
@@ -22,9 +20,6 @@ import {
   Box,
   Checkbox,
   Chip,
-  CircularProgress,
-  Menu,
-  MenuItem,
   TableCell,
   TableHead,
   TableRow,
@@ -43,14 +38,14 @@ import MessageBox from "../../../../components/error/message-box";
 import {
   CheckBox,
   CheckBoxOutlineBlank,
-  ExpandLessRounded,
-  ExpandMoreRounded,
+  // ExpandLessRounded,
+  // ExpandMoreRounded,
 } from "@mui/icons-material";
-import { toast } from "react-toastify";
-import Iconify from "../../../../components/iconify/iconify";
+// import { toast } from "react-toastify";
+// import Iconify from "../../../../components/iconify/iconify";
 import { getAllTransactions } from "../../../../services/admin/transactions.service";
 import dayjs from "dayjs";
-import { exportTransactions } from "../../../../services/admin/fees-management.service";
+// import { exportTransactions } from "../../../../services/admin/fees-management.service";
 import { DatePicker } from "@mui/x-date-pickers";
 import { Helmet } from "react-helmet-async";
 // ----------------------------------------------------------------------
@@ -67,7 +62,7 @@ const HEAD_LABEL = [
 ];
 
 export default function Transactions() {
-  const { userInfo, logout } = useAuth();
+  const { userInfo } = useAuth();
 
   const [page, setPage] = useState(0);
 
@@ -83,9 +78,9 @@ export default function Transactions() {
     ay_id: userInfo?.ay_id,
     ay_name: userInfo?.ay_name,
   });
-  const [anchorEl, setAnchorEl] = useState(null);
+  // const [anchorEl, setAnchorEl] = useState(null);
   const [selectedRows, setSelectedRows] = useState([]);
-  const [isExportLoading, setIsExportLoading] = useState(false);
+  // const [isExportLoading, setIsExportLoading] = useState(false);
 
   const dataSendToBackend = {
     ay_id: academicYear?.id || userInfo?.ay_id,
@@ -140,48 +135,48 @@ export default function Transactions() {
 
   // open bulk action menu
 
-  const handleMenuOpen = (event) => {
-    setAnchorEl(event.currentTarget);
-  };
+  // const handleMenuOpen = (event) => {
+  //   setAnchorEl(event.currentTarget);
+  // };
 
-  const handleMenuClose = () => {
-    setAnchorEl(null);
-  };
+  // const handleMenuClose = () => {
+  //   setAnchorEl(null);
+  // };
 
   // function to export students data as pdf
-  const handleExport = async () => {
-    handleMenuClose();
-    setIsExportLoading(true);
-    const response = await exportTransactions({
-      cg_id: dataSendToBackend?.cg_id,
-      date_from: dataSendToBackend?.date_from,
-      date_to: dataSendToBackend?.date_to,
-      search: dataSendToBackend?.search,
-      mode: "",
-    });
-    setIsExportLoading(false);
+  // const handleExport = async () => {
+  //   handleMenuClose();
+  //   setIsExportLoading(true);
+  //   const response = await exportTransactions({
+  //     cg_id: dataSendToBackend?.cg_id,
+  //     date_from: dataSendToBackend?.date_from,
+  //     date_to: dataSendToBackend?.date_to,
+  //     search: dataSendToBackend?.search,
+  //     mode: "",
+  //   });
+  //   setIsExportLoading(false);
 
-    if (response?.code === 200) {
-      const link = document.createElement("a");
-      link.href = response?.data?.file_url || "";
-      link.target = "_blank"; // Open in a new tab
-      link.rel = "noopener noreferrer"; // Add security attributes
+  //   if (response?.code === 200) {
+  //     const link = document.createElement("a");
+  //     link.href = response?.data?.file_url || "";
+  //     link.target = "_blank"; // Open in a new tab
+  //     link.rel = "noopener noreferrer"; // Add security attributes
 
-      // Append the link to the document and trigger the download
-      document.body.appendChild(link);
-      link.click();
+  //     // Append the link to the document and trigger the download
+  //     document.body.appendChild(link);
+  //     link.click();
 
-      // Remove the link after triggering the download
-      document.body.removeChild(link);
+  //     // Remove the link after triggering the download
+  //     document.body.removeChild(link);
 
-      toast.success(response?.message || "File downloaded successfully!");
-    } else if (response?.code === 401) {
-      logout(response);
-      // toast.error(response?.message || "Unauthorized");
-    } else {
-      toast.error(response?.message || "Some error occurred.");
-    }
-  };
+  //     toast.success(response?.message || "File downloaded successfully!");
+  //   } else if (response?.code === 401) {
+  //     logout(response);
+  //     // toast.error(response?.message || "Unauthorized");
+  //   } else {
+  //     toast.error(response?.message || "Some error occurred.");
+  //   }
+  // };
 
   // select all
   const handleSelectAllClick = (event) => {
@@ -251,6 +246,8 @@ export default function Transactions() {
         break;
       case "academicYear":
         setAcademicYear(value);
+        setSelectedOptions([]);
+        setCgId(null);
         break;
       default:
         break;
@@ -278,7 +275,7 @@ export default function Transactions() {
           }}
         >
           <Typography>Students Transactions</Typography>
-          <Box
+          {/* <Box
             sx={{
               display: "flex",
               alignItems: "center",
@@ -286,7 +283,7 @@ export default function Transactions() {
               gap: 1,
             }}
           >
-            {/* Bulk Actions */}
+        
             <Button
               variant="contained"
               onClick={handleMenuOpen}
@@ -300,7 +297,7 @@ export default function Transactions() {
               )}
             </Button>
 
-            {/* Menu  */}
+    
             <Menu
               anchorEl={anchorEl}
               anchorOrigin={{
@@ -315,7 +312,7 @@ export default function Transactions() {
               onClose={handleMenuClose}
               sx={{ color: "primary.main" }}
             >
-              {/* export pdf */}
+   
               <MenuItem
                 onClick={() => handleExport("pdf")}
                 sx={{ color: "primary.main" }}
@@ -324,7 +321,7 @@ export default function Transactions() {
                 Export PDF
               </MenuItem>
             </Menu>
-          </Box>
+          </Box> */}
         </Box>
 
         {/* Search and Filters */}

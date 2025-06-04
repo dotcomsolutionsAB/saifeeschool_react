@@ -2,7 +2,6 @@ import { useState } from "react";
 
 import Card from "@mui/material/Card";
 import Table from "@mui/material/Table";
-import Button from "@mui/material/Button";
 import TableBody from "@mui/material/TableBody";
 import Typography from "@mui/material/Typography";
 import TableContainer from "@mui/material/TableContainer";
@@ -10,20 +9,10 @@ import TablePagination from "@mui/material/TablePagination";
 
 import TableNoData from "../../../../components/table/table-no-data";
 import TableEmptyRows from "../../../../components/table/table-empty-rows";
-
-import {
-  exportStudents,
-  getClasses,
-} from "../../../../services/admin/students-management.service";
-import useAuth from "../../../../hooks/useAuth";
 import {
   Autocomplete,
   Box,
   Checkbox,
-  Chip,
-  CircularProgress,
-  Menu,
-  MenuItem,
   TableCell,
   TableHead,
   TableRow,
@@ -39,14 +28,6 @@ import {
 } from "../../../../utils/constants";
 import Loader from "../../../../components/loader/loader";
 import MessageBox from "../../../../components/error/message-box";
-import {
-  CheckBox,
-  CheckBoxOutlineBlank,
-  ExpandLessRounded,
-  ExpandMoreRounded,
-} from "@mui/icons-material";
-import { toast } from "react-toastify";
-import Iconify from "../../../../components/iconify/iconify";
 import {
   getPaymentModes,
   paymentAttempts,
@@ -72,8 +53,6 @@ const STATUS_LIST = [
 ];
 
 export default function PaymentAttempts() {
-  const { userInfo, logout } = useAuth();
-
   const [page, setPage] = useState(0);
 
   const [rowsPerPage, setRowsPerPage] = useState(DEFAULT_LIMIT);
@@ -81,24 +60,15 @@ export default function PaymentAttempts() {
   const [search, setSearch] = useState("");
 
   const [status, setStatus] = useState(null);
-  const [cgId, setCgId] = useState(null);
-  const [selectedOptions, setSelectedOptions] = useState([]); // to select multiple checkboxes in class field
   const [mode, setMode] = useState(null);
-  const [dueFrom, setDueFrom] = useState(null);
-  const [dueTill, setDueTill] = useState(null);
-  const [academicYear, setAcademicYear] = useState(null);
-  const [anchorEl, setAnchorEl] = useState(null);
+  // const [anchorEl, setAnchorEl] = useState(null);
   const [selectedRows, setSelectedRows] = useState([]);
-  const [isExportLoading, setIsExportLoading] = useState(false);
+  // const [isExportLoading, setIsExportLoading] = useState(false);
 
   const dataSendToBackend = {
-    ay_id: academicYear?.id || userInfo?.ay_id,
     search: search || "",
     status: status?.value || "",
-    cg_id: cgId || "",
     mode: mode || "",
-    due_from: dueFrom || "",
-    due_to: dueTill || "",
   };
   // api to get students list
 
@@ -115,28 +85,8 @@ export default function PaymentAttempts() {
       offset: page * rowsPerPage,
       limit: rowsPerPage,
     },
-    dependencies: [
-      academicYear,
-      page,
-      rowsPerPage,
-      search,
-      status,
-      cgId,
-      mode,
-      dueFrom,
-      dueTill,
-    ],
+    dependencies: [page, rowsPerPage, search, status, mode],
     debounceDelay: 500,
-  });
-
-  // api to get classList
-
-  const { dataList: classList } = useGetApi({
-    apiFunction: getClasses,
-    body: {
-      ay_id: academicYear?.id || userInfo?.ay_id,
-    },
-    dependencies: [academicYear],
   });
 
   // api to get mode list
@@ -147,45 +97,45 @@ export default function PaymentAttempts() {
 
   // open bulk action menu
 
-  const handleMenuOpen = (event) => {
-    setAnchorEl(event.currentTarget);
-  };
+  // const handleMenuOpen = (event) => {
+  //   setAnchorEl(event.currentTarget);
+  // };
 
-  const handleMenuClose = () => {
-    setAnchorEl(null);
-  };
+  // const handleMenuClose = () => {
+  //   setAnchorEl(null);
+  // };
 
   // function to export students data as pdf
-  const handleExport = async (exportType) => {
-    handleMenuClose();
-    setIsExportLoading(true);
-    const response = await exportStudents({
-      ...dataSendToBackend,
-      type: exportType,
-    });
-    setIsExportLoading(false);
+  // const handleExport = async (exportType) => {
+  //   handleMenuClose();
+  //   setIsExportLoading(true);
+  //   const response = await exportStudents({
+  //     ...dataSendToBackend,
+  //     type: exportType,
+  //   });
+  //   setIsExportLoading(false);
 
-    if (response?.code === 200) {
-      const link = document.createElement("a");
-      link.href = response?.data?.file_url || "";
-      link.target = "_blank"; // Open in a new tab
-      link.rel = "noopener noreferrer"; // Add security attributes
+  //   if (response?.code === 200) {
+  //     const link = document.createElement("a");
+  //     link.href = response?.data?.file_url || "";
+  //     link.target = "_blank"; // Open in a new tab
+  //     link.rel = "noopener noreferrer"; // Add security attributes
 
-      // Append the link to the document and trigger the download
-      document.body.appendChild(link);
-      link.click();
+  //     // Append the link to the document and trigger the download
+  //     document.body.appendChild(link);
+  //     link.click();
 
-      // Remove the link after triggering the download
-      document.body.removeChild(link);
+  //     // Remove the link after triggering the download
+  //     document.body.removeChild(link);
 
-      toast.success(response?.message || "File downloaded successfully!");
-    } else if (response?.code === 401) {
-      logout(response);
-      // toast.error(response?.message || "Unauthorized");
-    } else {
-      toast.error(response?.message || "Some error occurred.");
-    }
-  };
+  //     toast.success(response?.message || "File downloaded successfully!");
+  //   } else if (response?.code === 401) {
+  //     logout(response);
+  //     // toast.error(response?.message || "Unauthorized");
+  //   } else {
+  //     toast.error(response?.message || "Some error occurred.");
+  //   }
+  // };
 
   // select all
   const handleSelectAllClick = (event) => {
@@ -233,34 +183,14 @@ export default function PaymentAttempts() {
     setSearch(event.target.value);
   };
 
-  // for multiple checkbox selection
-
-  const handleSelectionChange = (event, newValues) => {
-    setSelectedOptions(newValues);
-    const ids = newValues?.map((option) => option?.id)?.join(",");
-    handleChange("cgId", ids);
-  };
-
   // for filtering
   const handleChange = (field, value) => {
     switch (field) {
       case "status":
         setStatus(value);
         break;
-      case "cgId":
-        setCgId(value);
-        break;
       case "mode":
         setMode(value);
-        break;
-      case "dueFrom":
-        setDueFrom(value);
-        break;
-      case "dueTill":
-        setDueTill(value);
-        break;
-      case "academicYear":
-        setAcademicYear(value);
         break;
       default:
         break;
@@ -287,7 +217,7 @@ export default function PaymentAttempts() {
           }}
         >
           <Typography>Students Payment Attempts</Typography>
-          <Box
+          {/* <Box
             sx={{
               display: "flex",
               alignItems: "center",
@@ -295,7 +225,7 @@ export default function PaymentAttempts() {
               gap: 1,
             }}
           >
-            {/* Bulk Actions */}
+     
             <Button
               variant="contained"
               onClick={handleMenuOpen}
@@ -309,7 +239,6 @@ export default function PaymentAttempts() {
               )}
             </Button>
 
-            {/* Menu  */}
             <Menu
               anchorEl={anchorEl}
               anchorOrigin={{
@@ -324,7 +253,7 @@ export default function PaymentAttempts() {
               onClose={handleMenuClose}
               sx={{ color: "primary.main" }}
             >
-              {/* export excel */}
+         
               <MenuItem
                 onClick={() => handleExport("excel")}
                 sx={{ color: "primary.main" }}
@@ -333,7 +262,7 @@ export default function PaymentAttempts() {
                 Export Excel
               </MenuItem>
             </Menu>
-          </Box>
+          </Box> */}
         </Box>
 
         {/* Search and Filters */}
@@ -374,42 +303,6 @@ export default function PaymentAttempts() {
             value={mode || null}
             onChange={(_, newValue) => handleChange("mode", newValue)}
             sx={{ width: "200px" }}
-          />
-
-          <Autocomplete
-            multiple
-            disableCloseOnSelect
-            limitTags={1}
-            options={classList || []}
-            getOptionLabel={(option) => option?.cg_name || ""} // it is necessary for searching the options
-            renderInput={(params) => (
-              <TextField {...params} label="Class" size="small" />
-            )}
-            renderOption={(props, option, { selected }) => (
-              <li {...props}>
-                <Checkbox
-                  size="small"
-                  icon={<CheckBoxOutlineBlank fontSize="small" />}
-                  checkedIcon={<CheckBox fontSize="small" />}
-                  checked={selected}
-                  sx={{ mr: 1 }}
-                />
-                {option?.cg_name || ""}
-              </li>
-            )}
-            renderTags={(selected, getTagProps) =>
-              selected?.map((option, index) => (
-                <Chip
-                  label={option?.cg_name}
-                  size="small"
-                  {...getTagProps({ index })}
-                  key={option?.id}
-                />
-              ))
-            }
-            value={selectedOptions || []}
-            onChange={handleSelectionChange}
-            sx={{ minWidth: "200px" }}
           />
         </Box>
 
@@ -488,6 +381,9 @@ export default function PaymentAttempts() {
                     <TableCell sx={{ cursor: "pointer" }}>
                       <Typography variant="subtitle2" noWrap>
                         {row?.Name || ""}
+                      </Typography>
+                      <Typography variant="subtitle2" noWrap>
+                        {row?.["Roll No"] || ""}
                       </Typography>
                     </TableCell>
 

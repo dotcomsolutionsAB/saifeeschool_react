@@ -61,7 +61,7 @@ const AddNewUserModal = ({
   const handleSelectionChange = (event, newValues) => {
     // Check if "all" was selected
     const isAllSelected =
-      newValues.includes("all") ||
+      newValues?.includes("all") ||
       newValues?.length === modulesList?.length - 1;
 
     if (isAllSelected) {
@@ -74,7 +74,7 @@ const AddNewUserModal = ({
       // Set only other options
       setSelectedOptions(newValues);
       handleChange({
-        target: { name: "access_to", value: newValues.join(",") },
+        target: { name: "access_to", value: newValues?.join(",") },
       });
     }
   };
@@ -86,9 +86,16 @@ const AddNewUserModal = ({
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!selectedOptions || selectedOptions?.length === 0) {
+    if (
+      formData?.role === "admin" &&
+      (!selectedOptions || selectedOptions?.length === 0)
+    ) {
       toast.error("Please select at least one module");
       return;
+    }
+
+    if (formData?.role !== "admin") {
+      delete formData?.access_to;
     }
     let response;
     setIsLoading(true);
@@ -124,7 +131,7 @@ const AddNewUserModal = ({
         mobile: detail?.mobile || "",
         email: detail?.email || "",
         role: detail?.role || "",
-        access_to: detail?.access_to || "",
+        ...(detail?.role === "admin" && { access_to: detail?.access_to || "" }),
       });
       setSelectedOptions(detail?.access_to?.split(",") || []);
     } else {
@@ -227,7 +234,6 @@ const AddNewUserModal = ({
                 label="Mobile"
                 name="mobile"
                 fullWidth
-                required
                 value={formData?.mobile || ""}
                 onChange={handleChange}
               />
@@ -263,49 +269,51 @@ const AddNewUserModal = ({
                 }
               />
             </Grid>
-            <Grid item xs={12} sm={6} md={4}>
-              <Autocomplete
-                multiple
-                disableCloseOnSelect
-                limitTags={1}
-                options={modulesList || []}
-                getOptionLabel={(option) => CAPITALIZE(option) || ""}
-                getOptionDisabled={(option) =>
-                  selectedOptions.includes("all") && option !== "all"
-                }
-                renderInput={(params) => (
-                  <TextField
-                    {...params}
-                    label="Module Permission"
-                    name="access_to"
-                  />
-                )}
-                renderOption={(props, option, { selected }) => (
-                  <li {...props} key={option}>
-                    <Checkbox
-                      size="small"
-                      icon={<CheckBoxOutlineBlank fontSize="small" />}
-                      checkedIcon={<CheckBox fontSize="small" />}
-                      checked={selected}
-                      sx={{ mr: 1 }}
+            {formData?.role === "admin" && (
+              <Grid item xs={12} sm={6} md={4}>
+                <Autocomplete
+                  multiple
+                  disableCloseOnSelect
+                  limitTags={1}
+                  options={modulesList || []}
+                  getOptionLabel={(option) => CAPITALIZE(option) || ""}
+                  getOptionDisabled={(option) =>
+                    selectedOptions.includes("all") && option !== "all"
+                  }
+                  renderInput={(params) => (
+                    <TextField
+                      {...params}
+                      label="Module Permission *"
+                      name="access_to"
                     />
-                    {CAPITALIZE(option) || ""}
-                  </li>
-                )}
-                renderTags={(selected, getTagProps) =>
-                  selected?.map((option, index) => (
-                    <Chip
-                      label={CAPITALIZE(option)}
-                      size="small"
-                      {...getTagProps({ index })}
-                      key={option || index}
-                    />
-                  ))
-                }
-                value={selectedOptions || []}
-                onChange={handleSelectionChange}
-              />
-            </Grid>
+                  )}
+                  renderOption={(props, option, { selected }) => (
+                    <li {...props} key={option}>
+                      <Checkbox
+                        size="small"
+                        icon={<CheckBoxOutlineBlank fontSize="small" />}
+                        checkedIcon={<CheckBox fontSize="small" />}
+                        checked={selected}
+                        sx={{ mr: 1 }}
+                      />
+                      {CAPITALIZE(option) || ""}
+                    </li>
+                  )}
+                  renderTags={(selected, getTagProps) =>
+                    selected?.map((option, index) => (
+                      <Chip
+                        label={CAPITALIZE(option)}
+                        size="small"
+                        {...getTagProps({ index })}
+                        key={option || index}
+                      />
+                    ))
+                  }
+                  value={selectedOptions || []}
+                  onChange={handleSelectionChange}
+                />
+              </Grid>
+            )}
           </Grid>
           <Box
             sx={{

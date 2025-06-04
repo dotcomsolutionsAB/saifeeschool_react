@@ -112,6 +112,22 @@ export default function MarksGradeEntry() {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
+    if (name === "ay_id") {
+      setFormData((preValue) => ({
+        ...preValue,
+        ay_id: value,
+        cg_id: null, // Reset class group when academic year changes
+        term: null, // Reset term when academic year changes
+      }));
+      return;
+    } else if (name === "cg_id") {
+      setFormData((preValue) => ({
+        ...preValue,
+        cg_id: value,
+        term: null, // Reset term when class changes
+      }));
+      return;
+    }
     setFormData((preValue) => ({ ...preValue, [name]: value }));
   };
 
