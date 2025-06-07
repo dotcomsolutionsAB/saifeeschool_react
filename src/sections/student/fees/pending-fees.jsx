@@ -123,12 +123,16 @@ export default function PendingFees() {
     });
     setLoading(false);
 
+    console.log(response, "response from payFees");
+
     if (response?.code === 200) {
       handleModalClose();
       if (response?.url) {
-        const decodedUrl = decodeURIComponent(response.url);
+        // const decodedUrl = decodeURIComponent(response.url);
+        const decodedUrl = response.url;
         if (decodedUrl.startsWith("http")) {
-          window.location.href = decodedUrl;
+          // window.location.href = decodedUrl;
+          window.open(decodedUrl, "_self", "noopener,noreferrer");
         } else {
           toast.error("Invalid redirect URL");
         }

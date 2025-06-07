@@ -54,6 +54,9 @@ export const getMarksDetails = async (body) =>
 export const addMarks = async (body) =>
   await postRequest(`${MARKS_PATH}/create`, body);
 
+export const exportReportCard = async (body) =>
+  await postRequest(`${MARKS_PATH}/export`, body);
+
 // subject
 export const getSubjectsList = async (body) =>
   await postRequest(`${SUBJECT_PATH}/class`, body);

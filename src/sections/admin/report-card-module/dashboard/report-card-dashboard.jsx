@@ -30,6 +30,7 @@ import { useNavigate } from "react-router-dom";
 import { ExpandLessRounded, ExpandMoreRounded } from "@mui/icons-material";
 import { toast } from "react-toastify";
 import { Helmet } from "react-helmet-async";
+import { exportReportCard } from "../../../../services/admin/report-card-module.service";
 
 const STATUS_LIST = ["Pending", "Locked", "Verified"];
 
@@ -46,6 +47,7 @@ const ReportCardDashboard = () => {
   });
   const [anchorEl, setAnchorEl] = useState(null);
   const [isExportLoading, setIsExportLoading] = useState(false);
+  const [isPrintReportCardLoading, setPrintReportCardLoading] = useState([]);
 
   const dataSendToBackend = {
     search: search || "",
@@ -59,6 +61,47 @@ const ReportCardDashboard = () => {
 
   const handleMenuClose = () => {
     setAnchorEl(null);
+  };
+
+  // function to print report card pdf
+  const handlePrintReportCard = async (e, option, index) => {
+    e.stopPropagation(); // Prevent the click from propagating to the card
+    handleMenuClose();
+    setPrintReportCardLoading((prev) => {
+      const newLoadingState = [...prev];
+      newLoadingState[index] = true; // Set the specific index to true
+      return newLoadingState;
+    });
+    const response = await exportReportCard({
+      type: "pdf",
+      cg_id: option.cg_id || "",
+      ay_id: formData?.ay_id?.ay_id || "",
+    });
+    setPrintReportCardLoading((prev) => {
+      const newLoadingState = [...prev];
+      newLoadingState[index] = false; // Set the specific index to false
+      return newLoadingState;
+    });
+
+    if (response?.code === 200) {
+      const link = document.createElement("a");
+      link.href = response?.data?.file_url || "";
+      link.target = "_blank"; // Open in a new tab
+      link.rel = "noopener noreferrer"; // Add security attributes
+
+      // Append the link to the document and trigger the download
+      document.body.appendChild(link);
+      link.click();
+
+      // Remove the link after triggering the download
+      document.body.removeChild(link);
+
+      toast.success(response?.message || "File downloaded successfully!");
+    } else if (response?.code === 401) {
+      logout(response);
+    } else {
+      toast.error(response?.message || "Some error occurred.");
+    }
   };
 
   // function to export students data as pdf
@@ -287,7 +330,7 @@ const ReportCardDashboard = () => {
           ) : (
             <Box sx={{ py: 2 }}>
               <Grid container spacing={3}>
-                {classList?.map((option) => (
+                {classList?.map((option, index) => (
                   <Grid item xs={12} sm={6} md={4} lg={3} key={option?.cg_id}>
                     <Box
                       sx={{
@@ -349,15 +392,19 @@ const ReportCardDashboard = () => {
                           height: "35px",
                         }}
                       >
-                        <Iconify
-                          icon="mdi-light:printer"
-                          sx={{ cursor: "pointer" }}
-                        />
+                        {isPrintReportCardLoading[index] ? (
+                          <CircularProgress size={24} color="inherit" />
+                        ) : (
+                          <Iconify
+                            icon="mdi-light:printer"
+                            sx={{ cursor: "pointer" }}
+                            onClick={(e) =>
+                              handlePrintReportCard(e, option, index)
+                            }
+                          />
+                        )}
 
-                        <Iconify
-                          icon="carbon:report-data"
-                          sx={{ cursor: "pointer" }}
-                        />
+                        <Iconify icon="carbon:report-data" />
                       </Box>
                     </Box>
                   </Grid>
