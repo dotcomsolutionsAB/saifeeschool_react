@@ -18,9 +18,11 @@ const PaymentFailurePage = ({ transactionData }) => {
       <Typography variant="h5" color="error" sx={{ textAlign: "center" }}>
         Transaction Failed
       </Typography>
-      <Typography color="error" sx={{ textAlign: "center" }}>
-        Reason: {transactionData?.description || ""}
-      </Typography>
+      {transactionData?.description?.length > 0 && (
+        <Typography color="error" sx={{ textAlign: "center" }}>
+          Reason: {transactionData?.description || ""}
+        </Typography>
+      )}
       <Button variant="contained" sx={{ textTransform: "none" }}>
         Reconcile
       </Button>

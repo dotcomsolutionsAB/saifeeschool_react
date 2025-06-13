@@ -12,7 +12,6 @@ import TableNoData from "../../../../components/table/table-no-data";
 import TableEmptyRows from "../../../../components/table/table-empty-rows";
 
 import {
-  exportStudents,
   getAllAcademicYears,
   getClasses,
 } from "../../../../services/admin/students-management.service";
@@ -49,6 +48,7 @@ import {
 import { toast } from "react-toastify";
 import Iconify from "../../../../components/iconify/iconify";
 import {
+  exportFeesPDF,
   getAllFees,
   getOneTimeFees,
 } from "../../../../services/admin/fees-management.service";
@@ -181,14 +181,11 @@ export default function Fees() {
     setAnchorEl(null);
   };
 
-  // function to export students data as pdf
-  const handleExport = async (type) => {
+  // function to export students data as pdf and excel
+  const handleExport = async () => {
     handleMenuClose();
     setIsExportLoading(true);
-    const response = await exportStudents({
-      ...dataSendToBackend,
-      type: type,
-    });
+    const response = await exportFeesPDF(dataSendToBackend);
     setIsExportLoading(false);
 
     if (response?.code === 200) {
@@ -207,7 +204,6 @@ export default function Fees() {
       toast.success(response?.message || "File downloaded successfully!");
     } else if (response?.code === 401) {
       logout(response);
-      // toast.error(response?.message || "Unauthorized");
     } else {
       toast.error(response?.message || "Some error occurred.");
     }
@@ -346,6 +342,7 @@ export default function Fees() {
             alignItems: "center",
             gap: 1,
             mb: 1,
+            width: "100%",
           }}
         >
           <Typography>Fees</Typography>
@@ -355,6 +352,7 @@ export default function Fees() {
               alignItems: "center",
               justifyContent: "end",
               gap: 1,
+              flex: 1,
             }}
           >
             {/* Total Paid */}
@@ -369,7 +367,12 @@ export default function Fees() {
             </Button>
 
             {/* Bulk Actions */}
-            <Box sx={{ display: "flex", justifyContent: "flex-end" }}>
+            <Box
+              sx={{
+                display: "flex",
+                justifyContent: "flex-end",
+              }}
+            >
               <Button
                 variant="contained"
                 onClick={handleMenuOpen}
@@ -401,19 +404,16 @@ export default function Fees() {
                 sx={{ color: "primary.main" }}
               >
                 {/* export excel */}
-                <MenuItem
+                {/* <MenuItem
                   onClick={() => handleExport("excel")}
                   sx={{ color: "primary.main" }}
                 >
                   <Iconify icon="uiw:file-excel" sx={{ mr: 1 }} />
                   Export Excel
-                </MenuItem>
+                </MenuItem> */}
 
                 {/* export pdf */}
-                <MenuItem
-                  onClick={() => handleExport("pdf")}
-                  sx={{ color: "primary.main" }}
-                >
+                <MenuItem onClick={handleExport} sx={{ color: "primary.main" }}>
                   <Iconify icon="uiw:file-pdf" sx={{ mr: 1 }} />
                   Export PDF
                 </MenuItem>

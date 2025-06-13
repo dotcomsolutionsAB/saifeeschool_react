@@ -1,13 +1,13 @@
 import { getRequest, postRequest } from "../api.request";
 
-const FEES_PATH = "/student";
+const STUDENT_PATH = "/student";
 
-// fees apis
+// student apis
 export const getPendingFees = async (body) =>
-  await postRequest(`${FEES_PATH}/fees_pending`, body);
+  await postRequest(`${STUDENT_PATH}/fees_pending`, body);
 
 export const getPaidFees = async (body) =>
-  await postRequest(`${FEES_PATH}/paid_fees`, body);
+  await postRequest(`${STUDENT_PATH}/paid_fees`, body);
 
 export const getTransactions = async (body) =>
   await postRequest(`/transactions/student`, body);

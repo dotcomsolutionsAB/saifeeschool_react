@@ -12,3 +12,9 @@ export const getOneTimeFees = async (body) =>
 
 export const exportTransactions = async (body) =>
   await postRequest(`/transactions/export`, body); // to download the report
+
+export const exportFeesPDF = async (body) =>
+  await postRequest(`${FEES_PATH}/export_pdf`, body); // to download the fees pdf report
+
+export const exportFeesExcel = async (body) =>
+  await postRequest(`${FEES_PATH}/export_excel`, body); // to download the fees excel report
