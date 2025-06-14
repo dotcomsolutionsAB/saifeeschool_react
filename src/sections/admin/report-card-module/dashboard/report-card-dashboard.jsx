@@ -31,6 +31,8 @@ import { ExpandLessRounded, ExpandMoreRounded } from "@mui/icons-material";
 import { toast } from "react-toastify";
 import { Helmet } from "react-helmet-async";
 import { exportReportCard } from "../../../../services/admin/report-card-module.service";
+import Popover from "@mui/material/Popover";
+import { getTerms } from "../../../../services/admin/report-card-module.service";
 
 const STATUS_LIST = ["Pending", "Locked", "Verified"];
 
@@ -48,6 +50,11 @@ const ReportCardDashboard = () => {
   const [anchorEl, setAnchorEl] = useState(null);
   const [isExportLoading, setIsExportLoading] = useState(false);
   const [isPrintReportCardLoading, setPrintReportCardLoading] = useState([]);
+  const [popoverAnchor, setPopoverAnchor] = useState(null);
+  const [selectedTerm, setSelectedTerm] = useState(null);
+  const [termsList, setTermsList] = useState([]);
+  const [isTermsLoading, setIsTermsLoading] = useState(false);
+  const [printIndex, setPrintIndex] = useState(null);
 
   const dataSendToBackend = {
     search: search || "",
@@ -63,10 +70,39 @@ const ReportCardDashboard = () => {
     setAnchorEl(null);
   };
 
+  // Open popover for print
+  const handlePrintPopoverOpen = async (e, option, index) => {
+    e.stopPropagation(); // Prevent the click from propagating to the card
+    setPopoverAnchor(e.currentTarget);
+    setPrintIndex(index);
+    setIsTermsLoading(true);
+    const response = await getTerms({
+      cg_id: option?.cg_id || "",
+    });
+    setIsTermsLoading(false);
+    if (response?.code === 200) {
+      setTermsList(response.data);
+    } else if (response?.code === 401) {
+      logout(response);
+    } else {
+      toast.error(response?.message || "Some error occurred.");
+    }
+  };
+
+  const handlePrintPopoverClose = () => {
+    setPopoverAnchor(null);
+    setSelectedTerm(null);
+    setTermsList([]);
+    setPrintIndex(null);
+  };
+
   // function to print report card pdf
   const handlePrintReportCard = async (e, option, index) => {
     e.stopPropagation(); // Prevent the click from propagating to the card
-    handleMenuClose();
+    if (!selectedTerm) {
+      toast.error("Please select a term to print the report card.");
+      return;
+    }
     setPrintReportCardLoading((prev) => {
       const newLoadingState = [...prev];
       newLoadingState[index] = true; // Set the specific index to true
@@ -76,6 +112,7 @@ const ReportCardDashboard = () => {
       type: "pdf",
       cg_id: option.cg_id || "",
       ay_id: formData?.ay_id?.ay_id || "",
+      term: selectedTerm?.term || "",
     });
     setPrintReportCardLoading((prev) => {
       const newLoadingState = [...prev];
@@ -85,7 +122,7 @@ const ReportCardDashboard = () => {
 
     if (response?.code === 200) {
       const link = document.createElement("a");
-      link.href = response?.data?.file_url || "";
+      link.href = response?.file_url || "";
       link.target = "_blank"; // Open in a new tab
       link.rel = "noopener noreferrer"; // Add security attributes
 
@@ -95,7 +132,7 @@ const ReportCardDashboard = () => {
 
       // Remove the link after triggering the download
       document.body.removeChild(link);
-
+      handlePrintPopoverClose(); // Close the popover after printing
       toast.success(response?.message || "File downloaded successfully!");
     } else if (response?.code === 401) {
       logout(response);
@@ -392,21 +429,68 @@ const ReportCardDashboard = () => {
                           height: "35px",
                         }}
                       >
-                        {isPrintReportCardLoading[index] ? (
-                          <CircularProgress size={24} color="inherit" />
-                        ) : (
-                          <Iconify
-                            icon="mdi-light:printer"
-                            sx={{ cursor: "pointer" }}
-                            onClick={(e) =>
-                              handlePrintReportCard(e, option, index)
-                            }
-                          />
-                        )}
+                        <Iconify
+                          icon="mdi-light:printer"
+                          sx={{ cursor: "pointer" }}
+                          onClick={(e) =>
+                            handlePrintPopoverOpen(e, option, index)
+                          }
+                        />
 
                         <Iconify icon="carbon:report-data" />
                       </Box>
                     </Box>
+
+                    <Popover
+                      open={Boolean(popoverAnchor) && printIndex === index}
+                      anchorEl={popoverAnchor}
+                      onClose={handlePrintPopoverClose}
+                      anchorOrigin={{
+                        vertical: "bottom",
+                        horizontal: "left",
+                      }}
+                      transformOrigin={{
+                        vertical: "top",
+                        horizontal: "left",
+                      }}
+                    >
+                      <Box sx={{ p: 2, minWidth: 250 }}>
+                        <Typography variant="subtitle1" sx={{ mb: 1 }}>
+                          Select Term
+                        </Typography>
+                        <Autocomplete
+                          options={termsList || []}
+                          loading={isTermsLoading}
+                          getOptionLabel={(option) =>
+                            option?.name || option?.term_name || ""
+                          }
+                          value={selectedTerm || null}
+                          onChange={(_, newValue) => setSelectedTerm(newValue)}
+                          renderInput={(params) => (
+                            <TextField {...params} label="Term" size="small" />
+                          )}
+                          sx={{ mb: 2 }}
+                        />
+                        <Button
+                          variant="contained"
+                          fullWidth
+                          onClick={(e) =>
+                            handlePrintReportCard(e, option, index)
+                          }
+                          disabled={
+                            isTermsLoading ||
+                            !selectedTerm ||
+                            isPrintReportCardLoading[index]
+                          }
+                        >
+                          {isPrintReportCardLoading[index] ? (
+                            <CircularProgress size={24} color="inherit" />
+                          ) : (
+                            "Print"
+                          )}
+                        </Button>
+                      </Box>
+                    </Popover>
                   </Grid>
                 ))}
               </Grid>

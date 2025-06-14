@@ -10,6 +10,7 @@ const FeesCollectionBarChart = ({ transactionStats }) => {
   // Data for the chart
   const series = [
     {
+      name: "Collection",
       data: sums,
     },
   ];
@@ -52,7 +53,7 @@ const FeesCollectionBarChart = ({ transactionStats }) => {
   return (
     <Card elevation={10} sx={{ height: "350px" }}>
       <CardContent>
-        {/* Donut Chart */}
+        {/* Fees Collection Bar Chart */}
         {hasValidData ? (
           <Chart
             options={options}
