@@ -29,6 +29,7 @@ import MessageBox from "../../../../components/error/message-box";
 import {
   getProductCategory,
   getProducts,
+  getUnits,
 } from "../../../../services/admin/procurement.service";
 import AddNewProductModal from "./modals/add-new-product-modal";
 import ProductsTableRow from "./products-table-row";
@@ -73,6 +74,15 @@ export default function Products() {
   // api to get productCategoryList for modal
   const { allResponse: productCategoryList } = useGetApi({
     apiFunction: getProductCategory,
+  });
+
+  // api to get units list
+  const { dataList: unitsList } = useGetApi({
+    apiFunction: getUnits,
+    body: {
+      offset: 0,
+      limit: 200,
+    },
   });
 
   const handleModalOpen = () => {
@@ -128,6 +138,7 @@ export default function Products() {
               productCategoryList?.categories?.filter((option) => !!option) ||
               []
             }
+            unitsList={unitsList || []}
           />
         </Box>
 
@@ -173,6 +184,7 @@ export default function Products() {
                         (option) => !!option
                       ) || []
                     }
+                    unitsList={unitsList || []}
                   />
                 ))}
 

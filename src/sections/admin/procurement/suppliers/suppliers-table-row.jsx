@@ -64,10 +64,10 @@ const SuppliersTableRow = ({ row, refetch, index, page, rowsPerPage }) => {
       <TableRow hover tabIndex={-1} key={row?.id} role="checkbox">
         <TableCell>{page * rowsPerPage + index + 1 || ""}</TableCell>
 
+        <TableCell>{row?.company || "-"}</TableCell>
         <TableCell>{row?.name || "-"}</TableCell>
 
         <TableCell>{row?.mobile || "-"}</TableCell>
-        <TableCell>{row?.company || "-"}</TableCell>
 
         <TableCell>
           {row?.address1 || "-"}

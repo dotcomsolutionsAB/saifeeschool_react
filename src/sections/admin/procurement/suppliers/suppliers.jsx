@@ -29,6 +29,7 @@ import MessageBox from "../../../../components/error/message-box";
 import {
   getProductCategory,
   getSuppliers,
+  getUnits,
 } from "../../../../services/admin/procurement.service";
 import AddNewSupplierModal from "./modals/add-new-supplier-modal";
 import SuppliersTableRow from "./suppliers-table-row";
@@ -39,9 +40,9 @@ import AddNewProductModal from "../products/modals/add-new-product-modal";
 
 const HEAD_LABEL = [
   { id: "sn", label: "SN" },
+  { id: "company", label: "Company" },
   { id: "name", label: "Name" },
   { id: "mobile", label: "Contact Details" },
-  { id: "company", label: "Company" },
   { id: "address", label: "Address" },
   { id: "", label: "", align: "center" },
 ];
@@ -72,6 +73,15 @@ export default function Suppliers() {
   // api to get productCategoryList for modal
   const { allResponse: productCategoryList } = useGetApi({
     apiFunction: getProductCategory,
+  });
+
+  // api to get units list
+  const { dataList: unitsList } = useGetApi({
+    apiFunction: getUnits,
+    body: {
+      offset: 0,
+      limit: 200,
+    },
   });
 
   const handleSupplierModalOpen = () => {
@@ -146,6 +156,7 @@ export default function Suppliers() {
               productCategoryList?.categories?.filter((option) => !!option) ||
               []
             }
+            unitsList={unitsList || []}
           />
         </Box>
 

@@ -24,6 +24,7 @@ const AddNewProductModal = ({
   refetch,
   detail,
   productCategoryList,
+  unitsList,
 }) => {
   const { logout } = useAuth();
 
@@ -156,7 +157,6 @@ const AddNewProductModal = ({
                 label="Sub Category"
                 name="sub_category"
                 fullWidth
-                required
                 value={formData?.sub_category || ""}
                 onChange={handleChange}
               />
@@ -176,19 +176,21 @@ const AddNewProductModal = ({
                 label="Description"
                 name="description"
                 fullWidth
-                required
                 value={formData?.description || ""}
                 onChange={handleChange}
               />
             </Grid>
             <Grid item xs={12} sm={6}>
-              <TextField
-                label="Unit"
-                name="unit"
-                fullWidth
-                required
-                value={formData?.unit || ""}
-                onChange={handleChange}
+              <Autocomplete
+                options={unitsList || []}
+                getOptionLabel={(option) => option?.toUpperCase() || ""}
+                renderInput={(params) => (
+                  <TextField {...params} label="Unit" name="unit" required />
+                )}
+                value={formData?.unit || null}
+                onChange={(_, newValue) => {
+                  handleChange({ target: { name: "unit", value: newValue } });
+                }}
               />
             </Grid>
             <Grid item xs={12} sm={6}>
@@ -203,10 +205,9 @@ const AddNewProductModal = ({
             </Grid>
             <Grid item xs={12} sm={6}>
               <TextField
-                label="Discount"
+                label="Discount (%)"
                 name="discount"
                 fullWidth
-                required
                 value={formData?.discount || ""}
                 onChange={handleChange}
               />
@@ -226,7 +227,6 @@ const AddNewProductModal = ({
                 label="HSN"
                 name="hsn"
                 fullWidth
-                required
                 value={formData?.hsn || ""}
                 onChange={handleChange}
               />
@@ -267,6 +267,7 @@ AddNewProductModal.propTypes = {
   refetch: PropTypes.func,
   detail: PropTypes.object,
   productCategoryList: PropTypes.array,
+  unitsList: PropTypes.array,
 };
 
 export default AddNewProductModal;

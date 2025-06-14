@@ -16,6 +16,7 @@ const ProductsTableRow = ({
   page,
   rowsPerPage,
   productCategoryList,
+  unitsList,
 }) => {
   const { logout } = useAuth();
   const [anchorEl, setAnchorEl] = useState(null);
@@ -131,6 +132,7 @@ const ProductsTableRow = ({
         refetch={refetch}
         detail={row}
         productCategoryList={productCategoryList || []}
+        unitsList={unitsList || []}
       />
     </>
   );
@@ -143,6 +145,7 @@ ProductsTableRow.propTypes = {
   page: PropTypes.number,
   rowsPerPage: PropTypes.number,
   productCategoryList: PropTypes.array,
+  unitsList: PropTypes.array,
 };
 
 export default ProductsTableRow;

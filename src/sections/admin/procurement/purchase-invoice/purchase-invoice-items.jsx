@@ -90,7 +90,7 @@ const PurchaseInvoiceItems = ({
           <Grid item xs>
             <TextField
               type="number"
-              label="Discount"
+              label="Discount (%)"
               name="discount"
               value={row?.discount || ""}
               onChange={(e) => handleChange(e, index, "items")}

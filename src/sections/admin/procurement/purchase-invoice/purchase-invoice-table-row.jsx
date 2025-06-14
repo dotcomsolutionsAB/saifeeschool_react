@@ -83,8 +83,6 @@ const PurchaseInvoiceTableRow = ({
     handleMenuClose();
   };
 
-  console.log(row, "invoiceTableRow");
-
   const handleEdit = () => {
     const { products, ...rest } = row?.purchase_details || {};
     const computedItems = (products || []).map((item) => {
@@ -163,7 +161,7 @@ const PurchaseInvoiceTableRow = ({
           </IconButton>
         </TableCell>
 
-        <TableCell>{row?.purchase_details?.supplier || "-"}</TableCell>
+        <TableCell>{row?.supplier?.company || "-"}</TableCell>
         <TableCell>
           {row?.purchase_details?.purchase_invoice_no || "-"}
         </TableCell>

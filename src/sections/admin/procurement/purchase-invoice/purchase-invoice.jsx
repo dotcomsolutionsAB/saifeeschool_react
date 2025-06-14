@@ -53,7 +53,7 @@ const PRODUCTS_HEAD_LABEL = [
   { id: "qty", label: "Quantity" },
   { id: "unit", label: "Unit" },
   { id: "price", label: "Price" },
-  { id: "discount", label: "Discount" },
+  { id: "discount", label: "Discount (%)" },
   { id: "hsn", label: "HSN" },
   { id: "tax_percentage", label: "Tax (%)" },
   { id: "gross", label: "Gross" },
@@ -282,7 +282,7 @@ export default function PurchaseInvoice() {
     setLoading(true);
     const payload = {
       ...formData,
-      supplier: formData?.supplier?.name,
+      supplier: formData?.supplier?.company,
       items: formData?.items?.map((item) => ({
         ...item,
         product: item?.product?.name,
@@ -385,7 +385,7 @@ export default function PurchaseInvoice() {
             <Typography variant="h5">Purchase Invoice</Typography>
             <Typography variant="subtitle1" sx={{ ml: "auto" }}>
               {formData?.id
-                ? `Update Purchase Invoice - ${formData?.sn}`
+                ? `Update Purchase Invoice - ${formData?.purchase_invoice_no} (SN-${formData?.sn})`
                 : "Add Purchase Invoice"}
             </Typography>
           </Box>
@@ -394,9 +394,9 @@ export default function PurchaseInvoice() {
               {/* Supplier */}
               <Grid item xs={12} sm={6} md={4} lg={3}>
                 <Autocomplete
-                  getOptionLabel={(option) => option?.name || ""}
+                  getOptionLabel={(option) => option?.company || ""}
                   options={
-                    suppliersList?.filter((option) => !!option?.name) || []
+                    suppliersList?.filter((option) => !!option?.company) || []
                   }
                   renderInput={(params) => (
                     <TextField
