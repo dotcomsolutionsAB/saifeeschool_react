@@ -8,30 +8,21 @@ import {
   RadioGroup,
   TextField,
 } from "@mui/material";
+import { memo } from "react";
 
 const FatherDetailsTab = ({ props }) => {
   const { formData, handleChange } = props;
   return (
     <Box>
       <Grid container spacing={4}>
-        {/*First Name */}
+        {/*Name */}
         <Grid item xs={12} sm={6} md={4} lg={3}>
           <TextField
-            name="f_first_name"
-            label="First Name"
+            name="f_name"
+            label="Name"
             fullWidth
-            value={formData?.f_first_name || ""}
-            onChange={handleChange}
-          />
-        </Grid>
-
-        {/* Last Name */}
-        <Grid item xs={12} sm={6} md={4} lg={3}>
-          <TextField
-            name="f_last_name"
-            label="Last Name"
-            fullWidth
-            value={formData?.f_last_name || ""}
+            required
+            value={formData?.f_name || ""}
             onChange={handleChange}
           />
         </Grid>
@@ -43,6 +34,7 @@ const FatherDetailsTab = ({ props }) => {
             label="Mobile"
             type="tel"
             fullWidth
+            required
             value={formData?.f_contact || ""}
             onChange={handleChange}
           />
@@ -55,14 +47,17 @@ const FatherDetailsTab = ({ props }) => {
             label="Email"
             type="email"
             fullWidth
+            required
             value={formData?.f_email || ""}
             onChange={handleChange}
           />
         </Grid>
 
         {/*Father's Occupation */}
-        <Grid item xs={12} sm={6} md={4}>
-          <FormLabel component="legend">Occupation</FormLabel>
+        <Grid item xs={12} sm={6}>
+          <FormLabel component="legend" required>
+            Occupation
+          </FormLabel>
           <RadioGroup
             row
             name="f_occupation"
@@ -70,7 +65,7 @@ const FatherDetailsTab = ({ props }) => {
             onChange={handleChange}
           >
             <FormControlLabel
-              value="self_employed"
+              value="self-employed"
               control={<Radio />}
               label="Self Employed"
             />
@@ -86,7 +81,7 @@ const FatherDetailsTab = ({ props }) => {
 
       {formData?.f_occupation !== "none" && (
         <Grid container spacing={3} sx={{ mt: 1 }}>
-          {formData?.f_occupation === "self_employed" && (
+          {formData?.f_occupation === "self-employed" && (
             <>
               {/* Business Name */}
               <Grid item xs={12} sm={6} md={4} lg={3}>
@@ -94,6 +89,7 @@ const FatherDetailsTab = ({ props }) => {
                   name="f_business_name"
                   label="Business Name"
                   fullWidth
+                  required
                   value={formData?.f_business_name || ""}
                   onChange={handleChange}
                 />
@@ -105,7 +101,67 @@ const FatherDetailsTab = ({ props }) => {
                   name="f_business_nature"
                   label="Business Nature"
                   fullWidth
+                  required
                   value={formData?.f_business_nature || ""}
+                  onChange={handleChange}
+                />
+              </Grid>
+
+              {/* Address 1 */}
+              <Grid item xs={12} sm={6} md={4} lg={3}>
+                <TextField
+                  name="f_business_address1"
+                  label="Address"
+                  fullWidth
+                  required
+                  value={formData?.f_business_address1 || ""}
+                  onChange={handleChange}
+                />
+              </Grid>
+              {/* City */}
+              <Grid item xs={12} sm={6} md={4} lg={3}>
+                <TextField
+                  name="f_business_city"
+                  label="City"
+                  fullWidth
+                  required
+                  value={formData?.f_business_city || ""}
+                  onChange={handleChange}
+                />
+              </Grid>
+
+              {/* State */}
+              <Grid item xs={12} sm={6} md={4} lg={3}>
+                <TextField
+                  name="f_business_state"
+                  label="State"
+                  fullWidth
+                  required
+                  value={formData?.f_business_state || ""}
+                  onChange={handleChange}
+                />
+              </Grid>
+
+              {/* Country */}
+              <Grid item xs={12} sm={6} md={4} lg={3}>
+                <TextField
+                  name="f_business_country"
+                  label="Country"
+                  fullWidth
+                  required
+                  value={formData?.f_business_country || ""}
+                  onChange={handleChange}
+                />
+              </Grid>
+
+              {/* Pincode */}
+              <Grid item xs={12} sm={6} md={4} lg={3}>
+                <TextField
+                  name="f_business_pincode"
+                  label="Pincode"
+                  fullWidth
+                  required
+                  value={formData?.f_business_pincode || ""}
                   onChange={handleChange}
                 />
               </Grid>
@@ -120,6 +176,7 @@ const FatherDetailsTab = ({ props }) => {
                   name="f_employer_name"
                   label="Employer"
                   fullWidth
+                  required
                   value={formData?.f_employer_name || ""}
                   onChange={handleChange}
                 />
@@ -130,78 +187,73 @@ const FatherDetailsTab = ({ props }) => {
                   name="f_designation"
                   label="Designation"
                   fullWidth
+                  required
                   value={formData?.f_designation || ""}
                   onChange={handleChange}
                 />
-              </Grid>{" "}
+              </Grid>
+
+              {/* Address 1 */}
+              <Grid item xs={12} sm={6} md={4} lg={3}>
+                <TextField
+                  name="f_work_address1"
+                  label="Address"
+                  fullWidth
+                  required
+                  value={formData?.f_work_address1 || ""}
+                  onChange={handleChange}
+                />
+              </Grid>
+
+              {/* City */}
+              <Grid item xs={12} sm={6} md={4} lg={3}>
+                <TextField
+                  name="f_work_city"
+                  label="City"
+                  fullWidth
+                  required
+                  value={formData?.f_work_city || ""}
+                  onChange={handleChange}
+                />
+              </Grid>
+
+              {/* State */}
+              <Grid item xs={12} sm={6} md={4} lg={3}>
+                <TextField
+                  name="f_work_state"
+                  label="State"
+                  fullWidth
+                  required
+                  value={formData?.f_work_state || ""}
+                  onChange={handleChange}
+                />
+              </Grid>
+
+              {/* Country */}
+              <Grid item xs={12} sm={6} md={4} lg={3}>
+                <TextField
+                  name="f_work_country"
+                  label="Country"
+                  fullWidth
+                  required
+                  value={formData?.f_work_country || ""}
+                  onChange={handleChange}
+                />
+              </Grid>
+
+              {/* Pincode */}
+              <Grid item xs={12} sm={6} md={4} lg={3}>
+                <TextField
+                  name="f_work_pincode"
+                  label="Pincode"
+                  fullWidth
+                  required
+                  value={formData?.f_work_pincode || ""}
+                  onChange={handleChange}
+                />
+              </Grid>
             </>
           )}
-
-          {/* Address 1 */}
-          <Grid item xs={12} sm={6} md={4} lg={3}>
-            <TextField
-              name="f_work_address1"
-              label="Address 1"
-              fullWidth
-              value={formData?.f_work_address1 || ""}
-              onChange={handleChange}
-            />
-          </Grid>
-
-          {/* Address 2 */}
-          <Grid item xs={12} sm={6} md={4} lg={3}>
-            <TextField
-              name="f_work_address2"
-              label="Address 2"
-              fullWidth
-              value={formData?.f_work_address2 || ""}
-              onChange={handleChange}
-            />
-          </Grid>
-
-          {/* City */}
-          <Grid item xs={12} sm={6} md={4} lg={3}>
-            <TextField
-              name="f_work_city"
-              label="City"
-              fullWidth
-              value={formData?.f_work_city || ""}
-              onChange={handleChange}
-            />
-          </Grid>
-
-          {/* State */}
-          <Grid item xs={12} sm={6} md={4} lg={3}>
-            <TextField
-              name="f_work_state"
-              label="State"
-              fullWidth
-              value={formData?.f_work_state || ""}
-              onChange={handleChange}
-            />
-          </Grid>
-
-          {/* Country */}
-          <Grid item xs={12} sm={6} md={4} lg={3}>
-            <TextField
-              name="f_work_country"
-              label="Country"
-              fullWidth
-              value={formData?.f_work_country || ""}
-              onChange={handleChange}
-            />
-          </Grid>
-
-          {/* Pincode */}
-          <Grid item xs={12} sm={6} md={4} lg={3}>
-            <TextField
-              name="f_work_pincode"
-              label="Pincode"
-              fullWidth
-              value={formData?.f_work_pincode || ""}
-              onChange={handleChange}
-            />
-          </Grid>
         </Grid>
       )}
     </Box>
@@ -214,4 +266,4 @@ FatherDetailsTab.propTypes = {
   handleChange: PropTypes.func,
 };
 
-export default FatherDetailsTab;
+export default memo(FatherDetailsTab);

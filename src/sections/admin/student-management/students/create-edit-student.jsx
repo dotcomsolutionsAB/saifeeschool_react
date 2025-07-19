@@ -18,7 +18,7 @@ import {
 import { DatePicker } from "@mui/x-date-pickers";
 
 import PropTypes from "prop-types";
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import OtherDetailsTab from "./create-edit-tabs/other-details-tab";
 import AddressDetailsTab from "./create-edit-tabs/address-details-tab";
 import FatherDetailsTab from "./create-edit-tabs/father-details-tab";
@@ -58,7 +58,10 @@ const CreateEditStudent = ({ isEdit = false }) => {
     st_blood_group: detail?.blood_group || "",
     aadhaar_no: detail?.aadhaar_no || "",
     st_year_of_admission: null,
-    academicYear: null,
+    academicYear: {
+      ay_id: userInfo?.ay_id,
+      ay_name: userInfo?.ay_name,
+    },
     class_group: null,
     residential_address1: detail?.residential_address1 || "",
     residential_address2: detail?.residential_address2 || "",
@@ -66,36 +69,42 @@ const CreateEditStudent = ({ isEdit = false }) => {
     state: detail?.state || "",
     country: detail?.country || "",
     pincode: detail?.pincode || "",
-    f_first_name: detail?.f_first_name || "",
-    f_last_name: detail?.f_last_name || "",
+    f_name: detail?.f_name || "",
     f_contact: detail?.f_contact || "",
     f_email: detail?.f_email || "",
-    f_occupation: detail?.f_occupation || "self_employed",
+    f_occupation: detail?.f_occupation || "self-employed",
     f_business_name: detail?.f_business_name || "",
     f_business_nature: detail?.f_business_nature || "",
     f_employer_name: detail?.f_employer_name || "",
     f_designation: detail?.f_designation || "",
     f_work_address1: detail?.f_work_address1 || "",
-    f_work_address2: detail?.f_work_address2 || "",
     f_work_city: detail?.f_work_city || "",
     f_work_state: detail?.f_work_state || "",
     f_work_country: detail?.f_work_country || "",
     f_work_pincode: detail?.f_work_pincode || "",
-    m_first_name: detail?.m_first_name || "",
-    m_last_name: detail?.m_last_name || "",
+    f_business_address1: detail?.f_business_address1 || "",
+    f_business_city: detail?.f_business_city || "",
+    f_business_state: detail?.f_business_state || "",
+    f_business_country: detail?.f_business_country || "",
+    f_business_pincode: detail?.f_business_pincode || "",
+    m_name: detail?.m_name || "",
     m_contact: detail?.m_contact || "",
     m_email: detail?.m_email || "",
-    m_occupation: detail?.m_occupation || "self_employed",
+    m_occupation: detail?.m_occupation || "self-employed",
     m_business_name: detail?.m_business_name || "",
     m_business_nature: detail?.m_business_nature || "",
     m_employer_name: detail?.m_employer_name || "",
     m_designation: detail?.m_designation || "",
     m_work_address1: detail?.m_work_address1 || "",
-    m_work_address2: detail?.m_work_address2 || "",
     m_work_city: detail?.m_work_city || "",
     m_work_state: detail?.m_work_state || "",
     m_work_country: detail?.m_work_country || "",
     m_work_pincode: detail?.m_work_pincode || "",
+    m_business_address1: detail?.m_business_address1 || "",
+    m_business_city: detail?.m_business_city || "",
+    m_business_state: detail?.m_business_state || "",
+    m_business_country: detail?.m_business_country || "",
+    m_business_pincode: detail?.m_business_pincode || "",
   };
 
   const [formData, setFormData] = useState(initialState);
@@ -131,20 +140,29 @@ const CreateEditStudent = ({ isEdit = false }) => {
     setActiveTab(newValue);
   };
 
-  const handleChange = (e) => {
+  const handleChange = useCallback((e) => {
     const { name, value } = e.target;
-    console.log(e, "event");
+
     setFormData((preValue) => ({
       ...preValue,
-      [name]: name === "st_bohra" ? Number(value) : value,
+      [name]: value,
     }));
-  };
+  }, []);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log(formData, "formData");
+
     setIsLoading(true);
-    const response = await createStudent(formData);
+    const response = await createStudent({
+      ...formData,
+      class_group: formData?.class_group?.id || null,
+      st_year_of_admission: formData?.st_year_of_admission
+        ? dayjs(formData.st_year_of_admission).year()
+        : null,
+      st_dob: formData?.st_dob
+        ? dayjs(formData.st_dob).format("YYYY-MM-DD")
+        : null,
+    });
     setIsLoading(false);
 
     if (response?.code === 200) {
@@ -220,7 +238,9 @@ const CreateEditStudent = ({ isEdit = false }) => {
 
           {/* Gender */}
           <Grid item xs={12} sm={6} md={4} lg={3}>
-            <FormLabel component="legend">Gender</FormLabel>
+            <FormLabel component="legend" required>
+              Gender
+            </FormLabel>
             <RadioGroup
               row
               name="st_gender"
@@ -265,7 +285,9 @@ const CreateEditStudent = ({ isEdit = false }) => {
 
           {/* External (Yes/No) */}
           <Grid item xs={12} sm={6} md={4} lg={3}>
-            <FormLabel component="legend">External</FormLabel>
+            <FormLabel component="legend" required>
+              External
+            </FormLabel>
             <RadioGroup
               row
               name="st_external"
@@ -292,7 +314,9 @@ const CreateEditStudent = ({ isEdit = false }) => {
 
           {/* Bohra (Yes/No) */}
           <Grid item xs={12} sm={6} md={4} lg={3}>
-            <FormLabel component="legend">Bohra</FormLabel>
+            <FormLabel component="legend" required>
+              Bohra
+            </FormLabel>
             <RadioGroup
               row
               name="st_bohra"
@@ -359,6 +383,9 @@ const CreateEditStudent = ({ isEdit = false }) => {
           sx={{ mt: 4 }}
           textColor="primary"
           indicatorColor="primary"
+          scrollButtons="auto"
+          variant="scrollable"
+          allowScrollButtonsMobile
         >
           <Tab label="Other Details" />
           <Tab label="Address" />

@@ -1,8 +1,10 @@
 import PropTypes from "prop-types";
 import { Box, Grid, TextField } from "@mui/material";
+import { memo } from "react";
 
 const AddressDetailsTab = ({ props }) => {
   const { formData, handleChange } = props;
+  console.log("testing...");
   return (
     <Box>
       <Grid container spacing={4}>
@@ -12,6 +14,7 @@ const AddressDetailsTab = ({ props }) => {
             name="residential_address1"
             label="Residential Address 1"
             fullWidth
+            required
             value={formData?.residential_address1 || ""}
             onChange={handleChange}
           />
@@ -34,6 +37,7 @@ const AddressDetailsTab = ({ props }) => {
             name="city"
             label="City"
             fullWidth
+            required
             value={formData?.city || ""}
             onChange={handleChange}
           />
@@ -45,6 +49,7 @@ const AddressDetailsTab = ({ props }) => {
             name="state"
             label="State"
             fullWidth
+            required
             value={formData?.state || ""}
             onChange={handleChange}
           />
@@ -56,6 +61,7 @@ const AddressDetailsTab = ({ props }) => {
             name="country"
             label="Country"
             fullWidth
+            required
             value={formData?.country || ""}
             onChange={handleChange}
           />
@@ -67,6 +73,7 @@ const AddressDetailsTab = ({ props }) => {
             name="pincode"
             label="Pincode"
             fullWidth
+            required
             value={formData?.pincode || ""}
             onChange={handleChange}
           />
@@ -82,4 +89,4 @@ AddressDetailsTab.propTypes = {
   handleChange: PropTypes.func,
 };
 
-export default AddressDetailsTab;
+export default memo(AddressDetailsTab);

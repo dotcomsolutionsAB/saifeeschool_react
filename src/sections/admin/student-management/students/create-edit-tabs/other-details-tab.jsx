@@ -1,6 +1,7 @@
 import PropTypes from "prop-types";
 import { Autocomplete, Box, Grid, TextField } from "@mui/material";
 import { DatePicker } from "@mui/x-date-pickers";
+import { memo } from "react";
 
 const OtherDetailsTab = ({ props }) => {
   const {
@@ -23,6 +24,7 @@ const OtherDetailsTab = ({ props }) => {
                 name="st_blood_group"
                 label="Blood Group"
                 fullWidth
+                required
               />
             )}
             value={formData?.st_blood_group || ""}
@@ -40,6 +42,7 @@ const OtherDetailsTab = ({ props }) => {
             name="aadhaar_no"
             label="Aadhaar No"
             fullWidth
+            required
             value={formData?.aadhaar_no || ""}
             onChange={handleChange}
           />
@@ -50,7 +53,11 @@ const OtherDetailsTab = ({ props }) => {
           <DatePicker
             label="Date of Admission"
             slotProps={{
-              textField: { name: "st_year_of_admission", fullWidth: true },
+              textField: {
+                name: "st_year_of_admission",
+                fullWidth: true,
+                required: true,
+              },
             }}
             value={formData?.st_year_of_admission || null}
             onChange={(newValue) =>
@@ -67,7 +74,7 @@ const OtherDetailsTab = ({ props }) => {
             options={academicYearList || []}
             getOptionLabel={(option) => option?.ay_name || ""}
             renderInput={(params) => (
-              <TextField {...params} label="Select Year" fullWidth />
+              <TextField {...params} label="Select Year" fullWidth required />
             )}
             value={formData?.academicYear || null}
             onChange={(_, newValue) =>
@@ -84,7 +91,7 @@ const OtherDetailsTab = ({ props }) => {
             options={classList || []}
             getOptionLabel={(option) => option?.cg_name || ""}
             renderInput={(params) => (
-              <TextField {...params} label="Class Group" fullWidth />
+              <TextField {...params} label="Class Group" fullWidth required />
             )}
             value={formData?.class_group || null}
             onChange={(_, newValue) =>
@@ -108,4 +115,4 @@ OtherDetailsTab.propTypes = {
   classList: PropTypes.array,
 };
 
-export default OtherDetailsTab;
+export default memo(OtherDetailsTab);
