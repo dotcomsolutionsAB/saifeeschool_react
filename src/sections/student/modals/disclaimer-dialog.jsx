@@ -53,10 +53,10 @@ const DisclaimerDialog = ({
       </Box>
       <DialogContent>
         <Typography sx={{ mb: 2 }}>
-          {`You will now be redirected to the ICICI bank website where you can pay through Net Banking or Debit Card (of any bank).`}
+          {`You will now be redirected to the CC Avenue Payment Gateway where you can pay through Net Banking or Debit Card (of any bank).`}
         </Typography>
         <Typography sx={{ mb: 2 }}>
-          {`Your financial information (card number, username, password, OTP, etc.) will be entered by you directly on the ICICI bank website. At no point of time does the school or the website developer come in possession of this information and hence is not liable for the misuse of this information.`}
+          {`Your financial information (card number, username, password, OTP, etc.) will be entered by you directly on the CC Avenue Payment Gateway. At no point of time does the school or the website developer come in possession of this information and hence is not liable for the misuse of this information.`}
         </Typography>
         <Typography sx={{ fontWeight: 600 }}>Bank Charges</Typography>
         <Typography>

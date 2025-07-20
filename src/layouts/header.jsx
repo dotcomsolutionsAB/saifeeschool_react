@@ -29,7 +29,7 @@ const MENU_OPTIONS = [
   //   icon: <HomeRounded />,
   // },
   {
-    label: "Profile",
+    label: "Change Password",
     icon: <VerifiedUserRounded />,
   },
   // {
@@ -60,7 +60,7 @@ const Header = () => {
     if (option.label === "Home") {
       navigate("/");
     }
-    if (option.label === "Profile") {
+    if (option.label === "Change Password") {
       navigate("/change-password");
     }
   };
@@ -259,7 +259,7 @@ const Header = () => {
                   p: 0,
                   mt: 1,
                   ml: 0.75,
-                  width: 200,
+                  width: 220,
                 },
               },
             }}
