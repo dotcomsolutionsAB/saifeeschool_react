@@ -49,6 +49,8 @@ const StudentDetail = () => {
     body: { id: studentId },
   });
 
+  console.log(detail, "detail");
+
   const [previewImage, setPreviewImage] = useState(detail?.photo || "");
   const [activeTab, setActiveTab] = useState(0);
   const [walletModalOpen, setWalletModalOpen] = useState(false);
@@ -72,8 +74,8 @@ const StudentDetail = () => {
     console.log(file, "file");
     if (file) {
       const response = await uploadStudentImage({
-        st_roll_no: detail?.roll_no,
-        st_id: detail?.student_id,
+        st_roll_no: detail?.st_roll_no,
+        st_id: detail?.id,
         file: [file],
         file_type: ["photo"],
         file_name: [file?.name],
@@ -114,7 +116,7 @@ const StudentDetail = () => {
   }, [studentId]);
 
   useEffect(() => {
-    setPreviewImage(detail?.photo || "");
+    setPreviewImage(detail?.photo_url || "");
   }, [detail]);
 
   return (
@@ -199,7 +201,9 @@ const StudentDetail = () => {
             <Typography
               variant="h4"
               sx={{ textAlign: "center", color: "primary.main" }}
-            >{`${detail?.name || ""} `}</Typography>
+            >{`${detail?.st_first_name || ""} ${
+              detail?.st_last_name || ""
+            }`}</Typography>
 
             {/* mobile, class and roll no  */}
             <Box
@@ -217,7 +221,7 @@ const StudentDetail = () => {
                 <Box component="span" sx={{ fontWeight: "bold" }}>
                   Mobile:{" "}
                 </Box>
-                {detail?.mobile || ""}
+                {detail?.st_mobile || ""}
               </Typography>
               <Divider
                 sx={{ bgcolor: "primary.main", height: "20px", width: "2px" }}
@@ -226,7 +230,7 @@ const StudentDetail = () => {
                 <Box component="span" sx={{ fontWeight: "bold" }}>
                   Class:{" "}
                 </Box>
-                {detail?.admitted_class || ""}
+                {detail?.st_admitted_class || ""}
               </Typography>
               <Divider
                 sx={{ bgcolor: "primary.main", height: "20px", width: "2px" }}
@@ -235,7 +239,7 @@ const StudentDetail = () => {
                 <Box component="span" sx={{ fontWeight: "bold" }}>
                   Roll No:{" "}
                 </Box>
-                {detail?.roll_no || ""}
+                {detail?.st_roll_no || ""}
               </Typography>
             </Box>
             <Divider

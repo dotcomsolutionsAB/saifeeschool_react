@@ -50,7 +50,7 @@ export default function PaidFees({ detail, academicYear }) {
   } = useGetApi({
     apiFunction: getAllPaidFees,
     body: {
-      st_id: detail?.student_id,
+      st_id: detail?.id,
       offset: page * rowsPerPage,
       limit: rowsPerPage,
       ay_id: Number(academicYear?.ay_id),

@@ -5,6 +5,7 @@ import { memo } from "react";
 
 const OtherDetailsTab = ({ props }) => {
   const {
+    isEdit,
     formData,
     handleChange,
     bloodGroupList = [],
@@ -68,39 +69,53 @@ const OtherDetailsTab = ({ props }) => {
           />
         </Grid>
 
-        {/* Academic Year */}
-        <Grid item xs={12} sm={6} md={4} lg={3}>
-          <Autocomplete
-            options={academicYearList || []}
-            getOptionLabel={(option) => option?.ay_name || ""}
-            renderInput={(params) => (
-              <TextField {...params} label="Select Year" fullWidth required />
-            )}
-            value={formData?.academicYear || null}
-            onChange={(_, newValue) =>
-              handleChange({
-                target: { name: "academicYear", value: newValue },
-              })
-            }
-          />
-        </Grid>
+        {!isEdit && (
+          <>
+            {/* Academic Year */}
+            <Grid item xs={12} sm={6} md={4} lg={3}>
+              <Autocomplete
+                options={academicYearList || []}
+                getOptionLabel={(option) => option?.ay_name || ""}
+                renderInput={(params) => (
+                  <TextField
+                    {...params}
+                    label="Select Year"
+                    fullWidth
+                    required
+                  />
+                )}
+                value={formData?.academicYear || null}
+                onChange={(_, newValue) =>
+                  handleChange({
+                    target: { name: "academicYear", value: newValue },
+                  })
+                }
+              />
+            </Grid>
 
-        {/* Class Group */}
-        <Grid item xs={12} sm={6} md={4} lg={3}>
-          <Autocomplete
-            options={classList || []}
-            getOptionLabel={(option) => option?.cg_name || ""}
-            renderInput={(params) => (
-              <TextField {...params} label="Class Group" fullWidth required />
-            )}
-            value={formData?.class_group || null}
-            onChange={(_, newValue) =>
-              handleChange({
-                target: { name: "class_group", value: newValue },
-              })
-            }
-          />
-        </Grid>
+            {/* Class Group */}
+            <Grid item xs={12} sm={6} md={4} lg={3}>
+              <Autocomplete
+                options={classList || []}
+                getOptionLabel={(option) => option?.cg_name || ""}
+                renderInput={(params) => (
+                  <TextField
+                    {...params}
+                    label="Class Group"
+                    fullWidth
+                    required
+                  />
+                )}
+                value={formData?.class_group || null}
+                onChange={(_, newValue) =>
+                  handleChange({
+                    target: { name: "class_group", value: newValue },
+                  })
+                }
+              />
+            </Grid>
+          </>
+        )}
       </Grid>
     </Box>
   );
@@ -108,6 +123,7 @@ const OtherDetailsTab = ({ props }) => {
 
 OtherDetailsTab.propTypes = {
   props: PropTypes.object,
+  isEdit: PropTypes.bool,
   formData: PropTypes.object,
   handleChange: PropTypes.func,
   bloodGroupList: PropTypes.array,

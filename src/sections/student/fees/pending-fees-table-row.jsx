@@ -11,19 +11,22 @@ const PendingFeesTableRow = ({
   index,
   selectedRowIds,
   rows,
+  allResponse,
 }) => {
   const isDisabled = index > 0 && !selectedRowIds.includes(rows[index - 1]?.id);
   return (
     <>
       <TableRow hover tabIndex={-1} role="checkbox" selected={isRowSelected}>
-        <TableCell padding="checkbox">
-          <Checkbox
-            disableRipple
-            checked={isRowSelected}
-            onChange={() => handleClick(row)}
-            disabled={isDisabled} // Disable based on previous row's selection
-          />
-        </TableCell>
+        {allResponse?.last_payment_status !== "pending" && (
+          <TableCell padding="checkbox">
+            <Checkbox
+              disableRipple
+              checked={isRowSelected}
+              onChange={() => handleClick(row)}
+              disabled={isDisabled} // Disable based on previous row's selection
+            />
+          </TableCell>
+        )}
 
         <TableCell>
           <Typography variant="subtitle2" noWrap>
@@ -73,6 +76,7 @@ PendingFeesTableRow.propTypes = {
   index: PropTypes.number.isRequired, // Index of the current row
   selectedRowIds: PropTypes.array.isRequired, // Array of selected row IDs
   rows: PropTypes.array.isRequired, // Full list of rows to check previous row
+  allResponse: PropTypes.object, // Response object containing payment status
 };
 
 export default PendingFeesTableRow;

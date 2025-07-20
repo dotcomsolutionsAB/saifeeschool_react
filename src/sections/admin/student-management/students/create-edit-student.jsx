@@ -35,6 +35,7 @@ import useAuth from "../../../../hooks/useAuth";
 import { toast } from "react-toastify";
 import { useLocation, useNavigate } from "react-router-dom";
 import dayjs from "dayjs";
+// import CreateEditStudentSchema from "../../../../joi/create-edit-schema";
 
 const CreateEditStudent = ({ isEdit = false }) => {
   const { userInfo, logout } = useAuth();
@@ -44,67 +45,73 @@ const CreateEditStudent = ({ isEdit = false }) => {
   const detail = location?.state;
 
   const initialState = {
-    st_first_name: detail?.name?.split(" ")?.[0] || "",
-    st_last_name: detail?.name?.split(" ")?.slice(1).join(" ") || "",
-    st_gender: detail?.gender === "Female" ? "F" : "M",
-    st_dob: detail?.dob ? dayjs(detail?.dob) : null,
-    st_roll_no: detail?.roll_no || "",
-    st_external: detail?.external || "0",
-    st_mobile: detail?.mobile || "",
-    st_bohra: detail?.bohra ?? 0,
-    st_its_id: detail?.its_id || "",
-    st_gmail_address: detail?.email || "",
-    st_house: detail?.house || "",
-    st_blood_group: detail?.blood_group || "",
-    aadhaar_no: detail?.aadhaar_no || "",
-    st_year_of_admission: null,
-    academicYear: {
-      ay_id: userInfo?.ay_id,
-      ay_name: userInfo?.ay_name,
-    },
-    class_group: null,
-    residential_address1: detail?.residential_address1 || "",
-    residential_address2: detail?.residential_address2 || "",
-    city: detail?.city || "",
-    state: detail?.state || "",
-    country: detail?.country || "",
-    pincode: detail?.pincode || "",
-    f_name: detail?.f_name || "",
-    f_contact: detail?.f_contact || "",
-    f_email: detail?.f_email || "",
-    f_occupation: detail?.f_occupation || "self-employed",
-    f_business_name: detail?.f_business_name || "",
-    f_business_nature: detail?.f_business_nature || "",
-    f_employer_name: detail?.f_employer_name || "",
-    f_designation: detail?.f_designation || "",
-    f_work_address1: detail?.f_work_address1 || "",
-    f_work_city: detail?.f_work_city || "",
-    f_work_state: detail?.f_work_state || "",
-    f_work_country: detail?.f_work_country || "",
-    f_work_pincode: detail?.f_work_pincode || "",
-    f_business_address1: detail?.f_business_address1 || "",
-    f_business_city: detail?.f_business_city || "",
-    f_business_state: detail?.f_business_state || "",
-    f_business_country: detail?.f_business_country || "",
-    f_business_pincode: detail?.f_business_pincode || "",
-    m_name: detail?.m_name || "",
-    m_contact: detail?.m_contact || "",
-    m_email: detail?.m_email || "",
-    m_occupation: detail?.m_occupation || "self-employed",
-    m_business_name: detail?.m_business_name || "",
-    m_business_nature: detail?.m_business_nature || "",
-    m_employer_name: detail?.m_employer_name || "",
-    m_designation: detail?.m_designation || "",
-    m_work_address1: detail?.m_work_address1 || "",
-    m_work_city: detail?.m_work_city || "",
-    m_work_state: detail?.m_work_state || "",
-    m_work_country: detail?.m_work_country || "",
-    m_work_pincode: detail?.m_work_pincode || "",
-    m_business_address1: detail?.m_business_address1 || "",
-    m_business_city: detail?.m_business_city || "",
-    m_business_state: detail?.m_business_state || "",
-    m_business_country: detail?.m_business_country || "",
-    m_business_pincode: detail?.m_business_pincode || "",
+    st_first_name: detail?.st_first_name || "",
+    st_last_name: detail?.st_last_name || "",
+    st_gender: detail?.st_gender === "F" ? "F" : "M",
+    st_dob: detail?.st_dob ? dayjs(detail?.st_dob) : null,
+    st_roll_no: detail?.st_roll_no || "",
+    st_external: detail?.st_external || "0",
+    st_mobile: detail?.st_mobile || "",
+    st_bohra: detail?.st_bohra ?? 0,
+    st_its_id: detail?.st_its_id || "",
+    st_gmail_address: detail?.st_gmail_address || "",
+    st_house: detail?.st_house || "",
+    st_blood_group: detail?.st_blood_group || "",
+    aadhaar_no: detail?.aadhaar_id || "",
+    st_year_of_admission: detail?.st_year_of_admission
+      ? dayjs(detail?.st_year_of_admission)
+      : null,
+    // academicYear: {
+    //   ay_id: userInfo?.ay_id,
+    //   ay_name: userInfo?.ay_name,
+    // },
+    // class_group: {
+    //   cg_name: detail?.st_admitted_class || "",
+    // },
+    academicYear: null, // it is not required in edit
+    class_group: null, // it is not required in edit
+    residential_address1: detail?.details?.residential_address1 || "",
+    residential_address2: detail?.details?.residential_address2 || "",
+    city: detail?.details?.city || "",
+    state: detail?.details?.state || "",
+    country: detail?.details?.country || "",
+    pincode: detail?.details?.pincode || "",
+    f_name: detail?.details?.f_name || "",
+    f_contact: detail?.details?.f_contact || "",
+    f_email: detail?.details?.f_email || "",
+    f_occupation: detail?.details?.f_occupation || "self-employed",
+    f_business_name: detail?.details?.f_business_name || "",
+    f_business_nature: detail?.details?.f_business_nature || "",
+    f_employer_name: detail?.details?.f_employer_name || "",
+    f_designation: detail?.details?.f_designation || "",
+    f_work_address1: detail?.details?.f_work_address1 || "",
+    f_work_city: detail?.details?.f_work_city || "",
+    f_work_state: detail?.details?.f_work_state || "",
+    f_work_country: detail?.details?.f_work_country || "",
+    f_work_pincode: detail?.details?.f_work_pincode || "",
+    f_business_address1: detail?.details?.f_business_address1 || "",
+    f_business_city: detail?.details?.f_business_city || "",
+    f_business_state: detail?.details?.f_business_state || "",
+    f_business_country: detail?.details?.f_business_country || "",
+    f_business_pincode: detail?.details?.f_business_pincode || "",
+    m_name: detail?.details?.m_name || "",
+    m_contact: detail?.details?.m_contact || "",
+    m_email: detail?.details?.m_email || "",
+    m_occupation: detail?.details?.m_occupation || "self-employed",
+    m_business_name: detail?.details?.m_business_name || "",
+    m_business_nature: detail?.details?.m_business_nature || "",
+    m_employer_name: detail?.details?.m_employer_name || "",
+    m_designation: detail?.details?.m_designation || "",
+    m_work_address1: detail?.details?.m_work_address1 || "",
+    m_work_city: detail?.details?.m_work_city || "",
+    m_work_state: detail?.details?.m_work_state || "",
+    m_work_country: detail?.details?.m_work_country || "",
+    m_work_pincode: detail?.details?.m_work_pincode || "",
+    m_business_address1: detail?.details?.m_business_address1 || "",
+    m_business_city: detail?.details?.m_business_city || "",
+    m_business_state: detail?.details?.m_business_state || "",
+    m_business_country: detail?.details?.m_business_country || "",
+    m_business_pincode: detail?.details?.m_business_pincode || "",
   };
 
   const [formData, setFormData] = useState(initialState);
@@ -135,6 +142,9 @@ const CreateEditStudent = ({ isEdit = false }) => {
     apiFunction: getHouse,
   });
 
+  // // validation from joi
+  // const { error } = CreateEditStudentSchema.validate(formData);
+
   // tab change
   const handleTabChange = (event, newValue) => {
     setActiveTab(newValue);
@@ -151,7 +161,12 @@ const CreateEditStudent = ({ isEdit = false }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
+    // if (error) {
+    //   error?.details?.forEach((err) => {
+    //     toast.error(err.message);
+    //   });
+    //   return;
+    // }
     setIsLoading(true);
     const response = await createStudent({
       ...formData,
@@ -177,6 +192,7 @@ const CreateEditStudent = ({ isEdit = false }) => {
   };
 
   const props = {
+    isEdit,
     formData,
     handleChange,
     bloodGroupList,

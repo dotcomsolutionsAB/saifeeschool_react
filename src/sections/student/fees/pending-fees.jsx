@@ -163,11 +163,18 @@ export default function PendingFees() {
               Pending Fees - {userInfo?.name || ""} | ₹
               {FORMAT_INDIAN_CURRENCY(allResponse?.total_unpaid) || "0"}
             </Box>
+            {allResponse?.last_payment_status === "pending" && (
+              <Box sx={{ mb: 2, fontSize: "14px", color: "warning.main" }}>
+                {allResponse?.last_payment_details || ""}
+              </Box>
+            )}
             <TableContainer sx={{ overflowY: "unset" }}>
               <Table sx={{ minWidth: 800 }}>
                 <TableHead>
                   <TableRow>
-                    <TableCell padding="checkbox"></TableCell>
+                    {allResponse?.last_payment_status !== "pending" && (
+                      <TableCell padding="checkbox"></TableCell>
+                    )}
                     {HEAD_LABEL?.map((headCell) => (
                       <TableCell
                         key={headCell?.id}
@@ -197,6 +204,7 @@ export default function PendingFees() {
                         index={index} // Pass the row index
                         selectedRowIds={selectedRowIds} // Pass the selected rows array
                         rows={pendingFeesList} // Pass the full list of rows
+                        allResponse={allResponse}
                         refetch={refetch}
                       />
                     );
