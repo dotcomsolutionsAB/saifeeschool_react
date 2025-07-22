@@ -15,7 +15,6 @@ import useAuth from "../../../../../hooks/useAuth";
 import { CancelOutlined } from "@mui/icons-material";
 import { DatePicker } from "@mui/x-date-pickers";
 import dayjs from "dayjs";
-import useStudent from "../../../../../hooks/useStudent";
 import { addMoneyToWallet } from "../../../../../services/admin/transactions.service";
 
 const TYPE_LIST = [
@@ -41,9 +40,9 @@ const TYPE_LIST = [
   },
 ];
 
-const WalletModal = ({ open, onClose, detail }) => {
-  const { logout } = useAuth();
-  const { refetch } = useStudent();
+const WalletModal = ({ open, onClose, detail, refetch }) => {
+  const { userInfo, logout } = useAuth();
+  // const { refetch } = useStudent();
   const [isLoading, setIsLoading] = useState(false);
   const [formData, setFormData] = useState(null);
 
@@ -60,7 +59,7 @@ const WalletModal = ({ open, onClose, detail }) => {
     const response = await addMoneyToWallet({
       ...formData,
       type: formData?.type?.value,
-      st_id: detail?.student_id,
+      st_id: detail?.id,
       amount: Number(formData?.amount),
     });
     setIsLoading(false);
@@ -116,7 +115,11 @@ const WalletModal = ({ open, onClose, detail }) => {
           <Grid container spacing={2}>
             <Grid item xs={12} sm={6} md={4} lg={3}>
               <Autocomplete
-                options={TYPE_LIST || []}
+                options={
+                  userInfo?.name?.toLowerCase()?.includes("atul")
+                    ? [{ id: "1", label: "Cash", value: "cash" }]
+                    : TYPE_LIST || []
+                }
                 getOptionLabel={(option) => option?.label || ""} // it is necessary for searching the options
                 renderInput={(params) => (
                   <TextField
@@ -328,6 +331,7 @@ WalletModal.propTypes = {
   open: PropTypes.bool,
   onClose: PropTypes.func,
   detail: PropTypes.object,
+  refetch: PropTypes.func,
 };
 
 export default WalletModal;

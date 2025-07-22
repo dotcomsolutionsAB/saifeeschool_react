@@ -67,19 +67,20 @@ export default function DebitVoucher() {
   const {
     allResponse,
     dataList: debitList,
+    dataCount,
     isLoading,
     isError,
     refetch,
     errorMessage,
   } = useGetApi({
     apiFunction: getDebit,
-    // body: {
-    //   search,
-    //   offset: page * rowsPerPage,
-    //   limit: rowsPerPage,
-    // },
-    // dependencies: [page, rowsPerPage, search],
-    // debounceDelay: 500,
+    body: {
+      search,
+      offset: page * rowsPerPage,
+      limit: rowsPerPage,
+    },
+    dependencies: [page, rowsPerPage, search],
+    debounceDelay: 500,
   });
 
   // add new debit modal handler
@@ -111,7 +112,7 @@ export default function DebitVoucher() {
   };
 
   // if no search result is found
-  const notFound = !debitList?.length && !!search;
+  const notFound = !dataCount && !!search;
 
   return (
     <>
@@ -167,7 +168,7 @@ export default function DebitVoucher() {
                     Total Cash
                   </Typography>
                   <Typography variant="h6">
-                    ₹ {FORMAT_INDIAN_CURRENCY(allResponse?.total) || "0"}
+                    ₹ {FORMAT_INDIAN_CURRENCY(allResponse?.total_cash) || "0"}
                   </Typography>
                 </Box>
               </Box>
@@ -220,10 +221,7 @@ export default function DebitVoucher() {
                     Total Cheque
                   </Typography>
                   <Typography variant="h6">
-                    ₹{" "}
-                    {FORMAT_INDIAN_CURRENCY(
-                      allResponse?.current_month_unpaid_amount
-                    ) || "0"}
+                    ₹ {FORMAT_INDIAN_CURRENCY(allResponse?.total_cheque) || "0"}
                   </Typography>
                 </Box>
               </Box>
@@ -283,9 +281,7 @@ export default function DebitVoucher() {
                   </Typography>
                   <Typography variant="h6">
                     ₹{" "}
-                    {FORMAT_INDIAN_CURRENCY(
-                      allResponse?.current_month_unpaid_amount
-                    ) || "0"}
+                    {FORMAT_INDIAN_CURRENCY(allResponse?.total_debited) || "0"}
                   </Typography>
                 </Box>
               </Box>
@@ -307,12 +303,12 @@ export default function DebitVoucher() {
             width: "100%",
           }}
         >
-          {/* <TextField
+          <TextField
             value={search || ""}
             onChange={handleSearch}
             placeholder="Search"
             size="small"
-          /> */}
+          />
           <Button
             variant="contained"
             sx={{ ml: "auto" }}
@@ -370,10 +366,10 @@ export default function DebitVoucher() {
                   );
                 })}
 
-                {/* <TableEmptyRows
+                <TableEmptyRows
                   height={77}
-                  emptyRows={emptyRows(page, rowsPerPage, debitList?.length)}
-                /> */}
+                  emptyRows={emptyRows(page, rowsPerPage, dataCount)}
+                />
 
                 {notFound && <TableNoData query={search} />}
               </TableBody>
@@ -383,15 +379,15 @@ export default function DebitVoucher() {
 
         {/* Pagination */}
 
-        {/* <TablePagination
+        <TablePagination
           page={page}
           component="div"
-          count={debitList?.length}
+          count={dataCount || 0}
           rowsPerPage={rowsPerPage}
           onPageChange={handleChangePage}
           rowsPerPageOptions={ROWS_PER_PAGE_OPTIONS}
           onRowsPerPageChange={handleChangeRowsPerPage}
-        /> */}
+        />
       </Card>
     </>
   );

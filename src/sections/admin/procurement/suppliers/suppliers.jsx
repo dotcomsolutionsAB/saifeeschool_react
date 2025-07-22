@@ -17,6 +17,7 @@ import {
   TableHead,
   TableRow,
   TableSortLabel,
+  TextField,
 } from "@mui/material";
 import { useGetApi } from "../../../../hooks/useGetApi";
 import {
@@ -52,6 +53,7 @@ export default function Suppliers() {
   const [productModalOpen, setProductModalOpen] = useState(false);
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(DEFAULT_LIMIT);
+  const [search, setSearch] = useState("");
 
   // api to get suppliers list
   const {
@@ -64,10 +66,12 @@ export default function Suppliers() {
   } = useGetApi({
     apiFunction: getSuppliers,
     body: {
+      search,
       offset: page * rowsPerPage,
       limit: rowsPerPage,
     },
-    dependencies: [page, rowsPerPage],
+    dependencies: [page, rowsPerPage, search],
+    debounceDelay: 500,
   });
 
   // api to get productCategoryList for modal
@@ -110,8 +114,14 @@ export default function Suppliers() {
     setRowsPerPage(parseInt(event.target.value, 10));
   };
 
+  // for searching
+  const handleSearch = (event) => {
+    setPage(0);
+    setSearch(event.target.value);
+  };
+
   // if no search result is found
-  const notFound = !suppliersCount;
+  const notFound = !suppliersCount && !!search;
 
   return (
     <>
@@ -131,6 +141,13 @@ export default function Suppliers() {
         >
           <Typography variant="h4">Suppliers</Typography>
           <Box sx={{ display: "flex", gap: 1 }}>
+            {/* Search */}
+            <TextField
+              value={search || ""}
+              onChange={handleSearch}
+              placeholder="Search"
+              size="small"
+            />
             {/* Add New Supplier */}
             <Button variant="contained" onClick={handleSupplierModalOpen}>
               + Add New Supplier

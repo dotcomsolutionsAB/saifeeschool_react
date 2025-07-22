@@ -183,7 +183,6 @@ const CreateEditDebitVoucherModal = ({ open, onClose, refetch, detail }) => {
               <TextField
                 name="cheque_no"
                 label="Cheque No"
-                required
                 fullWidth
                 value={formData?.cheque_no || ""}
                 onChange={handleChange}

@@ -15,7 +15,6 @@ import {
   TableRow,
   Typography,
 } from "@mui/material";
-import { FORMAT_INDIAN_CURRENCY } from "../../../utils/constants";
 import { useGetApi } from "../../../hooks/useGetApi";
 import MessageBox from "../../../components/error/message-box";
 import Loader from "../../../components/loader/loader";
@@ -123,8 +122,6 @@ export default function PendingFees() {
     });
     setLoading(false);
 
-    console.log(response, "response from payFees");
-
     if (response?.code === 200) {
       handleModalClose();
       if (response?.url) {
@@ -160,8 +157,7 @@ export default function PendingFees() {
         <Card sx={{ width: "100%", mt: 2 }}>
           <CardContent>
             <Box sx={{ mb: 2, fontSize: "20px" }}>
-              Pending Fees - {userInfo?.name || ""} | ₹
-              {FORMAT_INDIAN_CURRENCY(allResponse?.total_unpaid) || "0"}
+              Pending Fees - {userInfo?.name || ""}
             </Box>
             {allResponse?.last_payment_status === "pending" && (
               <Box sx={{ mb: 2, fontSize: "14px", color: "warning.main" }}>

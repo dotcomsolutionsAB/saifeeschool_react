@@ -44,6 +44,7 @@ const StudentDetail = () => {
     isLoading,
     isError,
     errorMessage,
+    refetch,
   } = useGetApi({
     apiFunction: getStudentById,
     body: { id: studentId },
@@ -230,7 +231,7 @@ const StudentDetail = () => {
                 <Box component="span" sx={{ fontWeight: "bold" }}>
                   Class:{" "}
                 </Box>
-                {detail?.st_admitted_class || ""}
+                {detail?.cg_name || ""}
               </Typography>
               <Divider
                 sx={{ bgcolor: "primary.main", height: "20px", width: "2px" }}
@@ -289,7 +290,7 @@ const StudentDetail = () => {
                 sx={{ bgcolor: "primary.main", color: "primary.contrastText" }}
                 onClick={handleWalletClick}
               >
-                +Wallet: ₹{detail?.wallet || 0}/-
+                +Wallet: ₹{detail?.st_wallet || 0}/-
               </Button>
               <IconButton
                 sx={{
@@ -323,6 +324,7 @@ const StudentDetail = () => {
               open={walletModalOpen}
               onClose={handleWalletModalClose}
               detail={detail}
+              refetch={refetch}
             />
           </CardContent>
         </Card>

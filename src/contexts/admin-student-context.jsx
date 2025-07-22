@@ -25,12 +25,17 @@ const AdminStudentProvider = ({ children }) => {
     ay_id: userInfo?.ay_id,
     ay_name: userInfo?.ay_name,
   });
+  const [stExternal, setStExternal] = useState({
+    label: "Internal",
+    value: "0",
+  });
   const [anchorEl, setAnchorEl] = useState(null);
   const [selectedRows, setSelectedRows] = useState([]);
   const [isExportLoading, setIsExportLoading] = useState(false);
 
   const dataSendToBackend = {
     ay_id: academicYear?.ay_id || userInfo?.ay_id,
+    stExternal: stExternal?.value || "0",
     search: search || "",
     bohra: bohra?.value || "",
     cg_id: cgId || "",
@@ -57,6 +62,7 @@ const AdminStudentProvider = ({ children }) => {
     },
     dependencies: [
       academicYear,
+      stExternal,
       page,
       rowsPerPage,
       search,
@@ -95,6 +101,8 @@ const AdminStudentProvider = ({ children }) => {
     setAnchorEl,
     setSelectedRows,
     setIsExportLoading,
+    setStExternal,
+    stExternal,
     dataSendToBackend,
     studentsList,
     studentsCount,

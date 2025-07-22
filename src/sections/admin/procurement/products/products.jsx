@@ -17,6 +17,7 @@ import {
   TableHead,
   TableRow,
   TableSortLabel,
+  TextField,
 } from "@mui/material";
 import { useGetApi } from "../../../../hooks/useGetApi";
 import {
@@ -53,6 +54,7 @@ export default function Products() {
   const [modalOpen, setModalOpen] = useState(false);
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(DEFAULT_LIMIT);
+  const [search, setSearch] = useState("");
 
   // api to get products list
   const {
@@ -65,10 +67,12 @@ export default function Products() {
   } = useGetApi({
     apiFunction: getProducts,
     body: {
+      search,
       offset: page * rowsPerPage,
       limit: rowsPerPage,
     },
-    dependencies: [page, rowsPerPage],
+    dependencies: [page, rowsPerPage, search],
+    debounceDelay: 500,
   });
 
   // api to get productCategoryList for modal
@@ -104,8 +108,14 @@ export default function Products() {
     setRowsPerPage(parseInt(event.target.value, 10));
   };
 
+  // for searching
+  const handleSearch = (event) => {
+    setPage(0);
+    setSearch(event.target.value);
+  };
+
   // if no search result is found
-  const notFound = !productsCount;
+  const notFound = !productsCount && !!search;
 
   return (
     <>
@@ -124,10 +134,19 @@ export default function Products() {
           }}
         >
           <Typography variant="h4">Products</Typography>
-          {/* Add New */}
-          <Button variant="contained" onClick={handleModalOpen}>
-            + Add New
-          </Button>
+          <Box sx={{ display: "flex", gap: 1 }}>
+            {/* Search */}
+            <TextField
+              value={search || ""}
+              onChange={handleSearch}
+              placeholder="Search"
+              size="small"
+            />
+            {/* Add New */}
+            <Button variant="contained" onClick={handleModalOpen}>
+              + Add New
+            </Button>
+          </Box>
 
           {/* Modal */}
           <AddNewProductModal

@@ -16,7 +16,6 @@ import {
 import {
   DEFAULT_LIMIT,
   emptyRows,
-  FORMAT_INDIAN_CURRENCY,
   ROWS_PER_PAGE_OPTIONS,
 } from "../../../utils/constants";
 import { useGetApi } from "../../../hooks/useGetApi";
@@ -48,7 +47,6 @@ export default function PaidFees() {
   const {
     dataList: paidFeesList,
     dataCount: paidFeesCount,
-    allResponse,
     isLoading,
     isError,
     errorMessage,
@@ -94,8 +92,7 @@ export default function PaidFees() {
         <Card sx={{ width: "100%", mt: 2 }}>
           <CardContent>
             <Box sx={{ mb: 2, fontSize: "20px" }}>
-              Paid Fees - {userInfo?.name || ""} | ₹
-              {FORMAT_INDIAN_CURRENCY(allResponse?.total_paid) || "0"}
+              Paid Fees - {userInfo?.name || ""}
             </Box>
 
             <TableContainer sx={{ overflowY: "unset" }}>

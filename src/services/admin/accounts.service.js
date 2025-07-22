@@ -19,7 +19,8 @@ export const deleteCashReceived = async (body) =>
   await deleteRequest(`${CASH_RECEIVED_PATH}/${body?.id}`);
 
 // debit apis
-export const getDebit = async () => await getRequest(`${DEBIT_PATH}`);
+export const getDebit = async (params) =>
+  await getRequest(`${DEBIT_PATH}`, params);
 
 export const createDebitVoucher = async (body) =>
   await postRequest(`${DEBIT_PATH}`, body);

@@ -35,7 +35,10 @@ export const useGetApi = ({
           : response?.data || []
       );
       setDataCount(
-        response?.total || response?.count || response?.total_records || 0
+        Number(response?.total) ||
+          Number(response?.count) ||
+          Number(response?.total_records) ||
+          0
       );
       setAllResponse(response || {});
     } else if (response?.code === 401) {

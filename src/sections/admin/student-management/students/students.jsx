@@ -74,6 +74,12 @@ const GENDER_LIST = [
   { label: "Female", value: "F" },
 ];
 
+const STUDENT_TYPE_LIST = [
+  { label: "Internal", value: "0" },
+  { label: "External", value: "1" },
+  { label: "Both", value: "%" },
+];
+
 export default function Students() {
   const navigate = useNavigate();
   const { userInfo, logout } = useAuth();
@@ -100,6 +106,8 @@ export default function Students() {
     setDobFrom,
     setDobTo,
     setAcademicYear,
+    stExternal,
+    setStExternal,
     setAnchorEl,
     setSelectedRows,
     setIsExportLoading,
@@ -279,6 +287,9 @@ export default function Students() {
         setAcademicYear(value);
         setSelectedOptions([]);
         setCgId(null);
+        break;
+      case "st_external":
+        setStExternal(value);
         break;
       default:
         break;
@@ -487,6 +498,16 @@ export default function Students() {
             )}
             value={academicYear || null}
             onChange={(_, newValue) => handleChange("academicYear", newValue)}
+            sx={{ width: "200px" }}
+          />
+          <Autocomplete
+            options={STUDENT_TYPE_LIST || []}
+            getOptionLabel={(option) => option?.label || ""}
+            renderInput={(params) => (
+              <TextField {...params} label="Student Type" size="small" />
+            )}
+            value={stExternal || null}
+            onChange={(_, newValue) => handleChange("st_external", newValue)}
             sx={{ width: "200px" }}
           />
 
