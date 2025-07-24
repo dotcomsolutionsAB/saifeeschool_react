@@ -51,21 +51,35 @@ const DisclaimerDialog = ({
           <CancelOutlined />
         </IconButton>
       </Box>
-      <DialogContent>
-        <Typography sx={{ mb: 2 }}>
-          {`You will now be redirected to the CC Avenue Payment Gateway where you can pay through Net Banking or Debit Card (of any bank).`}
-        </Typography>
-        <Typography sx={{ mb: 2 }}>
-          {`Your financial information (card number, username, password, OTP, etc.) will be entered by you directly on the CC Avenue Payment Gateway. At no point of time does the school or the website developer come in possession of this information and hence is not liable for the misuse of this information.`}
-        </Typography>
-        <Typography sx={{ fontWeight: 600 }}>Bank Charges</Typography>
-        <Typography>
-          {`Net Banking: The school shall bear the bank charges.`}
-        </Typography>
-        <Typography>
-          {`Debit Card: You will need to bear the charges. These will be shown to you on the next page.`}
-        </Typography>
-      </DialogContent>
+      {furtherToPay > 0 ? (
+        <DialogContent>
+          <Typography sx={{ mb: 2 }}>
+            {`You will now be redirected to the CC Avenue Payment Gateway where you can pay through Net Banking or Debit Card (of any bank).`}
+          </Typography>
+          <Typography sx={{ mb: 2 }}>
+            {`Your financial information (card number, username, password, OTP, etc.) will be entered by you directly on the CC Avenue Payment Gateway. At no point of time does the school or the website developer come in possession of this information and hence is not liable for the misuse of this information.`}
+          </Typography>
+          <Typography sx={{ fontWeight: 600 }}>Bank Charges</Typography>
+          <Typography>
+            {`Net Banking: The school shall bear the bank charges.`}
+          </Typography>
+          <Typography>
+            {`Debit Card: You will need to bear the charges. These will be shown to you on the next page.`}
+          </Typography>
+        </DialogContent>
+      ) : (
+        <DialogContent>
+          <Typography variant="h6" sx={{ textAlign: "center", mb: 1 }}>
+            {`Are you sure you want to adjust the fees?`}
+          </Typography>
+          <Typography
+            variant="h6"
+            sx={{ textAlign: "center", color: "warning.main" }}
+          >
+            {`This will deduct the amount from your wallet.`}
+          </Typography>
+        </DialogContent>
+      )}
       <DialogActions sx={{ textAlign: "right" }}>
         <Button onClick={onCancel} variant="outlined" disabled={isLoading}>
           Close
@@ -74,7 +88,7 @@ const DisclaimerDialog = ({
           {isLoading ? (
             <CircularProgress size={27} color="inherit" />
           ) : (
-            `Pay ₹${furtherToPay}`
+            `${furtherToPay > 0 ? `Pay ₹${furtherToPay}` : "Adjust Fees"}`
           )}
         </Button>
       </DialogActions>

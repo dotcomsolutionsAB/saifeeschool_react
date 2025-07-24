@@ -61,15 +61,19 @@ export default function PendingFees() {
     },
   });
 
+  const selectedFees = selectedRows?.reduce((total, row) => {
+    return (
+      total +
+      Number(row?.fpp_amount || 0) +
+      Number(row?.f_late_fee_applicable === "1" ? row?.fpp_late_fee : 0) -
+      Number(row?.f_concession || 0)
+    );
+  }, 0);
+
   const furtherToPay =
-    selectedRows?.reduce((total, row) => {
-      return (
-        total +
-        Number(row?.fpp_amount || 0) +
-        Number(row?.f_late_fee_applicable === "1" ? row?.fpp_late_fee : 0) -
-        Number(row?.f_concession || 0)
-      );
-    }, 0) - Number(allResponse?.student_wallet || 0);
+    selectedFees >= allResponse?.student_wallet
+      ? selectedFees - Number(allResponse?.student_wallet || 0)
+      : 0;
 
   const handleModalOpen = () => {
     setModalOpen(true);
@@ -124,6 +128,9 @@ export default function PendingFees() {
 
     if (response?.code === 200) {
       handleModalClose();
+      setSelectedRows([]);
+      setSelectedRowIds([]);
+      refetch();
       if (response?.url) {
         // const decodedUrl = decodeURIComponent(response.url);
         const decodedUrl = response.url;
@@ -246,7 +253,11 @@ export default function PendingFees() {
                       Adjusted From Wallet
                     </Typography>
                     <Typography sx={{ color: "primary.main" }}>
-                      ₹ {allResponse?.student_wallet || "0"}/-
+                      ₹{" "}
+                      {furtherToPay > 0
+                        ? allResponse?.student_wallet || "0"
+                        : selectedFees}
+                      /-
                     </Typography>
                   </Box>
                   <Box
@@ -272,7 +283,7 @@ export default function PendingFees() {
                     onClick={handleModalOpen}
                     sx={{ minWidth: "120px" }}
                   >
-                    Pay Fees
+                    {furtherToPay > 0 ? `Pay Fees` : "Adjust Fees"}
                   </Button>
                 </Box>
               </Box>
