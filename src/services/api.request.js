@@ -67,8 +67,16 @@ export const getRequest = async (path, params = {}) => {
 
 export const postRequest = async (path, body, isFormData = false) => {
   try {
-    const headers = isFormData ? { "Content-Type": "multipart/form-data" } : {};
-    const result = await api.post(path, body, { headers });
+    const headers = isFormData
+      ? { "Content-Type": "multipart/form-data" }
+      : body?.bearerToken
+      ? { Authorization: `Bearer ${body.bearerToken}` }
+      : {};
+    const result = await api.post(
+      path,
+      body?.bearerToken ? { username: body?.username } : body,
+      { headers }
+    );
     return result?.data;
   } catch (error) {
     return GET_ERROR(error);

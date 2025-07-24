@@ -9,7 +9,7 @@ import {
   Typography,
 } from "@mui/material";
 import useAuth from "../hooks/useAuth";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, useCallback } from "react";
 import LoginSchema from "../joi/login-schema";
 import { toast } from "react-toastify";
 import { Helmet } from "react-helmet-async";
@@ -38,7 +38,7 @@ const NAV_OPTIONS = [
 const loginCardWidth = "clamp(400px, 40vw, 100%)";
 
 const Login = () => {
-  const { login, isLoading } = useAuth();
+  const { login, isLoading, userInfo } = useAuth();
 
   const usernameRef = useRef(null);
   const passwordRef = useRef(null);
@@ -83,6 +83,10 @@ const Login = () => {
     }
   };
 
+  const handleLoginAsStudent = useCallback((data) => {
+    login(data);
+  }, []);
+
   const handleSendEmail = (e) => {
     e.preventDefault();
     // setFormData((preValue) => ({ ...preValue, username: "" }));
@@ -94,6 +98,19 @@ const Login = () => {
       usernameRef.current.focus();
     }
   }, [isForgotPassword]);
+
+  useEffect(() => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const urlData = Object.fromEntries(urlParams.entries());
+    if (Object.keys(urlData).length > 0) {
+      if (urlData?.st_roll_no && urlData?.bearerToken) {
+        handleLoginAsStudent({
+          username: urlData?.st_roll_no,
+          bearerToken: urlData?.bearerToken,
+        });
+      }
+    }
+  }, [handleLoginAsStudent, userInfo?.token]);
 
   return (
     <Box

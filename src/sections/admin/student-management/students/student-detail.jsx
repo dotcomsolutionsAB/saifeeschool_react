@@ -50,8 +50,6 @@ const StudentDetail = () => {
     body: { id: studentId },
   });
 
-  console.log(detail, "detail");
-
   const [previewImage, setPreviewImage] = useState(detail?.photo || "");
   const [activeTab, setActiveTab] = useState(0);
   const [walletModalOpen, setWalletModalOpen] = useState(false);
@@ -110,6 +108,17 @@ const StudentDetail = () => {
     navigate("/students/edit-student", { state: detail });
   };
 
+  const handleLoginAsStudent = () => {
+    if (detail?.st_roll_no) {
+      const queryString = new URLSearchParams({
+        st_roll_no: detail.st_roll_no,
+        bearerToken: userInfo?.token || "",
+      }).toString();
+      const url = `/login?${queryString}`;
+      window.open(url, "_blank", "noopener,noreferrer");
+    }
+  };
+
   useEffect(() => {
     if (!studentId) {
       navigate(-1);
@@ -134,7 +143,9 @@ const StudentDetail = () => {
         <Card>
           <CardContent sx={{ position: "relative", px: 5 }}>
             <Box sx={{ display: "flex", justifyContent: "end", mb: 1 }}>
-              <Button variant="contained">Login as Student</Button>
+              <Button variant="contained" onClick={handleLoginAsStudent}>
+                Login as Student
+              </Button>
             </Box>
             {/* Image */}
             <Box

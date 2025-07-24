@@ -1,7 +1,7 @@
 import { createContext, useRef, useState } from "react";
 import PropTypes from "prop-types";
 import useSessionStorage from "../hooks/useSessionStorage";
-import { loginApi } from "../services/auth.service";
+import { loginApi, loginAsStudentApi } from "../services/auth.service";
 import { toast } from "react-toastify";
 import { IS_LOGGED_IN, USER_INFO } from "../utils/constants";
 
@@ -26,8 +26,16 @@ const AuthProvider = ({ children }) => {
   const accessTo = userInfo?.access_to?.split(",") || [];
 
   const login = async (formData) => {
+    let response;
     setIsLoading(true);
-    const response = await loginApi(formData);
+    if (formData?.username && formData?.bearerToken) {
+      response = await loginAsStudentApi(
+        { username: formData?.username },
+        { bearerToken: formData?.bearerToken }
+      );
+    } else {
+      response = await loginApi(formData);
+    }
     setIsLoading(false);
 
     if (response?.code == 200 && response?.status) {
