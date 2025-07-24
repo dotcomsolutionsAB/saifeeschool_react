@@ -20,7 +20,6 @@ import {
 } from "../../../../../services/admin/accounts.service";
 
 const CreateEditDebitVoucherModal = ({ open, onClose, refetch, detail }) => {
-  console.log(detail, "detail");
   const { logout } = useAuth();
   const [isLoading, setIsLoading] = useState(false);
 
@@ -69,6 +68,7 @@ const CreateEditDebitVoucherModal = ({ open, onClose, refetch, detail }) => {
 
     if (response?.code === 200) {
       onClose();
+      setFormData(initialState);
       refetch();
       toast.success(
         response?.message ||
