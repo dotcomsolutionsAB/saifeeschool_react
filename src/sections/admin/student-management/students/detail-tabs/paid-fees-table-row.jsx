@@ -99,6 +99,12 @@ const PaidFeesTableRow = ({
           </Typography>
         </TableCell>
 
+        <TableCell>
+          <Typography noWrap>
+            {row?.date_paid ? dayjs(row?.date_paid).format("DD-MM-YYYY") : "-"}
+          </Typography>
+        </TableCell>
+
         {isEditable ? (
           <>
             <TableCell sx={{ width: "110px" }}>

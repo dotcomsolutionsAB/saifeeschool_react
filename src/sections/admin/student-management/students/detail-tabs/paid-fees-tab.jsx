@@ -25,6 +25,7 @@ const HEAD_LABEL = [
   { id: "fpp_name", label: "Fee" },
   { id: "fpp_amount", label: "Fee Amount" },
   { id: "fpp_due_date", label: "Due Date" },
+  { id: "date_paid", label: "Date Paid" },
   { id: "f_concession", label: "Concession", width: "110px" },
   { id: "fpp_late_fee", label: "Late Fee", width: "110px" },
   { id: "total_amount", label: "Total Amount" },
