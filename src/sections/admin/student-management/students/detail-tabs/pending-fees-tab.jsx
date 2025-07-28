@@ -4,21 +4,24 @@ import { useState } from "react";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
 import TableContainer from "@mui/material/TableContainer";
-import TablePagination from "@mui/material/TablePagination";
 
-import { Box, Checkbox, TableCell, TableHead, TableRow } from "@mui/material";
 import {
-  DEFAULT_LIMIT,
-  emptyRows,
-  ROWS_PER_PAGE_OPTIONS,
-} from "../../../../../utils/constants";
+  Box,
+  Button,
+  TableCell,
+  TableHead,
+  TableRow,
+  Typography,
+} from "@mui/material";
 import { useGetApi } from "../../../../../hooks/useGetApi";
-import TableEmptyRows from "../../../../../components/table/table-empty-rows";
-import TableNoData from "../../../../../components/table/table-no-data";
 import MessageBox from "../../../../../components/error/message-box";
 import Loader from "../../../../../components/loader/loader";
 import PendingFeesTableRow from "./pending-fees-table-row";
 import { getAllPendingFees } from "../../../../../services/admin/students-management.service";
+import useAuth from "../../../../../hooks/useAuth";
+import { payFees } from "../../../../../services/student/fees.service";
+import { toast } from "react-toastify";
+import DisclaimerDialog from "../../../../student/modals/disclaimer-dialog";
 // ----------------------------------------------------------------------
 
 const HEAD_LABEL = [
@@ -32,17 +35,18 @@ const HEAD_LABEL = [
 ];
 
 export default function PendingFees({ detail, academicYear }) {
-  const [page, setPage] = useState(0);
-
-  const [rowsPerPage, setRowsPerPage] = useState(DEFAULT_LIMIT);
+  const { logout } = useAuth();
 
   const [selectedRows, setSelectedRows] = useState([]);
+  const [selectedRowIds, setSelectedRowIds] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [modalOpen, setModalOpen] = useState(false);
 
   // api to get students list
 
   const {
     dataList: transferCertificateList,
-    dataCount: transferCertificateCount,
+    allResponse,
     isLoading,
     isError,
     refetch,
@@ -51,96 +55,142 @@ export default function PendingFees({ detail, academicYear }) {
     apiFunction: getAllPendingFees,
     body: {
       st_id: detail?.id,
-      offset: page * rowsPerPage,
-      limit: rowsPerPage,
+      offset: 0,
+      limit: 100,
       ay_id: Number(academicYear?.ay_id),
     },
-    dependencies: [page, rowsPerPage, academicYear],
-    debounceDelay: 500,
+    dependencies: [academicYear],
   });
 
-  // select all
-  const handleSelectAllClick = (event) => {
-    if (event.target.checked) {
-      const newSelecteds = transferCertificateList?.map((n) => n?.id);
-      setSelectedRows(newSelecteds);
-      return;
-    }
-    setSelectedRows([]);
+  const selectedFees = selectedRows?.reduce((total, row) => {
+    return (
+      total +
+      Number(row?.fpp_amount || 0) +
+      Number(row?.f_late_fee_applicable === "1" ? row?.fpp_late_fee : 0) -
+      Number(row?.f_concession || 0)
+    );
+  }, 0);
+
+  const furtherToPay =
+    selectedFees >= detail?.st_wallet
+      ? selectedFees - Number(detail?.st_wallet || 0)
+      : 0;
+
+  const handleModalOpen = () => {
+    setModalOpen(true);
   };
 
-  const handleClick = (id) => {
-    const selectedIndex = selectedRows?.indexOf(id);
-    let newSelected = [];
+  const handleModalClose = () => {
+    setModalOpen(false);
+  };
+
+  const handleClick = (selectedRowData) => {
+    const selectedIndex = selectedRowIds.indexOf(selectedRowData?.id);
+
     if (selectedIndex === -1) {
-      newSelected = newSelected?.concat(selectedRows, id);
-    } else if (selectedIndex === 0) {
-      newSelected = newSelected?.concat(selectedRows?.slice(1));
-    } else if (selectedIndex === selectedRows?.length - 1) {
-      newSelected = newSelected?.concat(selectedRows?.slice(0, -1));
-    } else if (selectedIndex > 0) {
-      newSelected = newSelected?.concat(
-        selectedRows?.slice(0, selectedIndex),
-        selectedRows?.slice(selectedIndex + 1)
-      );
+      // Row is being selected
+      setSelectedRows((prevSelectedRows) => [
+        ...prevSelectedRows,
+        selectedRowData,
+      ]);
+      setSelectedRowIds((prevSelectedRowIds) => [
+        ...prevSelectedRowIds,
+        selectedRowData?.id,
+      ]);
+    } else {
+      // Row is being unselected
+      if (selectedRowData?.is_compulsory === "1") {
+        // For compulsory fees, unselect this row and all subsequent compulsory rows
+        const compulsoryRows = transferCertificateList.filter(
+          (row) => row?.is_compulsory === "1"
+        );
+        const unselectedRowIndex = compulsoryRows.findIndex(
+          (row) => row.id === selectedRowData?.id
+        );
+
+        // Get IDs of compulsory rows that should be unselected (current and all after it)
+        const compulsoryRowsToUnselect = compulsoryRows
+          .slice(unselectedRowIndex)
+          .map((row) => row.id);
+
+        // Keep only rows that are not in the unselect list
+        const newSelectedRows = selectedRows.filter(
+          (row) => !compulsoryRowsToUnselect.includes(row.id)
+        );
+        const newSelectedRowIds = selectedRowIds.filter(
+          (id) => !compulsoryRowsToUnselect.includes(id)
+        );
+
+        setSelectedRows(newSelectedRows);
+        setSelectedRowIds(newSelectedRowIds);
+      } else {
+        // For non-compulsory fees, just unselect this single row
+        const newSelectedRows = selectedRows.filter(
+          (row) => row.id !== selectedRowData?.id
+        );
+        const newSelectedRowIds = selectedRowIds.filter(
+          (id) => id !== selectedRowData?.id
+        );
+
+        setSelectedRows(newSelectedRows);
+        setSelectedRowIds(newSelectedRowIds);
+      }
     }
-    setSelectedRows(newSelected);
   };
 
-  // change to next or prev page
+  const handlePayFees = async () => {
+    setLoading(true);
+    const response = await payFees({
+      st_id: detail?.id,
+      fpp_ids: selectedRows?.map((row) => row?.fpp_id)?.join(","),
+    });
+    setLoading(false);
 
-  const handleChangePage = (_, newPage) => {
-    if (!isLoading) setPage(newPage);
+    if (response?.code === 200) {
+      handleModalClose();
+      setSelectedRows([]);
+      setSelectedRowIds([]);
+      refetch();
+      if (response?.url) {
+        // const decodedUrl = decodeURIComponent(response.url);
+        const decodedUrl = response.url;
+        if (decodedUrl.startsWith("http")) {
+          // window.location.href = decodedUrl;
+          window.open(decodedUrl, "_self", "noopener,noreferrer");
+        } else {
+          toast.error("Invalid redirect URL");
+        }
+      }
+      toast.success(response?.message || "Fees paid successfully");
+    } else if (response?.code === 401) {
+      logout(response);
+    } else {
+      toast.error(response?.message || "Some error occurred.");
+    }
   };
-
-  // change rows per page
-  const handleChangeRowsPerPage = (event) => {
-    setPage(0);
-    setRowsPerPage(parseInt(event.target.value, 10));
-  };
-
-  // if no search result is found
-  const notFound = !transferCertificateCount;
 
   return (
     <>
-      <Box sx={{ width: "100%" }}>
-        {/* Table */}
+      {/* Table */}
 
-        {isLoading ? (
-          <Loader />
-        ) : isError ? (
-          <MessageBox errorMessage={errorMessage} />
-        ) : (
+      {isLoading ? (
+        <Loader />
+      ) : isError ? (
+        <MessageBox errorMessage={errorMessage} />
+      ) : (
+        <Box sx={{ width: "100%", mt: 2 }}>
+          {allResponse?.last_payment_status === "pending" && (
+            <Box sx={{ mb: 2, fontSize: "14px", color: "warning.main" }}>
+              {allResponse?.last_payment_details || ""}
+            </Box>
+          )}
           <TableContainer sx={{ overflowY: "unset" }}>
             <Table sx={{ minWidth: 800 }}>
               <TableHead>
                 <TableRow>
-                  <TableCell padding="checkbox">
-                    <Checkbox
-                      indeterminate={
-                        selectedRows?.filter((id) =>
-                          transferCertificateList?.some(
-                            (student) => student?.id === id
-                          )
-                        )?.length > 0 &&
-                        selectedRows?.filter((id) =>
-                          transferCertificateList?.some(
-                            (student) => student?.id === id
-                          )
-                        )?.length < transferCertificateList?.length
-                      }
-                      checked={
-                        transferCertificateList?.length > 0 &&
-                        selectedRows?.filter((id) =>
-                          transferCertificateList?.some(
-                            (student) => student?.id === id
-                          )
-                        )?.length === transferCertificateList?.length
-                      }
-                      onChange={handleSelectAllClick}
-                    />
-                  </TableCell>
+                  {allResponse?.last_payment_status !== "pending" && (
+                    <TableCell padding="checkbox"></TableCell>
+                  )}
                   {HEAD_LABEL?.map((headCell) => (
                     <TableCell
                       key={headCell?.id}
@@ -159,47 +209,91 @@ export default function PendingFees({ detail, academicYear }) {
 
               <TableBody>
                 {transferCertificateList?.map((row) => {
-                  const isRowSelected = selectedRows?.indexOf(row?.id) !== -1;
+                  const isRowSelected = selectedRowIds?.indexOf(row?.id) !== -1;
 
                   return (
                     <PendingFeesTableRow
                       key={row?.id}
-                      isRowSelected={isRowSelected}
                       row={row}
+                      isRowSelected={isRowSelected}
                       handleClick={handleClick}
+                      selectedRowIds={selectedRowIds} // Pass the selected rows array
+                      rows={transferCertificateList} // Pass the full list of rows
+                      allResponse={allResponse}
                       refetch={refetch}
                       detail={detail}
                     />
                   );
                 })}
-
-                <TableEmptyRows
-                  height={77}
-                  emptyRows={emptyRows(
-                    page,
-                    rowsPerPage,
-                    transferCertificateCount
-                  )}
-                />
-
-                {notFound && <TableNoData />}
               </TableBody>
             </Table>
           </TableContainer>
-        )}
-
-        {/* Pagination */}
-
-        <TablePagination
-          page={page}
-          component="div"
-          count={transferCertificateCount}
-          rowsPerPage={rowsPerPage}
-          onPageChange={handleChangePage}
-          rowsPerPageOptions={ROWS_PER_PAGE_OPTIONS}
-          onRowsPerPageChange={handleChangeRowsPerPage}
-        />
-      </Box>
+          {selectedRowIds?.length > 0 && (
+            <Box
+              sx={{
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "flex-end",
+                gap: 2,
+                mt: 2,
+                width: "100%",
+              }}
+            >
+              <Box sx={{ width: "300px" }}>
+                <Box
+                  sx={{
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "space-between",
+                    gap: 2,
+                  }}
+                >
+                  <Typography sx={{ fontWeight: 600 }}>
+                    Adjusted From Wallet
+                  </Typography>
+                  <Typography sx={{ color: "primary.main" }}>
+                    ₹{" "}
+                    {furtherToPay > 0 ? detail?.st_wallet || "0" : selectedFees}
+                    /-
+                  </Typography>
+                </Box>
+                <Box
+                  sx={{
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "space-between",
+                    gap: 2,
+                  }}
+                >
+                  <Typography sx={{ fontWeight: 600 }}>
+                    Further to Pay
+                  </Typography>
+                  <Typography sx={{ color: "primary.main" }}>
+                    ₹{furtherToPay || "0"}
+                    /-
+                  </Typography>
+                </Box>
+              </Box>
+              <Box>
+                <Button
+                  variant="contained"
+                  onClick={handleModalOpen}
+                  sx={{ minWidth: "120px" }}
+                >
+                  {furtherToPay > 0 ? `Pay Fees` : "Adjust Fees"}
+                </Button>
+              </Box>
+            </Box>
+          )}
+        </Box>
+      )}
+      <DisclaimerDialog
+        open={modalOpen}
+        onCancel={handleModalClose}
+        isLoading={loading}
+        onConfirm={handlePayFees}
+        furtherToPay={furtherToPay}
+      />
     </>
   );
 }

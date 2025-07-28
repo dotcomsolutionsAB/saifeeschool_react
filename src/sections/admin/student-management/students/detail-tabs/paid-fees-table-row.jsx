@@ -11,10 +11,14 @@ import {
 import Iconify from "../../../../../components/iconify/iconify";
 import useAuth from "../../../../../hooks/useAuth";
 import { useState } from "react";
-import { applyConcession } from "../../../../../services/admin/students-management.service";
+import {
+  applyConcession,
+  deleteFees,
+} from "../../../../../services/admin/students-management.service";
 import { toast } from "react-toastify";
 import dayjs from "dayjs";
 import { FORMAT_INDIAN_CURRENCY } from "../../../../../utils/constants";
+import ConfirmationDialog from "../../../../../components/confirmation-dialog/confirmation-dialog";
 
 const PaidFeesTableRow = ({
   row,
@@ -33,6 +37,8 @@ const PaidFeesTableRow = ({
 
   const [isEditable, setIsEditable] = useState(false);
   const [formData, setFormData] = useState(initialState);
+  const [isDeleteLoading, setIsDeleteLoading] = useState(false);
+  const [confirmationModalOpen, setConfirmationModalOpen] = useState(false);
 
   const handleEditOpen = () => {
     setIsEditable(true);
@@ -43,9 +49,33 @@ const PaidFeesTableRow = ({
     setIsEditable(false);
   };
 
+  const handleConfirmationModalOpen = () => {
+    setConfirmationModalOpen(true);
+  };
+
+  const handleConfirmationModalClose = () => {
+    setConfirmationModalOpen(false);
+  };
+
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((preValue) => ({ ...preValue, [name]: Number(value) }));
+  };
+
+  const handleDelete = async () => {
+    setIsDeleteLoading(true);
+    const response = await deleteFees(row?.id);
+    setIsDeleteLoading(false);
+
+    if (response?.code === 200) {
+      handleConfirmationModalClose();
+      toast.success(response?.message || "Fees deleted successfully!");
+      refetch();
+    } else if (response?.code === 401) {
+      logout(response);
+    } else {
+      toast.error(response?.message || "Some error occurred.");
+    }
   };
 
   const handleSave = async () => {
@@ -182,7 +212,10 @@ const PaidFeesTableRow = ({
                 >
                   <Iconify icon="lucide:edit" />
                 </IconButton>
-                <IconButton sx={{ cursor: "pointer", color: "error.main" }}>
+                <IconButton
+                  sx={{ cursor: "pointer", color: "error.main" }}
+                  onClick={handleConfirmationModalOpen}
+                >
                   <Iconify icon="material-symbols:delete-outline-rounded" />
                 </IconButton>
               </>
@@ -190,6 +223,15 @@ const PaidFeesTableRow = ({
           </Box>
         </TableCell>
       </TableRow>
+
+      {/* Delete Confirmation*/}
+      <ConfirmationDialog
+        open={confirmationModalOpen}
+        onCancel={handleConfirmationModalClose}
+        onConfirm={handleDelete}
+        isLoading={isDeleteLoading}
+        title="Are you sure you want to delete this fee?"
+      />
     </>
   );
 };

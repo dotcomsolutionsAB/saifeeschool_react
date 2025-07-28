@@ -246,19 +246,6 @@ export default function PendingFees() {
                 }}
               >
                 <Box sx={{ width: "300px" }}>
-                  {/* <Box
-                    sx={{
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "space-between",
-                      gap: 2,
-                    }}
-                  >
-                    <Typography sx={{ fontWeight: 600 }}>Total</Typography>
-                    <Typography sx={{ color: "primary.main" }}>
-                      ₹ {allResponse?.total_unpaid || "0"}/-
-                    </Typography>
-                  </Box> */}
                   <Box
                     sx={{
                       display: "flex",

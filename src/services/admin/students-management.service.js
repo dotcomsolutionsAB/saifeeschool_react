@@ -1,4 +1,4 @@
-import { getRequest, postRequest } from "../api.request";
+import { deleteRequest, getRequest, postRequest } from "../api.request";
 
 const STUDENTS_PATH = "/student";
 const CLASS_PATH = "/class_group";
@@ -42,6 +42,8 @@ export const getAttachments = async (body) =>
 
 export const applyConcession = async (body) =>
   await postRequest(`${STUDENTS_PATH}/apply_concession`, body);
+
+export const deleteFees = async (id) => await deleteRequest(`/fee/${id}`);
 
 // other apis
 

@@ -10,16 +10,23 @@ import {
 } from "@mui/material";
 import Iconify from "../../../../../components/iconify/iconify";
 import { useState } from "react";
-import { applyConcession } from "../../../../../services/admin/students-management.service";
+import {
+  applyConcession,
+  deleteFees,
+} from "../../../../../services/admin/students-management.service";
 import { toast } from "react-toastify";
 import useAuth from "../../../../../hooks/useAuth";
 import dayjs from "dayjs";
 import { FORMAT_INDIAN_CURRENCY } from "../../../../../utils/constants";
+import ConfirmationDialog from "../../../../../components/confirmation-dialog/confirmation-dialog";
 
 const PendingFeesTableRow = ({
   row,
   isRowSelected,
   handleClick,
+  selectedRowIds,
+  rows,
+  allResponse,
   refetch,
   detail,
 }) => {
@@ -33,6 +40,27 @@ const PendingFeesTableRow = ({
 
   const [isEditable, setIsEditable] = useState(false);
   const [formData, setFormData] = useState(initialState);
+  const [isDeleteLoading, setIsDeleteLoading] = useState(false);
+  const [confirmationModalOpen, setConfirmationModalOpen] = useState(false);
+
+  // Check if current row is compulsory (monthly fee)
+  const isCompulsory = row?.is_compulsory === "1";
+
+  let isDisabled = false;
+
+  if (isCompulsory) {
+    // For compulsory fees, find the previous compulsory fee and check if it's selected
+    const compulsoryRows = rows.filter((r) => r?.is_compulsory === "1");
+    const currentCompulsoryIndex = compulsoryRows.findIndex(
+      (r) => r.id === row.id
+    );
+
+    if (currentCompulsoryIndex > 0) {
+      const previousCompulsoryRow = compulsoryRows[currentCompulsoryIndex - 1];
+      isDisabled = !selectedRowIds.includes(previousCompulsoryRow?.id);
+    }
+  }
+  // For non-compulsory fees (is_compulsory === "0"), isDisabled remains false
 
   const handleEditOpen = () => {
     setIsEditable(true);
@@ -43,9 +71,33 @@ const PendingFeesTableRow = ({
     setIsEditable(false);
   };
 
+  const handleConfirmationModalOpen = () => {
+    setConfirmationModalOpen(true);
+  };
+
+  const handleConfirmationModalClose = () => {
+    setConfirmationModalOpen(false);
+  };
+
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((preValue) => ({ ...preValue, [name]: Number(value) }));
+  };
+
+  const handleDelete = async () => {
+    setIsDeleteLoading(true);
+    const response = await deleteFees(row?.id);
+    setIsDeleteLoading(false);
+
+    if (response?.code === 200) {
+      handleConfirmationModalClose();
+      toast.success(response?.message || "Fees deleted successfully!");
+      refetch();
+    } else if (response?.code === 401) {
+      logout(response);
+    } else {
+      toast.error(response?.message || "Some error occurred.");
+    }
   };
 
   const handleSave = async () => {
@@ -73,14 +125,16 @@ const PendingFeesTableRow = ({
   return (
     <>
       <TableRow hover tabIndex={-1} role="checkbox" selected={isRowSelected}>
-        <TableCell padding="checkbox">
-          <Checkbox
-            disableRipple
-            checked={isRowSelected}
-            onChange={() => handleClick(row?.id)}
-          />
-        </TableCell>
-
+        {allResponse?.last_payment_status !== "pending" && (
+          <TableCell padding="checkbox">
+            <Checkbox
+              disableRipple
+              checked={isRowSelected}
+              onChange={() => handleClick(row)}
+              disabled={isDisabled} // Disable based on previous row's selection
+            />
+          </TableCell>
+        )}
         <TableCell>
           <Typography variant="subtitle2" noWrap>
             {row?.fpp_name || "-"}
@@ -176,7 +230,10 @@ const PendingFeesTableRow = ({
                 >
                   <Iconify icon="lucide:edit" />
                 </IconButton>
-                <IconButton sx={{ cursor: "pointer", color: "error.main" }}>
+                <IconButton
+                  sx={{ cursor: "pointer", color: "error.main" }}
+                  onClick={handleConfirmationModalOpen}
+                >
                   <Iconify icon="material-symbols:delete-outline-rounded" />
                 </IconButton>
               </>
@@ -184,6 +241,15 @@ const PendingFeesTableRow = ({
           </Box>
         </TableCell>
       </TableRow>
+
+      {/* Delete Confirmation*/}
+      <ConfirmationDialog
+        open={confirmationModalOpen}
+        onCancel={handleConfirmationModalClose}
+        onConfirm={handleDelete}
+        isLoading={isDeleteLoading}
+        title="Are you sure you want to delete this fee?"
+      />
     </>
   );
 };
@@ -194,6 +260,9 @@ PendingFeesTableRow.propTypes = {
   handleClick: PropTypes.func,
   refetch: PropTypes.func,
   detail: PropTypes.object,
+  selectedRowIds: PropTypes.array,
+  rows: PropTypes.array,
+  allResponse: PropTypes.object,
 };
 
 export default PendingFeesTableRow;
