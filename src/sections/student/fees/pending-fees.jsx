@@ -85,9 +85,6 @@ export default function PendingFees() {
 
   const handleClick = (selectedRowData) => {
     const selectedIndex = selectedRowIds.indexOf(selectedRowData?.id);
-    const rowIndex = pendingFeesList.findIndex(
-      (row) => row.id === selectedRowData?.id
-    ); // Find the index of the clicked row
 
     if (selectedIndex === -1) {
       // Row is being selected
@@ -101,20 +98,42 @@ export default function PendingFees() {
       ]);
     } else {
       // Row is being unselected
-      // Keep only the rows before the unselected row
-      const newSelectedRows = selectedRows.filter((option) => {
-        const idIndex = pendingFeesList.findIndex(
-          (row) => row.id === option.id
+      if (selectedRowData?.is_compulsory === "1") {
+        // For compulsory fees, unselect this row and all subsequent compulsory rows
+        const compulsoryRows = pendingFeesList.filter(
+          (row) => row?.is_compulsory === "1"
         );
-        return idIndex < rowIndex;
-      });
-      const newSelectedRowIds = selectedRowIds.filter((id) => {
-        const idIndex = pendingFeesList.findIndex((row) => row.id === id);
-        return idIndex < rowIndex;
-      });
+        const unselectedRowIndex = compulsoryRows.findIndex(
+          (row) => row.id === selectedRowData?.id
+        );
 
-      setSelectedRows(newSelectedRows);
-      setSelectedRowIds(newSelectedRowIds);
+        // Get IDs of compulsory rows that should be unselected (current and all after it)
+        const compulsoryRowsToUnselect = compulsoryRows
+          .slice(unselectedRowIndex)
+          .map((row) => row.id);
+
+        // Keep only rows that are not in the unselect list
+        const newSelectedRows = selectedRows.filter(
+          (row) => !compulsoryRowsToUnselect.includes(row.id)
+        );
+        const newSelectedRowIds = selectedRowIds.filter(
+          (id) => !compulsoryRowsToUnselect.includes(id)
+        );
+
+        setSelectedRows(newSelectedRows);
+        setSelectedRowIds(newSelectedRowIds);
+      } else {
+        // For non-compulsory fees, just unselect this single row
+        const newSelectedRows = selectedRows.filter(
+          (row) => row.id !== selectedRowData?.id
+        );
+        const newSelectedRowIds = selectedRowIds.filter(
+          (id) => id !== selectedRowData?.id
+        );
+
+        setSelectedRows(newSelectedRows);
+        setSelectedRowIds(newSelectedRowIds);
+      }
     }
   };
 
@@ -195,7 +214,7 @@ export default function PendingFees() {
                 </TableHead>
 
                 <TableBody>
-                  {pendingFeesList?.map((row, index) => {
+                  {pendingFeesList?.map((row) => {
                     const isRowSelected =
                       selectedRowIds?.indexOf(row?.id) !== -1;
                     return (
@@ -204,7 +223,6 @@ export default function PendingFees() {
                         row={row}
                         isRowSelected={isRowSelected}
                         handleClick={handleClick}
-                        index={index} // Pass the row index
                         selectedRowIds={selectedRowIds} // Pass the selected rows array
                         rows={pendingFeesList} // Pass the full list of rows
                         allResponse={allResponse}

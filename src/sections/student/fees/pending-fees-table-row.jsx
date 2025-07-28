@@ -8,12 +8,29 @@ const PendingFeesTableRow = ({
   row,
   isRowSelected,
   handleClick,
-  index,
   selectedRowIds,
   rows,
   allResponse,
 }) => {
-  const isDisabled = index > 0 && !selectedRowIds.includes(rows[index - 1]?.id);
+  // Check if current row is compulsory (monthly fee)
+  const isCompulsory = row?.is_compulsory === "1";
+
+  let isDisabled = false;
+
+  if (isCompulsory) {
+    // For compulsory fees, find the previous compulsory fee and check if it's selected
+    const compulsoryRows = rows.filter((r) => r?.is_compulsory === "1");
+    const currentCompulsoryIndex = compulsoryRows.findIndex(
+      (r) => r.id === row.id
+    );
+
+    if (currentCompulsoryIndex > 0) {
+      const previousCompulsoryRow = compulsoryRows[currentCompulsoryIndex - 1];
+      isDisabled = !selectedRowIds.includes(previousCompulsoryRow?.id);
+    }
+  }
+  // For non-compulsory fees (is_compulsory === "0"), isDisabled remains false
+
   return (
     <>
       <TableRow hover tabIndex={-1} role="checkbox" selected={isRowSelected}>
@@ -73,7 +90,6 @@ PendingFeesTableRow.propTypes = {
   row: PropTypes.object,
   isRowSelected: PropTypes.bool,
   handleClick: PropTypes.func,
-  index: PropTypes.number.isRequired, // Index of the current row
   selectedRowIds: PropTypes.array.isRequired, // Array of selected row IDs
   rows: PropTypes.array.isRequired, // Full list of rows to check previous row
   allResponse: PropTypes.object, // Response object containing payment status
