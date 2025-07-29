@@ -275,13 +275,19 @@ export default function PendingFees({ detail, academicYear }) {
                 </Box>
               </Box>
               <Box>
-                <Button
-                  variant="contained"
-                  onClick={handleModalOpen}
-                  sx={{ minWidth: "120px" }}
-                >
-                  {furtherToPay > 0 ? `Pay Fees` : "Adjust Fees"}
-                </Button>
+                {furtherToPay > 0 ? (
+                  <Typography variant="h6" color="primary.main">
+                    Please add ₹{furtherToPay} to wallet to adjust fees.
+                  </Typography>
+                ) : (
+                  <Button
+                    variant="contained"
+                    onClick={handleModalOpen}
+                    sx={{ minWidth: "120px" }}
+                  >
+                    Adjust Fees
+                  </Button>
+                )}
               </Box>
             </Box>
           )}
