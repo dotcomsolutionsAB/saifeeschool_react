@@ -25,12 +25,13 @@ import {
   uploadStudentImage,
 } from "../../../../services/admin/students-management.service";
 import { toast } from "react-toastify";
-import WalletModal from "./modals/wallet";
+import WalletModal from "./modals/wallet-modal";
 import useAuth from "../../../../hooks/useAuth";
 import { useGetApi } from "../../../../hooks/useGetApi";
 import Loader from "../../../../components/loader/loader";
 import MessageBox from "../../../../components/error/message-box";
 import { Helmet } from "react-helmet-async";
+import TransferMoneyModal from "./modals/transfer-money-modal";
 
 const StudentDetail = () => {
   const { logout, userInfo } = useAuth();
@@ -53,6 +54,7 @@ const StudentDetail = () => {
   const [previewImage, setPreviewImage] = useState(detail?.photo || "");
   const [activeTab, setActiveTab] = useState(0);
   const [walletModalOpen, setWalletModalOpen] = useState(false);
+  const [transferMoneyModalOpen, setTransferMoneyModalOpen] = useState(false);
   const [academicYear, setAcademicYear] = useState({
     ay_id: userInfo?.ay_id,
     ay_name: userInfo?.ay_name,
@@ -102,6 +104,14 @@ const StudentDetail = () => {
 
   const handleWalletClick = () => {
     setWalletModalOpen(true);
+  };
+
+  const handleTransferMoneyModalClose = () => {
+    setTransferMoneyModalOpen(false);
+  };
+
+  const handleTransferMoneyClick = () => {
+    setTransferMoneyModalOpen(true);
   };
 
   const handleEdit = () => {
@@ -299,6 +309,13 @@ const StudentDetail = () => {
               <Button
                 variant="standard"
                 sx={{ bgcolor: "primary.main", color: "primary.contrastText" }}
+                onClick={handleTransferMoneyClick}
+              >
+                Transfer Money
+              </Button>
+              <Button
+                variant="standard"
+                sx={{ bgcolor: "primary.main", color: "primary.contrastText" }}
                 onClick={handleWalletClick}
               >
                 +Wallet: ₹{detail?.st_wallet || 0}/-
@@ -338,6 +355,12 @@ const StudentDetail = () => {
             <WalletModal
               open={walletModalOpen}
               onClose={handleWalletModalClose}
+              detail={detail}
+              studentDetailRefetch={studentDetailRefetch}
+            />
+            <TransferMoneyModal
+              open={transferMoneyModalOpen}
+              onClose={handleTransferMoneyModalClose}
               detail={detail}
               studentDetailRefetch={studentDetailRefetch}
             />
