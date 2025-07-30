@@ -27,7 +27,7 @@ const CreateEditDebitVoucherModal = ({ open, onClose, refetch, detail }) => {
     date: detail?.date
       ? dayjs(detail?.date).format("YYYY-MM-DD")
       : dayjs().format("YYYY-MM-DD"),
-    debit_no: detail?.debit_no || "",
+    debit: detail?.debit || "",
     amount: Number(detail?.amount) || 0,
     paid_to: detail?.paid_to || "",
     cheque_no: detail?.cheque_no || "",
@@ -144,11 +144,11 @@ const CreateEditDebitVoucherModal = ({ open, onClose, refetch, detail }) => {
             {/* Debit */}
             <Grid item xs={12} sm={6} md={4}>
               <TextField
-                name="debit_no"
+                name="debit"
                 label="Debit"
                 required
                 fullWidth
-                value={formData?.debit_no || ""}
+                value={formData?.debit || ""}
                 onChange={handleChange}
               />
             </Grid>
