@@ -34,7 +34,11 @@ const HEAD_LABEL = [
   { id: "actions", label: "Actions" },
 ];
 
-export default function PendingFees({ detail, academicYear }) {
+export default function PendingFees({
+  detail,
+  academicYear,
+  studentDetailRefetch,
+}) {
   const { logout } = useAuth();
 
   const [selectedRows, setSelectedRows] = useState([]);
@@ -150,6 +154,7 @@ export default function PendingFees({ detail, academicYear }) {
       handleModalClose();
       setSelectedRows([]);
       setSelectedRowIds([]);
+      studentDetailRefetch();
       refetch();
       if (response?.url) {
         // const decodedUrl = decodeURIComponent(response.url);
@@ -307,4 +312,5 @@ export default function PendingFees({ detail, academicYear }) {
 PendingFees.propTypes = {
   detail: PropTypes.object,
   academicYear: PropTypes.object,
+  studentDetailRefetch: PropTypes.func.isRequired,
 };

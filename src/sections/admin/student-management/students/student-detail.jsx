@@ -44,7 +44,7 @@ const StudentDetail = () => {
     isLoading,
     isError,
     errorMessage,
-    refetch,
+    refetch: studentDetailRefetch,
   } = useGetApi({
     apiFunction: getStudentById,
     body: { id: studentId },
@@ -324,7 +324,11 @@ const StudentDetail = () => {
             {/* Tab Content */}
             {activeTab === 0 && <OtherDetailsTab detail={detail} />}
             {activeTab === 1 && (
-              <PendingFeesTab detail={detail} academicYear={academicYear} />
+              <PendingFeesTab
+                detail={detail}
+                academicYear={academicYear}
+                studentDetailRefetch={studentDetailRefetch}
+              />
             )}
             {activeTab === 2 && (
               <PaidFeesTab detail={detail} academicYear={academicYear} />
@@ -335,7 +339,7 @@ const StudentDetail = () => {
               open={walletModalOpen}
               onClose={handleWalletModalClose}
               detail={detail}
-              refetch={refetch}
+              studentDetailRefetch={studentDetailRefetch}
             />
           </CardContent>
         </Card>

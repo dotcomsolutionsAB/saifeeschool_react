@@ -40,7 +40,7 @@ const TYPE_LIST = [
   },
 ];
 
-const WalletModal = ({ open, onClose, detail, refetch }) => {
+const WalletModal = ({ open, onClose, detail, studentDetailRefetch }) => {
   const { userInfo, logout } = useAuth();
   // const { refetch } = useStudent();
   const [isLoading, setIsLoading] = useState(false);
@@ -66,7 +66,7 @@ const WalletModal = ({ open, onClose, detail, refetch }) => {
 
     if (response?.code === 200) {
       onClose();
-      refetch();
+      studentDetailRefetch();
       toast.success(response?.message || "Money added to wallet successfully.");
     } else if (response?.code === 401) {
       logout(response);
@@ -331,7 +331,7 @@ WalletModal.propTypes = {
   open: PropTypes.bool,
   onClose: PropTypes.func,
   detail: PropTypes.object,
-  refetch: PropTypes.func,
+  studentDetailRefetch: PropTypes.func,
 };
 
 export default WalletModal;
