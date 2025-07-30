@@ -2,6 +2,7 @@ import PropTypes from "prop-types";
 import {
   Box,
   Checkbox,
+  CircularProgress,
   IconButton,
   TableCell,
   TableRow,
@@ -14,6 +15,7 @@ import { useState } from "react";
 import {
   applyConcession,
   deleteFees,
+  printFees,
 } from "../../../../../services/admin/students-management.service";
 import { toast } from "react-toastify";
 import dayjs from "dayjs";
@@ -38,6 +40,7 @@ const PaidFeesTableRow = ({
   const [isEditable, setIsEditable] = useState(false);
   const [formData, setFormData] = useState(initialState);
   const [isDeleteLoading, setIsDeleteLoading] = useState(false);
+  const [isPrintLoading, setIsPrintLoading] = useState(false);
   const [confirmationModalOpen, setConfirmationModalOpen] = useState(false);
 
   const handleEditOpen = () => {
@@ -60,6 +63,31 @@ const PaidFeesTableRow = ({
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((preValue) => ({ ...preValue, [name]: Number(value) }));
+  };
+
+  const handlePrint = async () => {
+    setIsPrintLoading(true);
+    const response = await printFees(row?.id);
+    setIsPrintLoading(false);
+
+    if (response?.code === 200) {
+      const link = document.createElement("a");
+      link.href = response?.data?.file_url || "";
+      link.target = "_blank"; // Open in a new tab
+      link.rel = "noopener noreferrer"; // Add security attributes
+
+      // Append the link to the document and trigger the download
+      document.body.appendChild(link);
+      link.click();
+
+      // Remove the link after triggering the download
+      document.body.removeChild(link);
+      toast.success(response?.message || "File downloaded successfully!");
+    } else if (response?.code === 401) {
+      logout(response);
+    } else {
+      toast.error(response?.message || "Some error occurred.");
+    }
   };
 
   const handleDelete = async () => {
@@ -218,6 +246,16 @@ const PaidFeesTableRow = ({
                 >
                   <Iconify icon="material-symbols:delete-outline-rounded" />
                 </IconButton>
+                {isPrintLoading ? (
+                  <CircularProgress size={18} />
+                ) : (
+                  <IconButton
+                    sx={{ cursor: "pointer", color: "primary.main" }}
+                    onClick={handlePrint}
+                  >
+                    <Iconify icon="mdi-light:printer" />
+                  </IconButton>
+                )}
               </>
             )}
           </Box>

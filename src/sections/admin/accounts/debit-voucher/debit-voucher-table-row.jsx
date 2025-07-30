@@ -73,7 +73,7 @@ const DebitVoucherTableRow = ({ row, index, refetch }) => {
       toast.success(response?.message || "File downloaded successfully!");
     } else if (response?.code === 401) {
       logout(response);
-      toast.error(response?.message || "Unauthorized");
+      // toast.error(response?.message || "Unauthorized");
     } else {
       toast.error(response?.message || "Some error occurred.");
     }

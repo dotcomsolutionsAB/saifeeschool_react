@@ -45,6 +45,8 @@ export const applyConcession = async (body) =>
 
 export const deleteFees = async (id) => await deleteRequest(`/fee/${id}`);
 
+export const printFees = async (id) => await getRequest(`/fee/print/${id}`);
+
 // other apis
 
 export const getHouse = async () => await getRequest(HOUSE_PATH);

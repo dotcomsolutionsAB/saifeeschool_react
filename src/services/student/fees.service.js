@@ -18,3 +18,5 @@ export const payFees = async (body) => await postRequest(`test-fees`, body);
 
 export const getTransactionStatus = async (body) =>
   await getRequest(`fee/confirmation/${body?.txn_id}`);
+
+export const printFees = async (id) => await getRequest(`/fee/print/${id}`);

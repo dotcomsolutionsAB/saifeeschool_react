@@ -1,9 +1,48 @@
 import PropTypes from "prop-types";
-import { Box, TableCell, TableRow, Typography } from "@mui/material";
+import {
+  Box,
+  CircularProgress,
+  IconButton,
+  TableCell,
+  TableRow,
+  Typography,
+} from "@mui/material";
 import dayjs from "dayjs";
 import { FORMAT_INDIAN_CURRENCY } from "../../../utils/constants";
+import { printFees } from "../../../services/student/fees.service";
+import { toast } from "react-toastify";
+import useAuth from "../../../hooks/useAuth";
+import { useState } from "react";
+import Iconify from "../../../components/iconify/iconify";
 
 const PaidFeesTableRow = ({ row }) => {
+  const { logout } = useAuth();
+  const [isPrintLoading, setIsPrintLoading] = useState(false);
+
+  const handlePrint = async () => {
+    setIsPrintLoading(true);
+    const response = await printFees(row?.id);
+    setIsPrintLoading(false);
+
+    if (response?.code === 200) {
+      const link = document.createElement("a");
+      link.href = response?.data?.file_url || "";
+      link.target = "_blank"; // Open in a new tab
+      link.rel = "noopener noreferrer"; // Add security attributes
+
+      // Append the link to the document and trigger the download
+      document.body.appendChild(link);
+      link.click();
+
+      // Remove the link after triggering the download
+      document.body.removeChild(link);
+      toast.success(response?.message || "File downloaded successfully!");
+    } else if (response?.code === 401) {
+      logout(response);
+    } else {
+      toast.error(response?.message || "Some error occurred.");
+    }
+  };
   return (
     <>
       <TableRow hover tabIndex={-1}>
@@ -42,6 +81,18 @@ const PaidFeesTableRow = ({ row }) => {
 
         <TableCell>
           ₹ {FORMAT_INDIAN_CURRENCY(row?.total_amount) || "0"}
+        </TableCell>
+        <TableCell align="center">
+          {isPrintLoading ? (
+            <CircularProgress size={24} />
+          ) : (
+            <IconButton
+              sx={{ cursor: "pointer", color: "primary.main" }}
+              onClick={handlePrint}
+            >
+              <Iconify icon="mdi-light:printer" />
+            </IconButton>
+          )}
         </TableCell>
       </TableRow>
     </>

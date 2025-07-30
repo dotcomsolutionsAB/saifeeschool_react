@@ -34,6 +34,7 @@ const HEAD_LABEL = [
   { id: "fpp_amount", label: "Fee Amount" },
   { id: "fpp_due_date", label: "Due Date" },
   { id: "total_amount", label: "Total Amount" },
+  { id: "actions", label: "Actions", align: "center" },
 ];
 
 export default function PaidFees() {
