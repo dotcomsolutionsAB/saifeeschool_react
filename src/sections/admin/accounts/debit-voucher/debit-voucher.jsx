@@ -44,6 +44,7 @@ const HEAD_LABEL = [
   { id: "expense_no", label: "Expense No" },
   { id: "date", label: "Date" },
   { id: "amount", label: "Amount" },
+  { id: "debit", label: "Debit" },
   { id: "paid_to", label: "Paid To" },
   { id: "cheque_no", label: "Cheque No" },
   { id: "description", label: "Description" },

@@ -117,6 +117,7 @@ const DebitVoucherTableRow = ({ row, index, refetch }) => {
 
         <TableCell>₹ {FORMAT_INDIAN_CURRENCY(row?.amount) || ""}</TableCell>
         <TableCell>{row?.paid_to || "-"}</TableCell>
+        <TableCell>{row?.debit || "-"}</TableCell>
         <TableCell>{row?.cheque_no || "-"}</TableCell>
         <TableCell>{row?.description || "-"}</TableCell>
 
