@@ -55,6 +55,7 @@ const ReportCardDashboard = () => {
   const [termsList, setTermsList] = useState([]);
   const [isTermsLoading, setIsTermsLoading] = useState(false);
   const [printIndex, setPrintIndex] = useState(null);
+  const [type, setType] = useState("pdf");
 
   const dataSendToBackend = {
     search: search || "",
@@ -71,11 +72,12 @@ const ReportCardDashboard = () => {
   };
 
   // Open popover for print
-  const handlePrintPopoverOpen = async (e, option, index) => {
+  const handlePrintPopoverOpen = async (e, option, index, type) => {
     e.stopPropagation(); // Prevent the click from propagating to the card
     setPopoverAnchor(e.currentTarget);
     setPrintIndex(index);
     setIsTermsLoading(true);
+    setType(type);
     const response = await getTerms({
       cg_id: option?.cg_id || "",
     });
@@ -109,7 +111,7 @@ const ReportCardDashboard = () => {
       return newLoadingState;
     });
     const response = await exportReportCard({
-      type: "pdf",
+      type,
       cg_id: option.cg_id || "",
       ay_id: formData?.ay_id?.ay_id || "",
       term: selectedTerm?.term || "",
@@ -430,14 +432,20 @@ const ReportCardDashboard = () => {
                         }}
                       >
                         <Iconify
-                          icon="mdi-light:printer"
+                          icon="carbon:report-data"
                           sx={{ cursor: "pointer" }}
                           onClick={(e) =>
-                            handlePrintPopoverOpen(e, option, index)
+                            handlePrintPopoverOpen(e, option, index, "excel")
                           }
                         />
 
-                        <Iconify icon="carbon:report-data" />
+                        <Iconify
+                          icon="mdi-light:printer"
+                          sx={{ cursor: "pointer" }}
+                          onClick={(e) =>
+                            handlePrintPopoverOpen(e, option, index, "pdf")
+                          }
+                        />
                       </Box>
                     </Box>
 
