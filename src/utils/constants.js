@@ -260,6 +260,33 @@ export function emptyRows(page, rowsPerPage, arrayLength) {
   return page ? Math.max(0, (1 + page) * rowsPerPage - arrayLength) : 0;
 }
 
+/**
+ * Handles numeric input for form fields
+ * Ensures only positive numbers are allowed, defaults to 0 for invalid inputs
+ * @param {string} value - The input value to process
+ * @returns {number} - The processed numeric value
+ */
+export const handleNumericInput = (value) => {
+  // Handle empty string or invalid input
+  if (value === "" || value === null || value === undefined) {
+    return 0;
+  }
+
+  // Remove any non-numeric characters except decimal point
+  const cleanValue = value.replace(/[^0-9.]/g, "");
+
+  // Convert to number
+  const numericValue = parseFloat(cleanValue);
+
+  // Check if it's a valid number and not negative
+  if (isNaN(numericValue) || numericValue < 0) {
+    return 0;
+  }
+
+  // Return the numeric value
+  return numericValue;
+};
+
 const CREATE_ERROR_RESPONSE = (code, message) => ({
   code,
   data: null,

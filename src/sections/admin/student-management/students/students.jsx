@@ -80,6 +80,11 @@ const STUDENT_TYPE_LIST = [
   { label: "Both", value: "%" },
 ];
 
+const ON_ROLL_LIST = [
+  { label: "On Roll", value: "1" },
+  { label: "Off Roll", value: "0" },
+];
+
 export default function Students() {
   const navigate = useNavigate();
   const { userInfo, logout } = useAuth();
@@ -108,6 +113,8 @@ export default function Students() {
     setAcademicYear,
     stExternal,
     setStExternal,
+    stOnRoll,
+    setStOnRoll,
     setAnchorEl,
     setSelectedRows,
     setIsExportLoading,
@@ -290,6 +297,9 @@ export default function Students() {
         break;
       case "st_external":
         setStExternal(value);
+        break;
+      case "st_on_roll":
+        setStOnRoll(value);
         break;
       default:
         break;
@@ -508,6 +518,16 @@ export default function Students() {
             )}
             value={stExternal || null}
             onChange={(_, newValue) => handleChange("st_external", newValue)}
+            sx={{ width: "200px" }}
+          />
+          <Autocomplete
+            options={ON_ROLL_LIST || []}
+            getOptionLabel={(option) => option?.label || ""}
+            renderInput={(params) => (
+              <TextField {...params} label="Student On Roll" size="small" />
+            )}
+            value={stOnRoll || null}
+            onChange={(_, newValue) => handleChange("st_on_roll", newValue)}
             sx={{ width: "200px" }}
           />
 

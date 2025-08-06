@@ -19,7 +19,10 @@ import {
 } from "../../../../../services/admin/students-management.service";
 import { toast } from "react-toastify";
 import dayjs from "dayjs";
-import { FORMAT_INDIAN_CURRENCY } from "../../../../../utils/constants";
+import {
+  FORMAT_INDIAN_CURRENCY,
+  handleNumericInput,
+} from "../../../../../utils/constants";
 import ConfirmationDialog from "../../../../../components/confirmation-dialog/confirmation-dialog";
 
 const PaidFeesTableRow = ({
@@ -28,6 +31,7 @@ const PaidFeesTableRow = ({
   handleClick,
   refetch,
   detail,
+  studentDetailRefetch,
 }) => {
   const { logout } = useAuth();
   const initialState = {
@@ -62,7 +66,8 @@ const PaidFeesTableRow = ({
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData((preValue) => ({ ...preValue, [name]: Number(value) }));
+    const numericValue = handleNumericInput(value);
+    setFormData((preValue) => ({ ...preValue, [name]: numericValue }));
   };
 
   const handlePrint = async () => {
@@ -97,8 +102,9 @@ const PaidFeesTableRow = ({
 
     if (response?.code === 200) {
       handleConfirmationModalClose();
+      studentDetailRefetch();
       toast.success(response?.message || "Fees deleted successfully!");
-      refetch();
+      // refetch();
     } else if (response?.code === 401) {
       logout(response);
     } else {
@@ -118,7 +124,8 @@ const PaidFeesTableRow = ({
     }
     const response = await applyConcession(formData);
     if (response?.code === 200) {
-      refetch();
+      studentDetailRefetch();
+      // refetch();
       handleEditClose();
       toast.success(response?.message || "Concession updated  successfully");
     } else if (response?.code === 401) {
@@ -168,7 +175,6 @@ const PaidFeesTableRow = ({
             <TableCell sx={{ width: "110px" }}>
               <TextField
                 name="concession_amount"
-                type="number"
                 required
                 fullWidth
                 value={formData?.concession_amount ?? 0}
@@ -185,7 +191,6 @@ const PaidFeesTableRow = ({
             <TableCell sx={{ width: "110px" }}>
               <TextField
                 name="late_fee"
-                type="number"
                 required
                 fullWidth
                 value={formData?.late_fee ?? 0}
@@ -280,6 +285,7 @@ PaidFeesTableRow.propTypes = {
   handleClick: PropTypes.func,
   refetch: PropTypes.func,
   detail: PropTypes.object,
+  studentDetailRefetch: PropTypes.func,
 };
 
 export default PaidFeesTableRow;

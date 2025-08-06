@@ -9,9 +9,10 @@ import {
   Typography,
 } from "@mui/material";
 import { Link } from "react-router-dom";
+import { memo } from "react";
 
 const InstructionsTab = ({ props }) => {
-  const { termsAccepted, handleCheckboxChange } = props;
+  const { termsAccepted, handleCheckboxChange, acceptTermsRef } = props;
 
   return (
     <Box>
@@ -108,6 +109,8 @@ const InstructionsTab = ({ props }) => {
 
       {/* Terms Checkbox */}
       <FormControlLabel
+        ref={acceptTermsRef}
+        required
         control={
           <Checkbox
             checked={termsAccepted || false}
@@ -125,6 +128,10 @@ InstructionsTab.propTypes = {
   props: PropTypes.object,
   termsAccepted: PropTypes.object,
   handleCheckboxChange: PropTypes.func,
+  acceptTermsRef: PropTypes.oneOfType([
+    PropTypes.object,
+    PropTypes.oneOf([null]),
+  ]),
 };
 
-export default InstructionsTab;
+export default memo(InstructionsTab);

@@ -273,7 +273,7 @@ export default function Router() {
       element: isLoggedIn ? <Navigate to="/" replace /> : <Login />,
     },
     {
-      path: "/new-admission",
+      path: "/admissions",
       element: <NewAdmission />,
     },
     { path: "404", element: <Page404 /> },

@@ -8,6 +8,7 @@ import {
   RadioGroup,
   TextField,
 } from "@mui/material";
+import { memo } from "react";
 
 const MotherDetailsTab = ({ props }) => {
   const { formData, handleChange } = props;
@@ -246,4 +247,4 @@ MotherDetailsTab.propTypes = {
   handleChange: PropTypes.func,
 };
 
-export default MotherDetailsTab;
+export default memo(MotherDetailsTab);

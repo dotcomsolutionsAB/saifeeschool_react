@@ -22,6 +22,7 @@ import AttachmentsTab from "./detail-tabs/attachments-tab";
 import {
   getAllAcademicYears,
   getStudentById,
+  offRollStudent,
   uploadStudentImage,
 } from "../../../../services/admin/students-management.service";
 import { toast } from "react-toastify";
@@ -32,6 +33,7 @@ import Loader from "../../../../components/loader/loader";
 import MessageBox from "../../../../components/error/message-box";
 import { Helmet } from "react-helmet-async";
 import TransferMoneyModal from "./modals/transfer-money-modal";
+import ConfirmationDialog from "../../../../components/confirmation-dialog/confirmation-dialog";
 
 const StudentDetail = () => {
   const { logout, userInfo } = useAuth();
@@ -59,6 +61,8 @@ const StudentDetail = () => {
     ay_id: userInfo?.ay_id,
     ay_name: userInfo?.ay_name,
   });
+  const [offRollLoading, setOffRollLoading] = useState(false);
+  const [confirmationModalOpen, setConfirmationModalOpen] = useState(false);
 
   // api to get academicYearList
   const { dataList: academicYearList } = useGetApi({
@@ -114,8 +118,31 @@ const StudentDetail = () => {
     setTransferMoneyModalOpen(true);
   };
 
+  const handleConfirmationModalOpen = () => {
+    setConfirmationModalOpen(true);
+  };
+  const handleConfirmationModalClose = () => {
+    setConfirmationModalOpen(false);
+  };
+
   const handleEdit = () => {
     navigate("/students/edit-student", { state: detail });
+  };
+
+  const handleOffRoll = async () => {
+    setOffRollLoading(true);
+    const response = await offRollStudent({ st_id: studentId });
+    setOffRollLoading(false);
+
+    if (response?.code === 200) {
+      toast.success(response?.message || "Student off-rolled successfully!");
+      studentDetailRefetch();
+      handleConfirmationModalClose();
+    } else if (response?.code === 401) {
+      logout(response);
+    } else {
+      toast.error(response?.message || "Some error occurred.");
+    }
   };
 
   const handleLoginAsStudent = () => {
@@ -309,6 +336,13 @@ const StudentDetail = () => {
               <Button
                 variant="standard"
                 sx={{ bgcolor: "primary.main", color: "primary.contrastText" }}
+                onClick={handleConfirmationModalOpen}
+              >
+                {detail?.st_on_roll === "1" ? "Off Roll" : "On Roll"}
+              </Button>
+              <Button
+                variant="standard"
+                sx={{ bgcolor: "primary.main", color: "primary.contrastText" }}
                 onClick={handleTransferMoneyClick}
               >
                 Transfer Money
@@ -348,7 +382,11 @@ const StudentDetail = () => {
               />
             )}
             {activeTab === 2 && (
-              <PaidFeesTab detail={detail} academicYear={academicYear} />
+              <PaidFeesTab
+                detail={detail}
+                academicYear={academicYear}
+                studentDetailRefetch={studentDetailRefetch}
+              />
             )}
             {activeTab === 3 && <AttachmentsTab detail={detail} />}
 
@@ -367,6 +405,17 @@ const StudentDetail = () => {
           </CardContent>
         </Card>
       )}
+
+      {/* Off Roll Confirmation*/}
+      <ConfirmationDialog
+        open={confirmationModalOpen}
+        onCancel={handleConfirmationModalClose}
+        onConfirm={handleOffRoll}
+        isLoading={offRollLoading}
+        title={`Are you sure you want to ${
+          detail?.st_on_roll === "1" ? "Off Roll" : "On Roll"
+        } this student?`}
+      />
     </>
   );
 };

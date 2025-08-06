@@ -43,6 +43,9 @@ export const getAttachments = async (body) =>
 export const applyConcession = async (body) =>
   await postRequest(`${STUDENTS_PATH}/apply_concession`, body);
 
+export const offRollStudent = async (body) =>
+  await postRequest(`${STUDENTS_PATH}/off_roll`, body);
+
 export const deleteFees = async (id) => await deleteRequest(`/fee/${id}`);
 
 export const printFees = async (id) => await getRequest(`/fee/print/${id}`);

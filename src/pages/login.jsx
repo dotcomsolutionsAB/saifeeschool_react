@@ -32,7 +32,7 @@ const NAV_OPTIONS = [
     link: "https://www.saifeeschool.in/contact-us/",
     redirect: true,
   },
-  { _id: "4", label: "New Admission", link: "/new-admission" },
+  { _id: "4", label: "New Admission", link: "/admissions" },
 ];
 
 const loginCardWidth = "clamp(400px, 40vw, 100%)";

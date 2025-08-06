@@ -29,6 +29,10 @@ const AdminStudentProvider = ({ children }) => {
     label: "Internal",
     value: "0",
   });
+  const [stOnRoll, setStOnRoll] = useState({
+    label: "On Roll",
+    value: "1",
+  });
   const [anchorEl, setAnchorEl] = useState(null);
   const [selectedRows, setSelectedRows] = useState([]);
   const [isExportLoading, setIsExportLoading] = useState(false);
@@ -42,6 +46,7 @@ const AdminStudentProvider = ({ children }) => {
     gender: gender?.value || "",
     dob_from: dobFrom || "",
     dob_to: dobTo || "",
+    st_on_roll: stOnRoll?.value || "1",
   };
 
   // api to get students list
@@ -63,6 +68,7 @@ const AdminStudentProvider = ({ children }) => {
     dependencies: [
       academicYear,
       stExternal,
+      stOnRoll,
       page,
       rowsPerPage,
       search,
@@ -88,6 +94,14 @@ const AdminStudentProvider = ({ children }) => {
     page,
     rowsPerPage,
     search,
+    stExternal,
+    stOnRoll,
+    dataSendToBackend,
+    studentsList,
+    studentsCount,
+    isLoading,
+    isError,
+    errorMessage,
     setPage,
     setRowsPerPage,
     setSearch,
@@ -102,14 +116,8 @@ const AdminStudentProvider = ({ children }) => {
     setSelectedRows,
     setIsExportLoading,
     setStExternal,
-    stExternal,
-    dataSendToBackend,
-    studentsList,
-    studentsCount,
-    isLoading,
-    isError,
+    setStOnRoll,
     refetch,
-    errorMessage,
   };
 
   return (

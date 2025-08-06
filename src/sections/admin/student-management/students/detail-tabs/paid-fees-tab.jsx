@@ -32,7 +32,11 @@ const HEAD_LABEL = [
   { id: "actions", label: "Actions" },
 ];
 
-export default function PaidFees({ detail, academicYear }) {
+export default function PaidFees({
+  detail,
+  academicYear,
+  studentDetailRefetch,
+}) {
   const [page, setPage] = useState(0);
 
   const [rowsPerPage, setRowsPerPage] = useState(DEFAULT_LIMIT);
@@ -170,6 +174,7 @@ export default function PaidFees({ detail, academicYear }) {
                       handleClick={handleClick}
                       refetch={refetch}
                       detail={detail}
+                      studentDetailRefetch={studentDetailRefetch}
                     />
                   );
                 })}
@@ -208,4 +213,5 @@ export default function PaidFees({ detail, academicYear }) {
 PaidFees.propTypes = {
   detail: PropTypes.object,
   academicYear: PropTypes.object,
+  studentDetailRefetch: PropTypes.func,
 };

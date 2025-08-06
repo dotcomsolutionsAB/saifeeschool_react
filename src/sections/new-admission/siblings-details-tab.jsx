@@ -1,23 +1,17 @@
 import PropTypes from "prop-types";
-import {
-  Autocomplete,
-  Box,
-  Button,
-  Grid,
-  IconButton,
-  TextField,
-} from "@mui/material";
+import { Box, Button, Grid, IconButton, TextField } from "@mui/material";
 import { Add, Close } from "@mui/icons-material";
+import { memo } from "react";
 
 const SiblingsDetailsTab = ({ props }) => {
-  const { formData, setFormData, classList } = props;
+  const { formData, setFormData } = props;
 
   // Ensure siblingsData is an array in formData
   const siblingsData = formData?.siblings || [{}];
 
   const handleChange = (index, event) => {
     const { name, value } = event.target;
-    console.log({ [name]: value }, "newValue");
+
     const updatedSiblings = [...siblingsData];
     updatedSiblings[index] = {
       ...updatedSiblings[index],
@@ -53,25 +47,12 @@ const SiblingsDetailsTab = ({ props }) => {
           </Grid>
           {/* Class & Section */}
           <Grid item xs={12} sm={6} md={4} lg={3}>
-            <Autocomplete
-              options={classList || []}
-              getOptionLabel={(option) => option?.cg_name || ""}
-              renderInput={(params) => (
-                <TextField
-                  {...params}
-                  label="Class & Section"
-                  required
-                  fullWidth
-                />
-              )}
+            <TextField
               name="cg_id"
-              value={sibling?.cg_id || null}
-              onChange={(_, newValue) => {
-                handleChange(index, {
-                  target: { name: "cg_id", value: newValue },
-                });
-                console.log(newValue, "newValue");
-              }}
+              label="Class & Section"
+              fullWidth
+              value={sibling?.cg_id || ""}
+              onChange={(e) => handleChange(index, e)}
             />
           </Grid>
           {/* Roll No */}
@@ -109,7 +90,6 @@ SiblingsDetailsTab.propTypes = {
   props: PropTypes.object,
   formData: PropTypes.object,
   setFormData: PropTypes.func,
-  classList: PropTypes.any,
 };
 
-export default SiblingsDetailsTab;
+export default memo(SiblingsDetailsTab);

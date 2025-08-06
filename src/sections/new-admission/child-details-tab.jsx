@@ -11,9 +11,11 @@ import {
 } from "@mui/material";
 import { DatePicker } from "@mui/x-date-pickers";
 import AttachmentsTab from "./attachments/attachments-tab";
+import dayjs from "dayjs";
+import { memo } from "react";
 
 const ChildDetailsTab = ({ props }) => {
-  const { formData, setAttachments, handleChange, classList } = props;
+  const { formData, setAttachments, handleChange, attachments } = props;
 
   return (
     <Box>
@@ -79,22 +81,6 @@ const ChildDetailsTab = ({ props }) => {
           />
         </Grid>
 
-        {/* Class */}
-        <Grid item xs={12} sm={6} md={4} lg={3}>
-          <Autocomplete
-            options={classList || []}
-            getOptionLabel={(option) => option?.cg_name || ""}
-            renderInput={(params) => (
-              <TextField {...params} label="Class" required fullWidth />
-            )}
-            name="class"
-            value={formData?.class || null}
-            onChange={(_, newValue) =>
-              handleChange({ target: { name: "class", value: newValue } })
-            }
-          />
-        </Grid>
-
         {/* Roll No */}
         <Grid item xs={12} sm={6} md={4} lg={3}>
           <TextField
@@ -104,7 +90,6 @@ const ChildDetailsTab = ({ props }) => {
             value={formData?.aadhaar || ""}
             onChange={handleChange}
             fullWidth
-            required
           />
         </Grid>
 
@@ -183,50 +168,72 @@ const ChildDetailsTab = ({ props }) => {
         <Grid item xs={12} sm={6} md={4} lg={3}>
           <TextField
             name="last_school"
-            label="Last School"
+            label="Previous School"
             fullWidth
-            required
             value={formData?.last_school || ""}
             onChange={handleChange}
           />
         </Grid>
 
-        {/* Last School Address*/}
-        <Grid item xs={12} sm={6} md={4} lg={3}>
-          <TextField
-            name="last_school_address"
-            label="Last School Address"
-            fullWidth
-            required
-            value={formData?.last_school_address || ""}
-            onChange={handleChange}
-          />
-        </Grid>
+        {/* Second Language only for above Nursery and LKG*/}
+        {formData?.class?.cg_id !== "nursery" &&
+          formData?.class?.cg_id !== "lkg" && (
+            <Grid item xs={12} sm={6} md={4} lg={3}>
+              <Autocomplete
+                options={["Hindi", "Urdu", "Bengali"]}
+                renderInput={(params) => (
+                  <TextField
+                    {...params}
+                    label="Second Language"
+                    fullWidth
+                    required
+                  />
+                )}
+                value={formData?.second_language || ""}
+                onChange={(_, newValue) =>
+                  handleChange({
+                    target: { name: "second_language", value: newValue },
+                  })
+                }
+              />
+            </Grid>
+          )}
 
         {/* Attachments */}
         <Grid item xs={12}>
           <Grid container spacing={4}>
-            <Grid item xs={12} sm={6}>
+            <Grid item xs={12} sm={6} md={4}>
               <AttachmentsTab
                 setAttachments={setAttachments}
+                attachments={attachments}
                 title="Child's Photo"
               />
             </Grid>
-            <Grid item xs={12} sm={6}>
+            <Grid item xs={12} sm={6} md={4}>
               <AttachmentsTab
                 setAttachments={setAttachments}
+                attachments={attachments}
                 title="Father's Photo"
               />
             </Grid>
-            <Grid item xs={12} sm={6}>
+            <Grid item xs={12} sm={6} md={4}>
               <AttachmentsTab
                 setAttachments={setAttachments}
+                attachments={attachments}
                 title="Mother's Photo"
               />
             </Grid>
-            <Grid item xs={12} sm={6}>
+            <Grid item xs={12} sm={6} md={4}>
               <AttachmentsTab
                 setAttachments={setAttachments}
+                attachments={attachments}
+                title="Family Photo"
+              />
+            </Grid>
+            <Grid item xs={12} sm={6} md={4}>
+              <AttachmentsTab
+                setAttachments={setAttachments}
+                attachments={attachments}
                 title="Birth Certificate"
               />
             </Grid>
@@ -241,8 +248,9 @@ ChildDetailsTab.propTypes = {
   props: PropTypes.object,
   formData: PropTypes.object,
   setAttachments: PropTypes.func,
+  attachments: PropTypes.object,
   handleChange: PropTypes.func,
   classList: PropTypes.any,
 };
 
-export default ChildDetailsTab;
+export default memo(ChildDetailsTab);

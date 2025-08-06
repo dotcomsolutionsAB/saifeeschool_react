@@ -1,4 +1,5 @@
 import {
+  Autocomplete,
   Box,
   Button,
   Card,
@@ -8,11 +9,12 @@ import {
   Divider,
   Tab,
   Tabs,
+  TextField,
   Typography,
 } from "@mui/material";
 
 import PropTypes from "prop-types";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import OtherDetailsTab from "../sections/new-admission/other-details-tab";
 import FatherDetailsTab from "../sections/new-admission/father-details-tab";
 import MotherDetailsTab from "../sections/new-admission/mother-details-tab";
@@ -26,8 +28,6 @@ import InstructionsTab from "../sections/new-admission/instructions-tab";
 import ChildDetailsTab from "../sections/new-admission/child-details-tab";
 import SiblingsDetailsTab from "../sections/new-admission/siblings-details-tab";
 import { newAdmission } from "../services/new-admission.service";
-import { useGetApi } from "../hooks/useGetApi";
-import { getClasses } from "../services/admin/students-management.service";
 import dayjs from "dayjs";
 import { useNavigate } from "react-router-dom";
 import { WEBSITE_NAME } from "../utils/constants";
@@ -39,6 +39,20 @@ const TABS_LIST = [
   "Mother Details",
   "Sibling's Details",
   "Other Details",
+];
+
+const CLASS_LIST = [
+  { cg_id: "nursery", cg_name: "Nursery" },
+  { cg_id: "lkg", cg_name: "LKG" },
+  { cg_id: "ukg", cg_name: "UKG" },
+  { cg_id: "class_1", cg_name: "1st" },
+  { cg_id: "class_2", cg_name: "2nd" },
+  { cg_id: "class_3", cg_name: "3rd" },
+  { cg_id: "class_4", cg_name: "4th" },
+  { cg_id: "class_5", cg_name: "5th" },
+  { cg_id: "class_6", cg_name: "6th" },
+  { cg_id: "class_7", cg_name: "7th" },
+  { cg_id: "class_8", cg_name: "8th" },
 ];
 
 const NewAdmission = () => {
@@ -115,17 +129,19 @@ const NewAdmission = () => {
     mother_work_country: "",
     mother_work_pincode: "",
 
-    siblings: [],
+    siblings: [{}],
     attracted: "",
     strengths: "",
     remarks: "",
   };
 
+  const acceptTermsRef = useRef(null);
   const [formData, setFormData] = useState(initialState);
   const [attachments, setAttachments] = useState({
     child_photo: null,
     father_photo: null,
     mother_photo: null,
+    family_photo: null,
     birth_certificate: null,
   });
 
@@ -133,45 +149,126 @@ const NewAdmission = () => {
   const [activeTab, setActiveTab] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
 
-  const { dataList: classList } = useGetApi({
-    apiFunction: getClasses,
-    body: {
-      ay_id: 9,
-    },
-  });
-
   const handleCheckboxChange = (event) => {
     setTermsAccepted(event.target.checked);
   };
 
-  // tab change
-  const handleTabChange = (event, newValue) => {
-    if (!termsAccepted) {
-      toast.info("Please accept terms and conditions");
+  // Reusable function to validate attachments for a specific tab
+  const validateTabAttachments = (tabIndex) => {
+    if (
+      formData?.class?.cg_id !== "nursery" &&
+      formData?.class?.cg_id !== "lkg" &&
+      !formData?.second_language
+    ) {
+      toast.info("Please select a second language before proceeding");
       return;
     }
+
+    let requiredAttachments = [];
+
+    if (tabIndex === 1) {
+      // Child Details tab - all 5 attachments required
+      requiredAttachments = [
+        "child_photo",
+        "father_photo",
+        "mother_photo",
+        "family_photo",
+        "birth_certificate",
+      ];
+    }
+
+    if (requiredAttachments.length > 0) {
+      const missingAttachments = requiredAttachments.filter(
+        (attachment) =>
+          !attachments[attachment] || !(attachments[attachment] instanceof File)
+      );
+
+      if (missingAttachments.length > 0) {
+        const missingNames = missingAttachments
+          .map((attachment) => {
+            switch (attachment) {
+              case "child_photo":
+                return "Child Photo";
+              case "father_photo":
+                return "Father Photo";
+              case "mother_photo":
+                return "Mother Photo";
+              case "family_photo":
+                return "Family Photo";
+              case "birth_certificate":
+                return "Birth Certificate";
+              default:
+                return attachment;
+            }
+          })
+          .join(", ");
+
+        toast.info(`Please upload the required attachments: ${missingNames}`);
+        return false;
+      }
+    }
+    return true;
+  };
+
+  // tab change
+  const handleTabChange = (event, newValue) => {
+    if (!formData?.class) {
+      toast.info("Please select a class before proceeding");
+      return;
+    }
+    if (!termsAccepted) {
+      toast.info("Please accept terms and conditions");
+      acceptTermsRef.current?.scrollIntoView({ behavior: "smooth" });
+      return;
+    }
+
+    // Validate attachments when moving from current tab to any other tab
+    if (activeTab !== newValue && !validateTabAttachments(activeTab)) {
+      return;
+    }
+
     setActiveTab(newValue);
+    window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
   const handleChange = (e) => {
     const { name, value } = e.target;
 
-    setFormData((preValue) => ({
-      ...preValue,
-      [name]: value,
-    }));
+    setFormData((preValue) => {
+      if (name === "class") {
+        return { ...preValue, [name]: value, dob: null };
+      }
+      return { ...preValue, [name]: value };
+    });
   };
 
   const handleNext = () => {
-    if (!termsAccepted) {
-      toast.info("Please accept terms and conditions");
+    if (!formData?.class) {
+      toast.info("Please select a class before proceeding");
       return;
     }
-    if (activeTab < TABS_LIST?.length - 1) setActiveTab((prev) => prev + 1);
+    if (!termsAccepted) {
+      toast.info("Please accept terms and conditions");
+      acceptTermsRef.current?.scrollIntoView({ behavior: "smooth" });
+      return;
+    }
+
+    // Validate attachments for current tab before moving to next tab
+    if (!validateTabAttachments(activeTab)) {
+      return;
+    }
+
+    if (activeTab < TABS_LIST?.length - 1) {
+      setActiveTab((prev) => prev + 1);
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
   };
 
   const handlePrev = () => {
-    if (activeTab > 0) setActiveTab((prev) => prev - 1);
+    if (activeTab > 0) {
+      setActiveTab((prev) => prev - 1);
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
   };
 
   const cleanOccupationFields = (data, prefix, occupation) => {
@@ -229,13 +326,17 @@ const NewAdmission = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (!formData?.class?.cg_id) {
+      toast.info("Please select a class before proceeding");
+      return;
+    }
 
     // Prepare siblings
-    const processedSiblings =
-      formData?.siblings?.map((sibling) => ({
-        ...sibling,
-        cg_id: sibling?.cg_id?.id,
-      })) || [];
+    // const processedSiblings =
+    //   formData?.siblings?.map((sibling) => ({
+    //     ...sibling,
+    //     cg_id: sibling?.cg_id?.id,
+    //   })) || [];
 
     // Deep clone formData to avoid mutating the original
     const cleanedData = JSON.parse(JSON.stringify(formData));
@@ -246,12 +347,12 @@ const NewAdmission = () => {
 
     // Prepare json_data
     const jsonData = {
-      ...cleanedData,
+      // ...cleanedData,
       dob: cleanedData?.dob
         ? dayjs(cleanedData?.dob).format("YYYY-MM-DD")
         : null,
-      class: cleanedData?.class?.cg_name,
-      siblings: processedSiblings,
+      class: cleanedData?.class?.cg_id,
+      // siblings: processedSiblings,
     };
 
     // Create FormData object
@@ -289,13 +390,14 @@ const NewAdmission = () => {
   };
   //   props for each tab
   const props = {
+    acceptTermsRef,
     formData,
     setFormData,
     setAttachments,
+    attachments,
     handleChange,
     termsAccepted,
     handleCheckboxChange,
-    classList,
   };
 
   return (
@@ -339,9 +441,36 @@ const NewAdmission = () => {
         </Box>
         <Card>
           <CardContent>
-            <Typography variant="h6" sx={{ mb: 2 }}>
-              New Admission
-            </Typography>
+            <Box
+              sx={{
+                display: "flex",
+                justifyContent: "space-between",
+                alignItems: "center",
+                mb: 2,
+              }}
+            >
+              <Typography variant="h6">New Admission</Typography>
+              {/* Class */}
+              <Autocomplete
+                options={CLASS_LIST || []}
+                getOptionLabel={(option) => option?.cg_name || ""}
+                renderInput={(params) => (
+                  <TextField
+                    {...params}
+                    label="Class"
+                    required
+                    fullWidth
+                    size="small"
+                  />
+                )}
+                name="class"
+                value={formData?.class || null}
+                onChange={(_, newValue) =>
+                  handleChange({ target: { name: "class", value: newValue } })
+                }
+                sx={{ width: "150px" }}
+              />
+            </Box>
 
             <Box component="form" onSubmit={handleSubmit} id="student-form">
               {/* Tabs Section */}

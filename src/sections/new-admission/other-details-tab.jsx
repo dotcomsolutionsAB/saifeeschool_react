@@ -1,5 +1,6 @@
 import PropTypes from "prop-types";
 import { Box, Grid, TextField } from "@mui/material";
+import { memo } from "react";
 
 const OtherDetailsTab = ({ props }) => {
   const { formData, handleChange } = props;
@@ -47,4 +48,4 @@ OtherDetailsTab.propTypes = {
   classList: PropTypes.array,
 };
 
-export default OtherDetailsTab;
+export default memo(OtherDetailsTab);

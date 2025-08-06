@@ -23,9 +23,9 @@ const PaymentFailurePage = ({ transactionData }) => {
           Reason: {transactionData?.description || ""}
         </Typography>
       )}
-      <Button variant="contained" sx={{ textTransform: "none" }}>
+      {/* <Button variant="contained" sx={{ textTransform: "none" }}>
         Reconcile
-      </Button>
+      </Button> */}
     </Box>
   );
 };

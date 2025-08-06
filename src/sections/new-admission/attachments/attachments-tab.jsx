@@ -1,8 +1,8 @@
 /*************  ✨ Codeium Command 🌟  *************/
 import PropTypes from "prop-types";
-import { Box, Typography, Button, useTheme } from "@mui/material";
+import { Box, Typography, useTheme } from "@mui/material";
 import UploadImageIcon from "../../../assets/icons/UploadImageIcon.svg";
-import { useState } from "react";
+import { memo } from "react";
 import InsertDriveFile from "@mui/icons-material/InsertDriveFile";
 import Delete from "@mui/icons-material/Delete";
 import { toast } from "react-toastify";
@@ -15,12 +15,12 @@ import Iconify from "../../../components/iconify/iconify";
  * @param {Object} props - Component props.
  * @param {Object} props.detail - Detail object (unused).
  * @param {string} props.title - Title for the upload section.
+ * @param {Object} props.attachments - Current attachments state from parent.
  * @returns {JSX.Element} The rendered component.
  */
-const AttachmentsTab = ({ title, setAttachments }) => {
+const AttachmentsTab = ({ title, setAttachments, attachments }) => {
   // const { logout } = useAuth();
   const theme = useTheme();
-  const [file, setFile] = useState(null);
 
   // Map title to corresponding key in attachments state
   const getAttachmentKey = (title) => {
@@ -31,12 +31,18 @@ const AttachmentsTab = ({ title, setAttachments }) => {
         return "father_photo";
       case "Mother's Photo":
         return "mother_photo";
+      case "Family Photo":
+        return "family_photo";
       case "Birth Certificate":
         return "birth_certificate";
       default:
         return null;
     }
   };
+
+  // Get the current file from parent state instead of local state
+  const attachmentKey = getAttachmentKey(title);
+  const file = attachments?.[attachmentKey] || null;
 
   /**
    * Returns the appropriate icon for a given file based on its type.
@@ -81,9 +87,6 @@ const AttachmentsTab = ({ title, setAttachments }) => {
       return;
     }
 
-    // Update local state
-    setFile(selectedFile);
-
     // Update parent attachments state with the correct key
     const key = getAttachmentKey(title);
     if (key) {
@@ -100,7 +103,13 @@ const AttachmentsTab = ({ title, setAttachments }) => {
    * Removes the currently selected file.
    */
   const handleRemoveFile = () => {
-    setFile(null);
+    const key = getAttachmentKey(title);
+    if (key) {
+      setAttachments((prev) => ({
+        ...prev,
+        [key]: null,
+      }));
+    }
   };
 
   return (
@@ -114,41 +123,60 @@ const AttachmentsTab = ({ title, setAttachments }) => {
           mb: 2,
         }}
       >
-        <Typography>{`${!file ? "Upload " : ""}${title}`}</Typography>
+        <Typography>{`${!file ? "Upload " : ""}${title}*`}</Typography>
         {/* {file && <Button variant="contained">Upload</Button>} */}
       </Box>
 
       {/* File upload area */}
       {!file && (
-        <Box
-          component="label"
-          sx={{
-            display: "flex",
-            flexDirection: "column",
-            alignItems: "center",
-            justifyContent: "center",
-            gap: 1,
-            p: 2,
-            border: `1px dashed ${theme.palette.primary.lightActive}`,
-            borderRadius: "8px",
-            cursor: "pointer",
-            textAlign: "center",
-          }}
-        >
+        <>
           <Box
-            component="img"
-            src={UploadImageIcon}
-            alt="Upload Icon"
-            sx={{ width: "30px", height: "30px" }}
-          />
-          <Box sx={{ color: "primary.main", fontSize: "12px" }}>
-            Click to upload{" "}
-            <input type="file" hidden onChange={handleFileUpload} />
+            component="label"
+            sx={{
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+              justifyContent: "center",
+              gap: 1,
+              p: 2,
+              border: `1px dashed ${theme.palette.primary.lightActive}`,
+              borderRadius: "8px",
+              cursor: "pointer",
+              textAlign: "center",
+            }}
+          >
+            <Box
+              component="img"
+              src={UploadImageIcon}
+              alt="Upload Icon"
+              sx={{ width: "30px", height: "30px" }}
+            />
+            <Box sx={{ color: "primary.main", fontSize: "12px" }}>
+              Click to upload{" "}
+              <input
+                type="file"
+                hidden
+                onChange={handleFileUpload}
+                accept="image/jpg,image/jpeg,application/pdf"
+              />
+            </Box>
+            <Typography sx={{ fontSize: "10px", color: "neutralCool.dark" }}>
+              JPG / PDF (Less than 5MB)
+            </Typography>
           </Box>
-          <Typography sx={{ fontSize: "10px", color: "neutralCool.dark" }}>
-            Images, PDF, Excel, Docs (Less than 5MB)
-          </Typography>
-        </Box>
+          {title === "Family Photo" && (
+            <Typography
+              sx={{
+                fontSize: "10px",
+                color: "info.main",
+                textAlign: "center",
+                mt: "4px",
+              }}
+            >
+              Should have child, father, mother & any other siblings
+            </Typography>
+          )}
+        </>
       )}
 
       {/* Display uploaded file */}
@@ -228,7 +256,8 @@ const AttachmentsTab = ({ title, setAttachments }) => {
 
 AttachmentsTab.propTypes = {
   setAttachments: PropTypes.func,
+  attachments: PropTypes.object,
   title: PropTypes.string.isRequired,
 };
 
-export default AttachmentsTab;
+export default memo(AttachmentsTab);

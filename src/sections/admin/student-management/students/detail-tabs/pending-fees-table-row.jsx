@@ -17,7 +17,10 @@ import {
 import { toast } from "react-toastify";
 import useAuth from "../../../../../hooks/useAuth";
 import dayjs from "dayjs";
-import { FORMAT_INDIAN_CURRENCY } from "../../../../../utils/constants";
+import {
+  FORMAT_INDIAN_CURRENCY,
+  handleNumericInput,
+} from "../../../../../utils/constants";
 import ConfirmationDialog from "../../../../../components/confirmation-dialog/confirmation-dialog";
 
 const PendingFeesTableRow = ({
@@ -81,7 +84,8 @@ const PendingFeesTableRow = ({
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData((preValue) => ({ ...preValue, [name]: Number(value) }));
+    const numericValue = handleNumericInput(value);
+    setFormData((preValue) => ({ ...preValue, [name]: numericValue }));
   };
 
   const handleDelete = async () => {
@@ -158,7 +162,6 @@ const PendingFeesTableRow = ({
             <TableCell sx={{ width: "110px" }}>
               <TextField
                 name="concession_amount"
-                type="number"
                 required
                 fullWidth
                 value={formData?.concession_amount ?? 0}
@@ -175,7 +178,6 @@ const PendingFeesTableRow = ({
             <TableCell sx={{ width: "110px" }}>
               <TextField
                 name="late_fee"
-                type="number"
                 required
                 fullWidth
                 value={formData?.late_fee ?? 0}
