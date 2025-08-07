@@ -48,6 +48,7 @@ import {
 import { toast } from "react-toastify";
 import Iconify from "../../../../components/iconify/iconify";
 import {
+  exportFeesExcel,
   exportFeesPDF,
   getAllFees,
   getOneTimeFees,
@@ -182,10 +183,15 @@ export default function Fees() {
   };
 
   // function to export students data as pdf and excel
-  const handleExport = async () => {
+  const handleExport = async (exportType) => {
     handleMenuClose();
     setIsExportLoading(true);
-    const response = await exportFeesPDF(dataSendToBackend);
+    let response;
+    if (exportType === "pdf") {
+      response = await exportFeesPDF(dataSendToBackend);
+    } else if (exportType === "excel") {
+      response = await exportFeesExcel(dataSendToBackend);
+    }
     setIsExportLoading(false);
 
     if (response?.code === 200) {
@@ -404,16 +410,19 @@ export default function Fees() {
                 sx={{ color: "primary.main" }}
               >
                 {/* export excel */}
-                {/* <MenuItem
+                <MenuItem
                   onClick={() => handleExport("excel")}
                   sx={{ color: "primary.main" }}
                 >
                   <Iconify icon="uiw:file-excel" sx={{ mr: 1 }} />
                   Export Excel
-                </MenuItem> */}
+                </MenuItem>
 
                 {/* export pdf */}
-                <MenuItem onClick={handleExport} sx={{ color: "primary.main" }}>
+                <MenuItem
+                  onClick={() => handleExport("pdf")}
+                  sx={{ color: "primary.main" }}
+                >
                   <Iconify icon="uiw:file-pdf" sx={{ mr: 1 }} />
                   Export PDF
                 </MenuItem>
