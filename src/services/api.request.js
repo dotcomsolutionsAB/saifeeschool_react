@@ -12,11 +12,25 @@ const api = axios.create({
 // Add an Axios request interceptor to include the Bearer token in headers
 api.interceptors.request.use(
   (config) => {
-    const userInfo = JSON.parse(sessionStorage.getItem(USER_INFO));
-    console.log(userInfo, "userInfo");
-    if (userInfo && userInfo?.token) {
-      config.headers.Authorization = `Bearer ${userInfo.token || ""}`;
+    // Add error handling for sessionStorage parsing
+    let userInfo;
+    try {
+      userInfo = JSON.parse(sessionStorage.getItem(USER_INFO));
+    } catch (error) {
+      console.warn("Failed to parse user info from sessionStorage:", error);
+      userInfo = null;
     }
+
+    if (userInfo?.token) {
+      config.headers.Authorization = `Bearer ${userInfo.token}`;
+    }
+
+    // Only add no-cache headers for sensitive endpoints
+    if (config.url?.includes("test-fees")) {
+      config.headers["Cache-Control"] = "no-cache, no-store, must-revalidate";
+      config.headers["Pragma"] = "no-cache";
+    }
+
     return config;
   },
   (error) => {

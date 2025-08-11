@@ -157,11 +157,23 @@ export default function PendingFees({
       studentDetailRefetch();
       refetch();
       if (response?.url) {
-        // const decodedUrl = decodeURIComponent(response.url);
         const decodedUrl = response.url;
         if (decodedUrl.startsWith("http")) {
-          // window.location.href = decodedUrl;
-          window.open(decodedUrl, "_self", "noopener,noreferrer");
+          // Better mobile browser handling for payment gateway
+          const isMobile =
+            /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
+              navigator.userAgent
+            );
+
+          if (isMobile) {
+            // For mobile browsers, use window.location.href for better compatibility
+            setTimeout(() => {
+              window.location.href = decodedUrl;
+            }, 100);
+          } else {
+            // For desktop browsers
+            window.open(decodedUrl, "_self", "noopener,noreferrer");
+          }
         } else {
           toast.error("Invalid redirect URL");
         }
