@@ -34,16 +34,16 @@ const PendingFeesTableRow = ({
   return (
     <>
       <TableRow hover tabIndex={-1} role="checkbox" selected={isRowSelected}>
-        {allResponse?.last_payment_status !== "pending" && (
-          <TableCell padding="checkbox">
-            <Checkbox
-              disableRipple
-              checked={isRowSelected}
-              onChange={() => handleClick(row)}
-              disabled={isDisabled} // Disable based on previous row's selection
-            />
-          </TableCell>
-        )}
+        {/* {allResponse?.last_payment_status !== "pending" && ( */}
+        <TableCell padding="checkbox">
+          <Checkbox
+            disableRipple
+            checked={isRowSelected}
+            onChange={() => handleClick(row)}
+            disabled={isDisabled} // Disable based on previous row's selection
+          />
+        </TableCell>
+        {/* )} */}
 
         <TableCell>
           <Typography variant="subtitle2" noWrap>

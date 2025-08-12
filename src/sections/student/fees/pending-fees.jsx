@@ -10,6 +10,7 @@ import {
   Button,
   Card,
   CardContent,
+  CircularProgress,
   TableCell,
   TableHead,
   TableRow,
@@ -43,6 +44,7 @@ export default function PendingFees() {
   const [selectedRowIds, setSelectedRowIds] = useState([]);
   const [loading, setLoading] = useState(false);
   const [modalOpen, setModalOpen] = useState(false);
+  const [redirectUrl, setRedirectUrl] = useState("");
 
   // api to get pending fees list
   const {
@@ -74,14 +76,6 @@ export default function PendingFees() {
     selectedFees >= allResponse?.student_wallet
       ? selectedFees - Number(allResponse?.student_wallet || 0)
       : 0;
-
-  const handleModalOpen = () => {
-    setModalOpen(true);
-  };
-
-  const handleModalClose = () => {
-    setModalOpen(false);
-  };
 
   const handleClick = (selectedRowData) => {
     const selectedIndex = selectedRowIds.indexOf(selectedRowData?.id);
@@ -137,6 +131,16 @@ export default function PendingFees() {
     }
   };
 
+  const handleModalOpen = () => {
+    setModalOpen(true);
+  };
+
+  const handleModalClose = () => {
+    setModalOpen(false);
+    setRedirectUrl("");
+    setLoading(false); // Reset loading state
+  };
+
   const handlePayFees = async () => {
     setLoading(true);
     const response = await payFees({
@@ -146,38 +150,69 @@ export default function PendingFees() {
     setLoading(false);
 
     if (response?.code === 200) {
-      handleModalClose();
-      setSelectedRows([]);
-      setSelectedRowIds([]);
-      refetch();
+      toast.success(response?.message || "Payment link generated");
       if (response?.url) {
         const decodedUrl = response.url;
         if (decodedUrl.startsWith("http")) {
-          // Better mobile browser handling for payment gateway
-          const isMobile =
-            /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
-              navigator.userAgent
-            );
-
-          if (isMobile) {
-            // For mobile browsers, use window.location.href for better compatibility
-            setTimeout(() => {
-              window.location.href = decodedUrl;
-            }, 100);
-          } else {
-            // For desktop browsers
-            window.open(decodedUrl, "_self", "noopener,noreferrer");
-          }
+          setRedirectUrl(decodedUrl);
+          handleModalOpen();
+          // Don't clear rows yet - wait for user confirmation
         } else {
           toast.error("Invalid redirect URL");
+          // Clear rows only on error
+          setSelectedRows([]);
+          setSelectedRowIds([]);
         }
+      } else {
+        // No URL means wallet adjustment - clear rows and refresh
+        setSelectedRows([]);
+        setSelectedRowIds([]);
+        handleModalClose();
+        refetch();
       }
-      toast.success(response?.message || "Fees paid successfully");
     } else if (response?.code === 401) {
       logout(response);
     } else {
       toast.error(response?.message || "Some error occurred.");
     }
+  };
+
+  const handleWalletAdjustment = async () => {
+    setLoading(true);
+    const response = await payFees({
+      st_id: userInfo?.st_id,
+      fpp_ids: selectedRows?.map((row) => row?.fpp_id)?.join(","),
+    });
+    setLoading(false);
+
+    if (response?.code === 200) {
+      setSelectedRows([]);
+      setSelectedRowIds([]);
+      handleModalClose();
+      refetch();
+      toast.success(response?.message || "Fees adjusted successfully");
+    } else if (response?.code === 401) {
+      logout(response);
+    } else {
+      toast.error(response?.message || "Some error occurred.");
+    }
+  };
+
+  const handleRedirect = () => {
+    // Show loading during redirect
+    setLoading(true);
+
+    // Clear rows before redirect since payment is confirmed
+    setSelectedRows([]);
+    setSelectedRowIds([]);
+    refetch();
+    window.open(redirectUrl, "_self", "noopener,noreferrer");
+
+    // Small delay to show loading
+    setTimeout(() => {
+      setModalOpen(false);
+      setLoading(false);
+    }, 500);
   };
 
   return (
@@ -295,13 +330,28 @@ export default function PendingFees() {
                   </Box>
                 </Box>
                 <Box>
-                  <Button
-                    variant="contained"
-                    onClick={handleModalOpen}
-                    sx={{ minWidth: "120px" }}
-                  >
-                    {furtherToPay > 0 ? `Pay Fees` : "Adjust Fees"}
-                  </Button>
+                  {furtherToPay > 0 ? (
+                    <Button
+                      variant="contained"
+                      onClick={handlePayFees}
+                      sx={{ minWidth: "120px" }}
+                      disabled={loading}
+                    >
+                      {loading ? (
+                        <CircularProgress size={24} />
+                      ) : (
+                        `Pay ₹${furtherToPay}`
+                      )}
+                    </Button>
+                  ) : (
+                    <Button
+                      variant="contained"
+                      onClick={handleModalOpen}
+                      sx={{ minWidth: "120px" }}
+                    >
+                      Adjust Fees
+                    </Button>
+                  )}
                 </Box>
               </Box>
             )}
@@ -312,8 +362,9 @@ export default function PendingFees() {
         open={modalOpen}
         onCancel={handleModalClose}
         isLoading={loading}
-        onConfirm={handlePayFees}
+        onConfirm={redirectUrl ? handleRedirect : handleWalletAdjustment}
         furtherToPay={furtherToPay}
+        redirectUrl={redirectUrl}
       />
     </>
   );

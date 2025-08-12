@@ -156,28 +156,6 @@ export default function PendingFees({
       setSelectedRowIds([]);
       studentDetailRefetch();
       refetch();
-      if (response?.url) {
-        const decodedUrl = response.url;
-        if (decodedUrl.startsWith("http")) {
-          // Better mobile browser handling for payment gateway
-          const isMobile =
-            /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
-              navigator.userAgent
-            );
-
-          if (isMobile) {
-            // For mobile browsers, use window.location.href for better compatibility
-            setTimeout(() => {
-              window.location.href = decodedUrl;
-            }, 100);
-          } else {
-            // For desktop browsers
-            window.open(decodedUrl, "_self", "noopener,noreferrer");
-          }
-        } else {
-          toast.error("Invalid redirect URL");
-        }
-      }
       toast.success(response?.message || "Fees paid successfully");
     } else if (response?.code === 401) {
       logout(response);

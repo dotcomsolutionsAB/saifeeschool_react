@@ -11,13 +11,14 @@ import {
 } from "@mui/material";
 
 import PropTypes from "prop-types";
+import { memo } from "react";
 
 const DisclaimerDialog = ({
   open,
   onConfirm,
   onCancel,
   isLoading,
-  furtherToPay,
+  redirectUrl,
 }) => {
   return (
     <Dialog
@@ -51,7 +52,7 @@ const DisclaimerDialog = ({
           <CancelOutlined />
         </IconButton>
       </Box>
-      {furtherToPay > 0 ? (
+      {redirectUrl ? (
         <DialogContent>
           <Typography sx={{ mb: 2 }}>
             {`You will now be redirected to the CC Avenue Payment Gateway where you can pay through Net Banking or Debit Card (of any bank).`}
@@ -88,7 +89,7 @@ const DisclaimerDialog = ({
           {isLoading ? (
             <CircularProgress size={27} color="inherit" />
           ) : (
-            `${furtherToPay > 0 ? `Pay ₹${furtherToPay}` : "Adjust Fees"}`
+            `${redirectUrl ? "Proceed to Payment" : "Adjust Fees"}`
           )}
         </Button>
       </DialogActions>
@@ -102,7 +103,7 @@ DisclaimerDialog.propTypes = {
   onCancel: PropTypes.func.isRequired,
   title: PropTypes.string,
   isLoading: PropTypes.bool.isRequired,
-  furtherToPay: PropTypes.number,
+  redirectUrl: PropTypes.string, // URL to redirect for payment
 };
 
-export default DisclaimerDialog;
+export default memo(DisclaimerDialog);
