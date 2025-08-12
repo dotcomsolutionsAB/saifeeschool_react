@@ -57,6 +57,7 @@ const PurchaseInvoiceItems = ({
               onChange={(e) => handleChange(e, index, "items")}
               fullWidth
               size="small"
+              slotProps={{ input: { min: 0 } }}
             />
           </Grid>
           <Grid item xs>
@@ -85,6 +86,7 @@ const PurchaseInvoiceItems = ({
               onChange={(e) => handleChange(e, index, "items")}
               fullWidth
               size="small"
+              slotProps={{ input: { min: 0 } }}
             />
           </Grid>
           <Grid item xs>
@@ -96,6 +98,7 @@ const PurchaseInvoiceItems = ({
               onChange={(e) => handleChange(e, index, "items")}
               fullWidth
               size="small"
+              slotProps={{ input: { min: 0, max: 100 } }}
             />
           </Grid>
         </Grid>

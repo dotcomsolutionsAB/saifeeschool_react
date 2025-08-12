@@ -162,12 +162,28 @@ export default function PurchaseInvoice() {
     const { name, value, type } = e.target;
 
     // Parse value based on input type
-    const parsedValue =
+    let parsedValue =
       type === "date"
         ? dayjs(value).format("YYYY-MM-DD")
         : type === "number"
         ? Number(value)
         : value;
+
+    // Validate number fields to prevent negative values
+    if (type === "number") {
+      if (name === "quantity" && parsedValue < 0) {
+        parsedValue = 0;
+      } else if (name === "price" && parsedValue < 0) {
+        parsedValue = 0;
+      } else if (
+        name === "discount" &&
+        (parsedValue < 0 || parsedValue > 100)
+      ) {
+        parsedValue = Math.max(0, Math.min(100, parsedValue));
+      } else if (name === "freight" && parsedValue < 0) {
+        parsedValue = 0;
+      }
+    }
 
     // Handle nested updates for arrays (e.g., product items)
     if (key && Array.isArray(formData?.[key])) {
@@ -214,6 +230,7 @@ export default function PurchaseInvoice() {
           const price = Number(updatedItem?.price) || 0;
           const discount = Number(updatedItem?.discount) || 0;
           const tax = Number(updatedItem?.tax) || 0;
+          const quantity = Number(updatedItem?.quantity) || 0;
 
           const gross = price - (price * discount) / 100;
           const tax_amount = (gross * (tax / 2)) / 100;
@@ -226,7 +243,7 @@ export default function PurchaseInvoice() {
             ...updatedItem,
             Gross: gross,
             tax_amount,
-            Total: total,
+            Total: total * quantity,
           };
         }),
       }));
@@ -273,8 +290,6 @@ export default function PurchaseInvoice() {
       ],
     }));
   };
-
-  console.log(formData?.items, "items");
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -565,6 +580,11 @@ export default function PurchaseInvoice() {
                         onChange={handleChange}
                         fullWidth
                         size="small"
+                        slotProps={{
+                          input: {
+                            min: 0,
+                          },
+                        }}
                       />
                     </Grid>
                     <Grid item xs={12} sm={6} md={4} lg={3} xl>
