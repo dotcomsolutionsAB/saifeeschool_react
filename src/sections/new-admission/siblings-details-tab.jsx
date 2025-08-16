@@ -23,7 +23,7 @@ const SiblingsDetailsTab = ({ props }) => {
   const addSibling = () => {
     setFormData((preValue) => ({
       ...preValue,
-      siblings: [...siblingsData, { name: "", cg_id: null, roll_no: "" }],
+      siblings: [...siblingsData, { name: "", cg_id: "", roll_no: "" }],
     }));
   };
 

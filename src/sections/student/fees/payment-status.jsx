@@ -1,3 +1,4 @@
+import PropTypes from "prop-types";
 import { useLocation } from "react-router-dom";
 import PaymentSuccessPage from "./payment-success-page";
 import PaymentFailurePage from "./payment-failure-page";
@@ -6,8 +7,9 @@ import { Card, CardContent } from "@mui/material";
 import useLayout from "../../../hooks/uesLayout";
 import { useGetApi } from "../../../hooks/useGetApi";
 import { getTransactionStatus } from "../../../services/student/fees.service";
+import { getPaymentStatus } from "../../../services/new-admission.service";
 
-const PaymentStatus = () => {
+const PaymentStatus = ({ isPublic }) => {
   const location = useLocation();
   const { layout } = useLayout();
   const queryParams = new URLSearchParams(location.search);
@@ -21,7 +23,7 @@ const PaymentStatus = () => {
     isError,
     errorMessage,
   } = useGetApi({
-    apiFunction: getTransactionStatus,
+    apiFunction: isPublic ? getPaymentStatus : getTransactionStatus,
     body: txn_id ? { txn_id } : null,
     skip: !txn_id, // Add `skip` to prevent running when txn_id is missing
   });
@@ -51,6 +53,10 @@ const PaymentStatus = () => {
       </CardContent>
     </Card>
   );
+};
+
+PaymentStatus.propTypes = {
+  isPublic: PropTypes.bool,
 };
 
 export default PaymentStatus;

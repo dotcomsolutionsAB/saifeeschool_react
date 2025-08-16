@@ -30,7 +30,7 @@ import SiblingsDetailsTab from "../sections/new-admission/siblings-details-tab";
 import { newAdmission } from "../services/new-admission.service";
 import dayjs from "dayjs";
 import { useNavigate } from "react-router-dom";
-import { WEBSITE_NAME } from "../utils/constants";
+import { CLASS_LIST, WEBSITE_NAME } from "../utils/constants";
 
 const TABS_LIST = [
   "Instructions",
@@ -39,20 +39,6 @@ const TABS_LIST = [
   "Mother Details",
   "Sibling's Details",
   "Other Details",
-];
-
-const CLASS_LIST = [
-  { cg_id: "nursery", cg_name: "Nursery" },
-  { cg_id: "lkg", cg_name: "LKG" },
-  { cg_id: "ukg", cg_name: "UKG" },
-  { cg_id: "class_1", cg_name: "1st" },
-  { cg_id: "class_2", cg_name: "2nd" },
-  { cg_id: "class_3", cg_name: "3rd" },
-  { cg_id: "class_4", cg_name: "4th" },
-  { cg_id: "class_5", cg_name: "5th" },
-  { cg_id: "class_6", cg_name: "6th" },
-  { cg_id: "class_7", cg_name: "7th" },
-  { cg_id: "class_8", cg_name: "8th" },
 ];
 
 const NewAdmission = () => {
@@ -347,7 +333,7 @@ const NewAdmission = () => {
 
     // Prepare json_data
     const jsonData = {
-      // ...cleanedData,
+      ...cleanedData,
       dob: cleanedData?.dob
         ? dayjs(cleanedData?.dob).format("YYYY-MM-DD")
         : null,
@@ -381,7 +367,11 @@ const NewAdmission = () => {
     if (response?.code === 200) {
       toast.success(response?.message || "Student Creation Successful");
       setFormData(initialState);
-      navigate("/");
+      navigate(
+        response?.data?.application_no
+          ? `/payment?applicationNo=${response.data.application_no}`
+          : "/"
+      );
     } else if (response?.code === 401) {
       logout(response);
     } else {

@@ -1,18 +1,27 @@
 import PropTypes from "prop-types";
 import {
+  Autocomplete,
   Box,
   Checkbox,
   FormControlLabel,
   List,
   ListItem,
   ListItemText,
+  TextField,
   Typography,
 } from "@mui/material";
 import { Link } from "react-router-dom";
 import { memo } from "react";
+import { CLASS_LIST } from "../../utils/constants";
 
 const InstructionsTab = ({ props }) => {
-  const { termsAccepted, handleCheckboxChange, acceptTermsRef } = props;
+  const {
+    termsAccepted,
+    handleCheckboxChange,
+    acceptTermsRef,
+    formData,
+    handleChange,
+  } = props;
 
   return (
     <Box>
@@ -56,13 +65,11 @@ const InstructionsTab = ({ props }) => {
           Both steps are to be done online.
         </Typography>
       </Box>
-
       {/* Heading */}
       <Typography variant="h4" align="center" gutterBottom>
         PLEASE NOTE
       </Typography>
-
-      {/* Instructions List */}
+      {/* Instructions List  */}
       <List sx={{ mb: 2 }}>
         <ListItem>
           <ListItemText
@@ -82,7 +89,7 @@ const InstructionsTab = ({ props }) => {
           <ListItemText primary="Application Fee is to be paid online only through the link provided on the website after submitting the Application Form (completion of Step 1), by using the ICICI payment gateway and NOT at the School website. At no point does the School website come in possession of these details and so the School is NOT liable for any misuse of these details." />
         </ListItem>
         <ListItem>
-          <ListItemText primary="The Application Fee is Rs 500/- to cover the costs of the School for considering your application." />
+          <ListItemText primary="The Application Fee is Rs 600/- to cover the costs of the School for considering your application." />
         </ListItem>
         <ListItem>
           <ListItemText primary="Form of payment of the application fee does NOT guarantee admission in any way." />
@@ -100,13 +107,46 @@ const InstructionsTab = ({ props }) => {
           <ListItemText primary="The School reserves the right to change the admission process at any time." />
         </ListItem>
         <ListItem>
-          <ListItemText primary="If you face difficulties in submitting the Application Form or in paying the Application Fee, please contact us at <a href='mailto:admissions@schoolname.com'>admissions@schoolname.com</a>" />
+          <ListItemText
+            primary={
+              <>
+                If you face difficulties in submitting the Application Form or
+                in paying the Application Fee, please contact us at{" "}
+                <Box
+                  component={Link}
+                  to="mailto:admissions@schoolname.com"
+                  sx={{ textDecoration: "none", color: "info.main" }}
+                >
+                  admissions@schoolname.com
+                </Box>
+              </>
+            }
+          />
         </ListItem>
         <ListItem>
           <ListItemText primary="Please keep checking your child's name, your name, and other information in the Application Form (if available)." />
         </ListItem>
       </List>
-
+      {/* Class */}
+      <Autocomplete
+        options={CLASS_LIST || []}
+        getOptionLabel={(option) => option?.cg_name || ""}
+        renderInput={(params) => (
+          <TextField
+            {...params}
+            label="Class"
+            required
+            fullWidth
+            size="small"
+          />
+        )}
+        name="class"
+        value={formData?.class || null}
+        onChange={(_, newValue) =>
+          handleChange({ target: { name: "class", value: newValue } })
+        }
+        sx={{ width: "150px", mb: 1 }}
+      />
       {/* Terms Checkbox */}
       <FormControlLabel
         ref={acceptTermsRef}
@@ -132,6 +172,8 @@ InstructionsTab.propTypes = {
     PropTypes.object,
     PropTypes.oneOf([null]),
   ]),
+  formData: PropTypes.object,
+  handleChange: PropTypes.func,
 };
 
 export default memo(InstructionsTab);

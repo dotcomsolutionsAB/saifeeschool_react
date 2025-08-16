@@ -9,6 +9,7 @@ import AdminStudentProvider from "../contexts/admin-student-context";
 import { IS_LOGGED_IN, USER_INFO, WEBSITE_NAME } from "../utils/constants";
 import { Box, Typography } from "@mui/material";
 import Saifee_Logo from "../assets/logos/Saifee_Logo.png";
+import NewAdmissionPayment from "../pages/new-admission-payment";
 
 // Error Pages
 const Page404 = lazy(() => import("../pages/Page404"));
@@ -275,6 +276,14 @@ export default function Router() {
     {
       path: "/admissions",
       element: <NewAdmission />,
+    },
+    {
+      path: "/payment",
+      element: <NewAdmissionPayment />,
+    },
+    {
+      path: "/payment-status",
+      element: <PaymentStatus isPublic={true} />,
     },
     { path: "404", element: <Page404 /> },
     { path: "*", element: <Navigate to="/404" replace /> },
