@@ -10,7 +10,7 @@ import {
   TableRow,
 } from "@mui/material";
 import Iconify from "../../../../components/iconify/iconify";
-import { useState } from "react";
+import { memo, useState } from "react";
 import { toast } from "react-toastify";
 import useAuth from "../../../../hooks/useAuth";
 import CreateEditDebitVoucherModal from "./modals/create-edit-debit-voucher-modal";
@@ -22,7 +22,13 @@ import {
 import { FORMAT_INDIAN_CURRENCY } from "../../../../utils/constants";
 import ConfirmationDialog from "../../../../components/confirmation-dialog/confirmation-dialog";
 
-const DebitVoucherTableRow = ({ row, index, refetch }) => {
+const DebitVoucherTableRow = ({
+  row,
+  index,
+  refetch,
+  debit_from_to_list,
+  isLoadingFromTo,
+}) => {
   const { logout } = useAuth();
   const [anchorEl, setAnchorEl] = useState(null);
   const [debitVoucherEditModalOpen, setDebitVoucherEditModalOpen] =
@@ -116,8 +122,9 @@ const DebitVoucherTableRow = ({ row, index, refetch }) => {
         </TableCell>
 
         <TableCell>₹ {FORMAT_INDIAN_CURRENCY(row?.amount) || ""}</TableCell>
-        <TableCell>{row?.paid_to || "-"}</TableCell>
+        <TableCell>{row?.from || "-"}</TableCell>
         <TableCell>{row?.debit || "-"}</TableCell>
+        <TableCell>{row?.paid_to || "-"}</TableCell>
         <TableCell>{row?.cheque_no || "-"}</TableCell>
         <TableCell>{row?.description || "-"}</TableCell>
 
@@ -189,6 +196,8 @@ const DebitVoucherTableRow = ({ row, index, refetch }) => {
         onClose={handleDebitVoucherEditModalClose}
         refetch={refetch}
         detail={row}
+        debit_from_to_list={debit_from_to_list}
+        isLoadingFromTo={isLoadingFromTo}
       />
     </>
   );
@@ -198,6 +207,8 @@ DebitVoucherTableRow.propTypes = {
   row: PropTypes.object,
   refetch: PropTypes.func,
   index: PropTypes.number,
+  debit_from_to_list: PropTypes.object,
+  isLoadingFromTo: PropTypes.bool,
 };
 
-export default DebitVoucherTableRow;
+export default memo(DebitVoucherTableRow);

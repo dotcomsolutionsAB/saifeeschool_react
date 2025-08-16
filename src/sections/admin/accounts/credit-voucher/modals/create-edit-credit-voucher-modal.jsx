@@ -69,6 +69,7 @@ const CreateEditCreditVoucherModal = ({ open, onClose, refetch, detail }) => {
 
     if (response?.code === 200) {
       onClose();
+      setFormData(initialState);
       refetch();
       toast.success(
         response?.message ||

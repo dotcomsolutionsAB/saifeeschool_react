@@ -34,6 +34,9 @@ export const deleteDebitVoucher = async (body) =>
 export const printDebitPdf = async (body) =>
   await getRequest(`${DEBIT_PATH}/print/${body?.id}`);
 
+export const getDebitFromTo = async (body) =>
+  await getRequest(`${DEBIT_PATH}/from_to`, body);
+
 // credit apis
 export const getCredit = async () => await getRequest(`${CREDIT_PATH}`);
 

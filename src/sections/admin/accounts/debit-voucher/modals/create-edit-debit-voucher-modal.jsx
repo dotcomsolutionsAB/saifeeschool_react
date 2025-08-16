@@ -1,6 +1,7 @@
 import PropTypes from "prop-types";
-import { useState } from "react";
+import { memo, useState } from "react";
 import {
+  Autocomplete,
   Box,
   Button,
   CircularProgress,
@@ -19,7 +20,14 @@ import {
   updateDebitVoucher,
 } from "../../../../../services/admin/accounts.service";
 
-const CreateEditDebitVoucherModal = ({ open, onClose, refetch, detail }) => {
+const CreateEditDebitVoucherModal = ({
+  open,
+  onClose,
+  refetch,
+  detail,
+  debit_from_to_list,
+  isLoadingFromTo,
+}) => {
   const { logout } = useAuth();
   const [isLoading, setIsLoading] = useState(false);
 
@@ -27,6 +35,7 @@ const CreateEditDebitVoucherModal = ({ open, onClose, refetch, detail }) => {
     date: detail?.date
       ? dayjs(detail?.date).format("YYYY-MM-DD")
       : dayjs().format("YYYY-MM-DD"),
+    from: detail?.from || "",
     debit: detail?.debit || "",
     amount: Number(detail?.amount) || 0,
     paid_to: detail?.paid_to || "",
@@ -141,15 +150,82 @@ const CreateEditDebitVoucherModal = ({ open, onClose, refetch, detail }) => {
                 disableFuture
               />
             </Grid>
+            {/* Debit From*/}
+            <Grid item xs={12} sm={6} md={4}>
+              <Autocomplete
+                options={
+                  isLoadingFromTo
+                    ? ["Loading..."]
+                    : debit_from_to_list?.from || []
+                }
+                value={formData?.from || null}
+                onChange={(event, newValue) => {
+                  if (newValue !== "Loading...") {
+                    handleChange({
+                      target: { name: "from", value: newValue },
+                    });
+                  }
+                }}
+                loading={isLoadingFromTo}
+                renderInput={(params) => (
+                  <TextField
+                    {...params}
+                    name="from"
+                    label="Debit From"
+                    required
+                    fullWidth
+                    InputProps={{
+                      ...params.InputProps,
+                      endAdornment: (
+                        <>
+                          {isLoadingFromTo ? (
+                            <CircularProgress color="inherit" size={20} />
+                          ) : null}
+                          {params.InputProps.endAdornment}
+                        </>
+                      ),
+                    }}
+                  />
+                )}
+              />
+            </Grid>
             {/* Debit */}
             <Grid item xs={12} sm={6} md={4}>
-              <TextField
-                name="debit"
-                label="Debit"
-                required
-                fullWidth
-                value={formData?.debit || ""}
-                onChange={handleChange}
+              <Autocomplete
+                options={
+                  isLoadingFromTo
+                    ? ["Loading..."]
+                    : debit_from_to_list?.debit || []
+                }
+                value={formData?.debit || null}
+                onChange={(event, newValue) => {
+                  if (newValue !== "Loading...") {
+                    handleChange({
+                      target: { name: "debit", value: newValue },
+                    });
+                  }
+                }}
+                loading={isLoadingFromTo}
+                renderInput={(params) => (
+                  <TextField
+                    {...params}
+                    name="debit"
+                    label="Debit"
+                    required
+                    fullWidth
+                    InputProps={{
+                      ...params.InputProps,
+                      endAdornment: (
+                        <>
+                          {isLoadingFromTo ? (
+                            <CircularProgress color="inherit" size={20} />
+                          ) : null}
+                          {params.InputProps.endAdornment}
+                        </>
+                      ),
+                    }}
+                  />
+                )}
               />
             </Grid>
 
@@ -237,6 +313,8 @@ CreateEditDebitVoucherModal.propTypes = {
   onClose: PropTypes.func,
   refetch: PropTypes.func,
   detail: PropTypes.object,
+  debit_from_to_list: PropTypes.object,
+  isLoadingFromTo: PropTypes.bool,
 };
 
-export default CreateEditDebitVoucherModal;
+export default memo(CreateEditDebitVoucherModal);

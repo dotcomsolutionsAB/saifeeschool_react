@@ -17,23 +17,7 @@ import { VisibilityOffRounded, VisibilityRounded } from "@mui/icons-material";
 import { NavLink } from "react-router-dom";
 import Login_Background from "../assets/images/Login_Background.jpeg";
 import Saifee_Logo_White from "../assets/logos/Saifee_Logo_White.png";
-
-const NAV_OPTIONS = [
-  { _id: "1", label: "Home", link: "/" },
-  {
-    _id: "2",
-    label: "About Us",
-    link: "https://www.saifeeschool.in/overview-of-the-school/",
-    redirect: true,
-  },
-  {
-    _id: "3",
-    label: "Contact Us",
-    link: "https://www.saifeeschool.in/contact-us/",
-    redirect: true,
-  },
-  { _id: "4", label: "New Admission", link: "/admissions" },
-];
+import { NAV_OPTIONS } from "../utils/constants";
 
 const loginCardWidth = "clamp(400px, 40vw, 100%)";
 
@@ -131,10 +115,11 @@ const Login = () => {
           top: 0,
           left: 0,
           display: "flex",
+          flexWrap: "wrap",
           alignItems: "center",
-          gap: 2,
+          gap: { xs: 1, sm: 2 },
           py: 4,
-          px: 5,
+          px: { xs: 2, sm: 5 },
           zIndex: 2,
         }}
       >
@@ -147,6 +132,7 @@ const Login = () => {
             <Button
               variant="contained"
               sx={{ bgcolor: "primary.light", color: "primary.main" }}
+              size="small"
             >
               {option?.label || ""}
             </Button>

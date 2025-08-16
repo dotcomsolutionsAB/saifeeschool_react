@@ -122,7 +122,7 @@ export default function CreditVoucher() {
       {!isLoading && !isError && (
         <Grid container spacing={2}>
           {/* Total Cash Card */}
-          <Grid item xs={12} sm={6} md={4} lg={3}>
+          <Grid item xs={12} sm={6} lg={4} xl={3}>
             <Card
               elevation={10}
               sx={{
@@ -166,8 +166,8 @@ export default function CreditVoucher() {
                   <Typography sx={{ color: "text.disabled", fontSize: 14 }}>
                     Total Cash
                   </Typography>
-                  <Typography variant="h6">
-                    ₹ {FORMAT_INDIAN_CURRENCY(allResponse?.total) || "0"}
+                  <Typography variant="h6" noWrap>
+                    ₹ {FORMAT_INDIAN_CURRENCY(allResponse?.total_cash) || "0"}
                   </Typography>
                 </Box>
               </Box>
@@ -175,7 +175,7 @@ export default function CreditVoucher() {
           </Grid>
 
           {/* Total Cheque Card */}
-          <Grid item xs={12} sm={6} md={4} lg={3}>
+          <Grid item xs={12} sm={6} lg={4} xl={3}>
             <Card
               elevation={10}
               sx={{
@@ -219,11 +219,8 @@ export default function CreditVoucher() {
                   <Typography sx={{ color: "text.disabled", fontSize: 14 }}>
                     Total Cheque
                   </Typography>
-                  <Typography variant="h6">
-                    ₹{" "}
-                    {FORMAT_INDIAN_CURRENCY(
-                      allResponse?.current_month_unpaid_amount
-                    ) || "0"}
+                  <Typography variant="h6" noWrap>
+                    ₹ {FORMAT_INDIAN_CURRENCY(allResponse?.total_cheque) || "0"}
                   </Typography>
                 </Box>
               </Box>
@@ -231,7 +228,7 @@ export default function CreditVoucher() {
           </Grid>
 
           {/* Total Credited Card */}
-          <Grid item xs={12} sm={6} md={4} lg={3}>
+          <Grid item xs={12} sm={6} lg={4} xl={3}>
             <Card
               elevation={10}
               sx={{
@@ -281,11 +278,9 @@ export default function CreditVoucher() {
                   <Typography sx={{ color: "text.disabled", fontSize: 14 }}>
                     Total Credited
                   </Typography>
-                  <Typography variant="h6">
+                  <Typography variant="h6" noWrap>
                     ₹{" "}
-                    {FORMAT_INDIAN_CURRENCY(
-                      allResponse?.current_month_unpaid_amount
-                    ) || "0"}
+                    {FORMAT_INDIAN_CURRENCY(allResponse?.total_credited) || "0"}
                   </Typography>
                 </Box>
               </Box>

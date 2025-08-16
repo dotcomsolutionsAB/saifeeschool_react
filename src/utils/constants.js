@@ -255,6 +255,38 @@ export const TYPE_LIST = [
   { label: "Recurring Fee", value: "recurring" },
 ];
 
+export const NAV_OPTIONS = [
+  { _id: "1", label: "Home", link: "/" },
+  {
+    _id: "2",
+    label: "About Us",
+    link: "https://www.saifeeschool.in/overview-of-the-school/",
+    redirect: true,
+  },
+  {
+    _id: "3",
+    label: "Contact Us",
+    link: "https://www.saifeeschool.in/contact-us/",
+    redirect: true,
+  },
+  { _id: "4", label: "New Admission", link: "/admissions" },
+  { _id: "5", label: "Payment", link: "/payment" },
+];
+
+export const CLASS_LIST = [
+  { cg_id: "nursery", cg_name: "Nursery" },
+  { cg_id: "lkg", cg_name: "LKG" },
+  { cg_id: "ukg", cg_name: "UKG" },
+  { cg_id: "class_1", cg_name: "1st" },
+  { cg_id: "class_2", cg_name: "2nd" },
+  { cg_id: "class_3", cg_name: "3rd" },
+  { cg_id: "class_4", cg_name: "4th" },
+  { cg_id: "class_5", cg_name: "5th" },
+  { cg_id: "class_6", cg_name: "6th" },
+  { cg_id: "class_7", cg_name: "7th" },
+  { cg_id: "class_8", cg_name: "8th" },
+];
+
 export function emptyRows(page, rowsPerPage, arrayLength) {
   if (rowsPerPage > 25) return 0;
   return page ? Math.max(0, (1 + page) * rowsPerPage - arrayLength) : 0;

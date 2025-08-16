@@ -2,7 +2,6 @@ import PropTypes from "prop-types";
 import {
   Box,
   Button,
-  IconButton,
   Table,
   TableBody,
   TableCell,

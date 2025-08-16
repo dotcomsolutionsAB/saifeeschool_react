@@ -34,16 +34,20 @@ import Loader from "../../../../components/loader/loader";
 import CreateEditDebitVoucherModal from "./modals/create-edit-debit-voucher-modal";
 import DebitVoucherTableRow from "./debit-voucher-table-row";
 import { Helmet } from "react-helmet-async";
-import { getDebit } from "../../../../services/admin/accounts.service";
+import {
+  getDebit,
+  getDebitFromTo,
+} from "../../../../services/admin/accounts.service";
 import { TotalDebitedIcon } from "../../../../theme/overrides/CustomIcons";
 import Iconify from "../../../../components/iconify/iconify";
 // ----------------------------------------------------------------------
 
 const HEAD_LABEL = [
   { id: "sn", label: "SN" },
-  { id: "expense_no", label: "Expense No" },
+  { id: "debit_no", label: "Debit No" },
   { id: "date", label: "Date" },
   { id: "amount", label: "Amount" },
+  { id: "from", label: "Debit From" },
   { id: "debit", label: "Debit" },
   { id: "paid_to", label: "Paid To" },
   { id: "cheque_no", label: "Cheque No" },
@@ -83,6 +87,11 @@ export default function DebitVoucher() {
     dependencies: [page, rowsPerPage, search],
     debounceDelay: 500,
   });
+
+  const { dataList: debit_from_to_list, isLoading: isLoadingFromTo } =
+    useGetApi({
+      apiFunction: getDebitFromTo,
+    });
 
   // add new debit modal handler
 
@@ -124,7 +133,7 @@ export default function DebitVoucher() {
       {!isLoading && !isError && (
         <Grid container spacing={2}>
           {/* Total Cash Card */}
-          <Grid item xs={12} sm={6} md={4} lg={3}>
+          <Grid item xs={12} sm={6} lg={4} xl={3}>
             <Card
               elevation={10}
               sx={{
@@ -168,7 +177,7 @@ export default function DebitVoucher() {
                   <Typography sx={{ color: "text.disabled", fontSize: 14 }}>
                     Total Cash
                   </Typography>
-                  <Typography variant="h6">
+                  <Typography variant="h6" noWrap>
                     ₹ {FORMAT_INDIAN_CURRENCY(allResponse?.total_cash) || "0"}
                   </Typography>
                 </Box>
@@ -177,7 +186,7 @@ export default function DebitVoucher() {
           </Grid>
 
           {/* Total Cheque Card */}
-          <Grid item xs={12} sm={6} md={4} lg={3}>
+          <Grid item xs={12} sm={6} lg={4} xl={3}>
             <Card
               elevation={10}
               sx={{
@@ -221,7 +230,7 @@ export default function DebitVoucher() {
                   <Typography sx={{ color: "text.disabled", fontSize: 14 }}>
                     Total Cheque
                   </Typography>
-                  <Typography variant="h6">
+                  <Typography variant="h6" noWrap>
                     ₹ {FORMAT_INDIAN_CURRENCY(allResponse?.total_cheque) || "0"}
                   </Typography>
                 </Box>
@@ -230,7 +239,7 @@ export default function DebitVoucher() {
           </Grid>
 
           {/* Total Debited Card */}
-          <Grid item xs={12} sm={6} md={4} lg={3}>
+          <Grid item xs={12} sm={6} lg={4} xl={3}>
             <Card
               elevation={10}
               sx={{
@@ -280,7 +289,7 @@ export default function DebitVoucher() {
                   <Typography sx={{ color: "text.disabled", fontSize: 14 }}>
                     Total Debited
                   </Typography>
-                  <Typography variant="h6">
+                  <Typography variant="h6" noWrap>
                     ₹{" "}
                     {FORMAT_INDIAN_CURRENCY(allResponse?.total_debited) || "0"}
                   </Typography>
@@ -323,6 +332,8 @@ export default function DebitVoucher() {
             open={debitVoucherCreateModalOpen}
             onClose={handleDebitVoucherCreateModalClose}
             refetch={refetch}
+            debit_from_to_list={debit_from_to_list}
+            isLoadingFromTo={isLoadingFromTo}
           />
         </Box>
 
@@ -363,6 +374,8 @@ export default function DebitVoucher() {
                       row={row}
                       index={index}
                       refetch={refetch}
+                      debit_from_to_list={debit_from_to_list}
+                      isLoadingFromTo={isLoadingFromTo}
                     />
                   );
                 })}
