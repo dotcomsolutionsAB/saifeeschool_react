@@ -197,27 +197,25 @@ export default function PurchaseInvoice() {
             const price = Number(parsedValue?.price) || 0;
             const discount = Number(parsedValue?.discount) || 0;
             const tax = Number(parsedValue?.tax) || 0;
+            const quantity = Number(parsedValue?.quantity) || 1;
 
-            const gross = price - (price * discount) / 100;
-            const tax_amount = (gross * (tax / 2)) / 100;
-            const total =
-              gross +
-              (Number(parsedValue?.cgst) || 0) +
-              (Number(parsedValue?.sgst) || 0);
+            const gross = quantity * (price - (price * discount) / 100);
+            const tax_amount = (gross * tax * quantity) / 100;
+            const total = gross + tax_amount;
 
             return {
               ...item,
               product: parsedValue,
               description: parsedValue?.description,
-              quantity: 1,
+              quantity,
               unit: parsedValue?.unit,
               price: parsedValue?.price,
               discount: parsedValue?.discount,
               hsn: parsedValue?.hsn,
               tax: parsedValue?.tax,
-              Gross: gross,
-              tax_amount,
-              Total: total,
+              Gross: gross.toFixed(2),
+              tax_amount: tax_amount.toFixed(2),
+              Total: total.toFixed(2),
             };
           }
 
@@ -230,20 +228,17 @@ export default function PurchaseInvoice() {
           const price = Number(updatedItem?.price) || 0;
           const discount = Number(updatedItem?.discount) || 0;
           const tax = Number(updatedItem?.tax) || 0;
-          const quantity = Number(updatedItem?.quantity) || 0;
+          const quantity = Number(updatedItem?.quantity) || 1;
 
-          const gross = price - (price * discount) / 100;
-          const tax_amount = (gross * (tax / 2)) / 100;
-          const total =
-            gross +
-            (Number(updatedItem?.cgst) || 0) +
-            (Number(updatedItem?.sgst) || 0);
+          const gross = quantity * (price - (price * discount) / 100);
+          const tax_amount = (gross * tax * quantity) / 100;
+          const total = gross + tax_amount;
 
           return {
             ...updatedItem,
-            Gross: gross,
-            tax_amount,
-            Total: total * quantity,
+            Gross: gross.toFixed(2),
+            tax_amount: tax_amount.toFixed(2),
+            Total: total.toFixed(2),
           };
         }),
       }));
@@ -277,7 +272,7 @@ export default function PurchaseInvoice() {
         {
           product: null,
           description: "",
-          quantity: 0,
+          quantity: 1,
           unit: "",
           price: 0,
           discount: 0,
@@ -351,31 +346,28 @@ export default function PurchaseInvoice() {
     let totalTax = 0;
 
     formData?.items?.forEach((item) => {
-      const quantity = Number(item?.quantity) || 0;
+      const quantity = Number(item?.quantity) || 1;
       const price = Number(item?.price) || 0;
       const discount = Number(item?.discount) || 0;
       const tax = Number(item?.tax) || 0;
 
       const itemGross = quantity * price - (quantity * price * discount) / 100;
-      const itemTax = (itemGross * (tax / 2)) / 100;
+      const itemTax = (itemGross * tax) / 100;
 
       grossTotal += itemGross;
       totalTax += itemTax;
     });
 
-    const roundOff = Number(
-      Math.abs(totalTax - Math.round(totalTax)).toFixed(2)
-    );
-
     const freight = Number(formData?.freight) || 0;
-    const grandTotal = freight + grossTotal + totalTax + roundOff;
+    const grandTotal = freight + grossTotal + totalTax;
+    const roundOff = Number((grandTotal - Math.round(grandTotal)).toFixed(2));
 
     setFormData((prev) => ({
       ...prev,
       gross: grossTotal.toFixed(2),
-      total: grandTotal.toFixed(2),
+      total: (grandTotal - roundOff).toFixed(2),
       tax: totalTax.toFixed(2),
-      round_off: roundOff,
+      round_off: Math.abs(roundOff),
     }));
   }, [formData?.items, formData?.freight]);
 

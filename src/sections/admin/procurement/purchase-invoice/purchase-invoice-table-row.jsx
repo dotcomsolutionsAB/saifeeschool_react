@@ -21,7 +21,7 @@ import {
   TableSortLabel,
 } from "@mui/material";
 import Iconify from "../../../../components/iconify/iconify";
-import { useState } from "react";
+import { memo, useState } from "react";
 import { toast } from "react-toastify";
 import useAuth from "../../../../hooks/useAuth";
 import dayjs from "dayjs";
@@ -64,6 +64,8 @@ const PurchaseInvoiceTableRow = ({
 
   const productLength = row?.purchase_details?.products?.length;
 
+  console.log(row, "row");
+
   // open action menu open
 
   const handleMenuOpen = (event) => {
@@ -98,9 +100,9 @@ const PurchaseInvoiceTableRow = ({
 
       return {
         ...item,
-        Gross: gross,
-        tax_amount,
-        Total: total,
+        Gross: gross.toFixed(2),
+        tax_amount: tax_amount.toFixed(2),
+        Total: total.toFixed(2),
         product: productsList?.find(
           (option) =>
             option?.name?.toLowerCase() === item?.product?.toLowerCase()
@@ -123,7 +125,7 @@ const PurchaseInvoiceTableRow = ({
 
   const handleDelete = async () => {
     setIsDeleteLoading(true);
-    const response = await deletePurchase(row);
+    const response = await deletePurchase(row?.purchase_details);
     setIsDeleteLoading(false);
 
     if (response?.code === 200) {
@@ -305,4 +307,4 @@ PurchaseInvoiceTableRow.propTypes = {
   productsList: PropTypes.array,
 };
 
-export default PurchaseInvoiceTableRow;
+export default memo(PurchaseInvoiceTableRow);
